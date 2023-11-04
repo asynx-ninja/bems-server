@@ -1,11 +1,9 @@
 const mongoose = require("mongoose");
-
+const { hash } = require("../config/BCrypt");
 const User = require("../models/UserModel");
 const GenerateID = require("../functions/GenerateID");
 
-const {
-  uploadPicDrive
-} = require("../utils/Drive");
+const { uploadPicDrive } = require("../utils/Drive");
 
 const GetUsers = async (req, res) => {
   const { brgy } = req.params;
@@ -56,6 +54,9 @@ const CreateUser = async (req, res) => {
 
     const user_id = GenerateID(address.brgy, "U", type.toUpperCase());
 
+    // Hash the password before saving
+    const hashedPassword = await hash(password);
+
     const result = await User.create({
       user_id,
       firstName,
@@ -76,12 +77,17 @@ const CreateUser = async (req, res) => {
       isHead,
       profile: {},
       username,
-      password,
+      password: hashedPassword, // Save the hashed password
       isApproved: "Pending",
     });
 
     res.status(200).json(result);
   } catch (err) {
+    if (err.code === 11000) {
+      return res
+        .status(400)
+        .json({ error: "Username or email already existed" });
+    }
     res.send(err.message);
   }
 };
