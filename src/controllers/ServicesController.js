@@ -21,6 +21,19 @@ const GetBrgyService = async (req, res) => {
     : res.status(200).json(result);
 };
 
+const GetBrgyServiceBanner = async (req, res) => {
+  const { brgy } = req.params;
+
+  const result = await Service.aggregate([
+    { $match: { brgy: brgy, isArchived: false } },
+    { $project: { _id: 0, banner: "$collections.banner.link" } }
+  ]);
+
+  return !result
+    ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
+    : res.status(200).json(result);
+};
+
 const GetArchivedBrgyService = async (req, res) => {
   const { brgy } = req.params;
 
@@ -251,6 +264,7 @@ const UnArchiveService = async (req, res) => {
 
 module.exports = {
   GetBrgyService,
+  GetBrgyServiceBanner,
   GetArchivedBrgyService,
   CreateServices,
   UpdateServices,
