@@ -17,6 +17,8 @@ const GetUsers = async (req, res) => {
     : res.status(200).json(result);
 };
 
+
+
 const GetArchivedUsers = async (req, res) => {
   const { brgy } = req.params;
 
