@@ -9,9 +9,9 @@ const {
   CheckPIN
 } = require("../controllers/CredentialsController");
 
+router.get("/check_pin/:email/:pin", CheckPIN);
 router.get("/:username/:password/:type", GetCredentials);
 router.get("/send_pin/:email", SentPIN);
-router.get("/check_pin/:email/:pin", CheckPIN);
 router.patch("/pass", UpdatePasswordOnly);
 router.patch("/:id", UpdateCredentials);
 

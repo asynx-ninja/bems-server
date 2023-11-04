@@ -103,7 +103,7 @@ const UpdateCredentials = async (req, res) => {
 
 const UpdatePasswordOnly = async (req, res) => {
   try {
-    const { email, password } = req.body.user;
+    const { email, password } = req.body;
 
     const result = await User.findOneAndUpdate(
       { email: email },
