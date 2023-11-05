@@ -7,6 +7,7 @@ const {
   uploadPicDrive
 } = require("../utils/Drive");
 
+
 const GetUsers = async (req, res) => {
   const { brgy } = req.params;
 
@@ -16,6 +17,20 @@ const GetUsers = async (req, res) => {
 
   return !result
     ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
+    : res.status(200).json(result);
+};
+
+const GetSpecificUser = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "No such user" });
+  }
+  const result = await User.find({
+   _id: id
+  });
+
+  return !result
+    ? res.status(400).json({ error: `No such user` })
     : res.status(200).json(result);
 };
 
@@ -89,72 +104,59 @@ const CreateUser = async (req, res) => {
 const UpdateUser = async (req, res) => {
   try {
     const { doc_id } = req.params;
-    const { body, files } = req;
-    const {
-      firstName,
-      middleName,
-      lastName,
-      suffix,
-      religion,
-      email,
-      birthday,
-      age,
-      contact,
-      sex,
-      address,
-      occupation,
-      civil_status,
-      type,
-      isVoter,
-      isHead,
-    } = JSON.parse(body.user);
+    let { body, file } = req;
+    body = JSON.parse(JSON.stringify(body)); 
+    const {users} = JSON.parse(body);
+    console.log(users)
 
-    if (!mongoose.Types.ObjectId.isValid(doc_id)) {
-      return res.status(400).json({ error: "No such user" });
-    }
+    // if (!mongoose.Types.ObjectId.isValid(doc_id)) {
+    //   return res.status(400).json({ error: "No such user" });
+    // }
 
-    var id = null,
-      name = null;
+    // var id = null,
+    //   name = null;
 
-    if (!files) {
-      const obj = await uploadPicDrive(files, "U");
-      id = obj.id;
-      name = obj.name;
-    }
+    // if (file) {
+    //   const obj = await uploadPicDrive(file, users.address.brgy, "U");
+    //   console.log(users.address)
+    //   id = obj.id;
+    //   name = obj.name;
+    // }
 
-    const result = await User.findOneAndUpdate(
-      { _id: doc_id },
-      {
-        $set: {
-          firstName,
-          middleName,
-          lastName,
-          suffix,
-          religion,
-          email,
-          birthday,
-          age,
-          contact,
-          sex,
-          address,
-          occupation,
-          civil_status,
-          type,
-          isVoter,
-          isHead,
-          profile: !files
-            ? {
-                link: `https://drive.google.com/uc?export=view&id=${id}`,
-                id,
-                name,
-              }
-            : {},
-        },
-      },
-      { new: true }
-    );
+    // const result = await User.findOneAndUpdate(
+    //   { _id: doc_id },
+    //   {
+    //     $set: {
+    //       firstName: users.firstName,
+    //       middleName: users.middleName, 
+    //       lastName: users.lastName,
+    //       suffix: users.suffix,
+    //       religion: users.religion,
+    //       email: users.email,
+    //       birthday: users.birthday,
+    //       birthplace: users.birthplace,
+    //       age: users.age,
+    //       contact: users.contact,
+    //       sex: users.sex,
+    //       address: users.address,
+    //       occupation: users.occupation,
+    //       civil_status: users.civil_status,
+    //       type: users.type,
+    //       isVoter: users.isVoter,
+    //       isHead: users.isHead,
+    //       profile: file
+    //         ? {
+    //             link: `https://drive.google.com/uc?export=view&id=${id}`,
+    //             id,
+    //             name,
+    //           }
+    //         : {},
+    //     },
+    //   },
+    //   { new: true }
+    // );
 
-    res.status(200).json(result);
+    // res.status(200).json(result);
   } catch (err) {
     res.send(err.message);
   }
@@ -223,6 +225,7 @@ const UnArchiveUser = async (req, res) => {
 
 module.exports = {
   GetUsers,
+  GetSpecificUser,
   GetArchivedUsers,
   CreateUser,
   UpdateUser,

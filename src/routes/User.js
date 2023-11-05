@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
   GetUsers,
+  GetSpecificUser,
   GetArchivedUsers,
   CreateUser,
   UpdateUser,
@@ -14,11 +15,13 @@ const {
 const upload = require("../config/Multer");
 
 router.get("/:brgy", GetUsers);
+router.get("/specific/:id", GetSpecificUser);
 router.get("/showArchived/:brgy", GetArchivedUsers);
 router.post("/", CreateUser);
-router.patch("/:doc_id", upload.single("files"), UpdateUser);
+router.patch("/:doc_id", upload.single("file"), UpdateUser);
 router.patch("/status/:id", StatusUser);
 router.patch("/archived/:id", ArchiveUser);
 router.patch("/unarchived/:id", UnArchiveUser);
+
 
 module.exports = router;

@@ -18,7 +18,7 @@ const createFolder = async (brgy, type, service_id) => {
   return data.id;
 };
 
-const uploadPicDrive = async (fileObject, type) => {
+const uploadPicDrive = async (fileObject, brgy , type) => {
   const { data } = await google
     .drive({ version: "v3", auth: authorize })
     .files.create({
