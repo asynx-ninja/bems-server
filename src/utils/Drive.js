@@ -18,7 +18,7 @@ const createFolder = async (brgy, type, service_id) => {
   return data.id;
 };
 
-const uploadPicDrive = async (fileObject, brgy , type) => {
+const uploadPicDrive = async (fileObject, brgy, type) => {
   const { data } = await google
     .drive({ version: "v3", auth: authorize })
     .files.create({
@@ -65,9 +65,21 @@ const deleteFileDrive = async (fileID, folder_id) => {
   return data;
 };
 
+const deletePicDrive = async (fileID, brgy, type) => {
+  const { data } = await google
+    .drive({ version: "v3", auth: authorize })
+    .files.delete({
+      fileId: fileID,
+      parent: [ReturnBarangay(brgy, type)],
+    });
+
+  return data;
+};
+
 module.exports = {
   createFolder,
   uploadPicDrive,
   uploadFileDrive,
   deleteFileDrive,
+  deletePicDrive
 };

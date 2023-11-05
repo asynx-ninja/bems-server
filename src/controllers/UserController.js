@@ -3,10 +3,7 @@ const mongoose = require("mongoose");
 const User = require("../models/UserModel");
 const GenerateID = require("../functions/GenerateID");
 
-const {
-  uploadPicDrive
-} = require("../utils/Drive");
-
+const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 
 const GetUsers = async (req, res) => {
   const { brgy } = req.params;
@@ -26,7 +23,7 @@ const GetSpecificUser = async (req, res) => {
     return res.status(400).json({ error: "No such user" });
   }
   const result = await User.find({
-   _id: id
+    _id: id,
   });
 
   return !result
@@ -104,59 +101,59 @@ const CreateUser = async (req, res) => {
 const UpdateUser = async (req, res) => {
   try {
     const { doc_id } = req.params;
-    let { body, file } = req;
-    body = JSON.parse(JSON.stringify(body)); 
-    const {users} = JSON.parse(body);
-    console.log(users)
+    const { body, file } = req;
+    const user = JSON.parse(body.users);
 
-    // if (!mongoose.Types.ObjectId.isValid(doc_id)) {
-    //   return res.status(400).json({ error: "No such user" });
-    // }
+    if (!mongoose.Types.ObjectId.isValid(doc_id)) {
+      return res.status(400).json({ error: "No such user" });
+    }
 
-    // var id = null,
-    //   name = null;
+    var id = null,
+      name = null;
 
-    // if (file) {
-    //   const obj = await uploadPicDrive(file, users.address.brgy, "U");
-    //   console.log(users.address)
-    //   id = obj.id;
-    //   name = obj.name;
-    // }
+    if (file) {
+      const brgy = user.address.brgy.replace(/ /g, "_");
+      const obj = await uploadPicDrive(file, brgy, "U");
+      id = obj.id;
+      name = obj.name;
 
-    // const result = await User.findOneAndUpdate(
-    //   { _id: doc_id },
-    //   {
-    //     $set: {
-    //       firstName: users.firstName,
-    //       middleName: users.middleName, 
-    //       lastName: users.lastName,
-    //       suffix: users.suffix,
-    //       religion: users.religion,
-    //       email: users.email,
-    //       birthday: users.birthday,
-    //       birthplace: users.birthplace,
-    //       age: users.age,
-    //       contact: users.contact,
-    //       sex: users.sex,
-    //       address: users.address,
-    //       occupation: users.occupation,
-    //       civil_status: users.civil_status,
-    //       type: users.type,
-    //       isVoter: users.isVoter,
-    //       isHead: users.isHead,
-    //       profile: file
-    //         ? {
-    //             link: `https://drive.google.com/uc?export=view&id=${id}`,
-    //             id,
-    //             name,
-    //           }
-    //         : {},
-    //     },
-    //   },
-    //   { new: true }
-    // );
+      await deletePicDrive(user.profile.id, brgy, "U");
+    }
 
-    // res.status(200).json(result);
+    const result = await User.findOneAndUpdate(
+      { _id: doc_id },
+      {
+        $set: {
+          firstName: user.firstName,
+          middleName: user.middleName,
+          lastName: user.lastName,
+          suffix: user.suffix,
+          religion: user.religion,
+          email: user.email,
+          birthday: user.birthday,
+          birthplace: user.birthplace,
+          age: user.age,
+          contact: user.contact,
+          sex: user.sex,
+          address: user.address,
+          occupation: user.occupation,
+          civil_status: user.civil_status,
+          type: user.type,
+          isVoter: user.isVoter,
+          isHead: user.isHead,
+          profile: file
+            ? {
+                link: `https://drive.google.com/uc?export=view&id=${id}`,
+                id,
+                name,
+              }
+            : user.profile,
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json(result);
   } catch (err) {
     res.send(err.message);
   }
