@@ -9,7 +9,7 @@ const GetCredentials = async (req, res) => {
   try {
     const { username, password, type } = req.params;
 
-    const result = await User.find({ username: username }, { password: 1, type: 1 });
+    const result = await User.find({ username: username }, { password: 1, type: 1, "address.brgy": 1 });
 
     if (result.length === 0 || !result) {
       return res.status(400).json({ error: `No such user` });
