@@ -3,7 +3,7 @@ const { hash } = require("../config/BCrypt");
 const User = require("../models/UserModel");
 const GenerateID = require("../functions/GenerateID");
 
-const { uploadPicDrive } = require("../utils/Drive");
+const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 
 const GetUsers = async (req, res) => {
   const { brgy } = req.params;
@@ -16,8 +16,6 @@ const GetUsers = async (req, res) => {
     ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
     : res.status(200).json(result);
 };
-
-
 
 const GetArchivedUsers = async (req, res) => {
   const { brgy } = req.params;
@@ -97,25 +95,8 @@ const CreateUser = async (req, res) => {
 const UpdateUser = async (req, res) => {
   try {
     const { doc_id } = req.params;
-    const { body, files } = req;
-    const {
-      firstName,
-      middleName,
-      lastName,
-      suffix,
-      religion,
-      email,
-      birthday,
-      age,
-      contact,
-      sex,
-      address,
-      occupation,
-      civil_status,
-      type,
-      isVoter,
-      isHead,
-    } = JSON.parse(body.user);
+    const { body, file } = req;
+    const user = JSON.parse(body.users);
 
     if (!mongoose.Types.ObjectId.isValid(doc_id)) {
       return res.status(400).json({ error: "No such user" });
@@ -124,39 +105,43 @@ const UpdateUser = async (req, res) => {
     var id = null,
       name = null;
 
-    if (!files) {
-      const obj = await uploadPicDrive(files, "U");
+    if (file) {
+      const brgy = user.address.brgy.replace(/ /g, "_");
+      const obj = await uploadPicDrive(file, brgy, "U");
       id = obj.id;
       name = obj.name;
+
+      await deletePicDrive(user.profile.id, brgy, "U");
     }
 
     const result = await User.findOneAndUpdate(
       { _id: doc_id },
       {
         $set: {
-          firstName,
-          middleName,
-          lastName,
-          suffix,
-          religion,
-          email,
-          birthday,
-          age,
-          contact,
-          sex,
-          address,
-          occupation,
-          civil_status,
-          type,
-          isVoter,
-          isHead,
-          profile: !files
+          firstName: user.firstName,
+          middleName: user.middleName,
+          lastName: user.lastName,
+          suffix: user.suffix,
+          religion: user.religion,
+          email: user.email,
+          birthday: user.birthday,
+          birthplace: user.birthplace,
+          age: user.age,
+          contact: user.contact,
+          sex: user.sex,
+          address: user.address,
+          occupation: user.occupation,
+          civil_status: user.civil_status,
+          type: user.type,
+          isVoter: user.isVoter,
+          isHead: user.isHead,
+          profile: file
             ? {
                 link: `https://drive.google.com/uc?export=view&id=${id}`,
                 id,
                 name,
               }
-            : {},
+            : user.profile,
         },
       },
       { new: true }
@@ -231,6 +216,7 @@ const UnArchiveUser = async (req, res) => {
 
 module.exports = {
   GetUsers,
+  GetSpecificUser,
   GetArchivedUsers,
   CreateUser,
   UpdateUser,
