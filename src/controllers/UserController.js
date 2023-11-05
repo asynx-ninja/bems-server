@@ -23,7 +23,7 @@ const GetSpecificUser = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ error: "No such user" });
   }
-  
+
   const result = await User.find({
     _id: id,
   });
