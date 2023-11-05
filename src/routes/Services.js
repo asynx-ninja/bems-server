@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
   GetBrgyService,
+  GetBrgyServiceBanner,
   GetArchivedBrgyService,
   CreateServices,
   UpdateServices,
@@ -14,6 +15,7 @@ const {
 const upload = require("../config/Multer");
 
 router.get("/:brgy", GetBrgyService);
+router.get("/banner/:brgy", GetBrgyServiceBanner);
 router.get("/showArchived/:brgy", GetArchivedBrgyService);
 router.post("/", upload.array("files", 10), CreateServices);
 router.patch("/:id", upload.array("files", 10), UpdateServices);
