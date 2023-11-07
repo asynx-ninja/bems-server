@@ -10,6 +10,18 @@ const {
 } = require("../utils/Drive");
 
 const GetBrgyService = async (req, res) => {
+  const { brgy, archived } = req.query;
+
+  const result = await Service.find({
+    $and: [{ brgy: brgy }, { isArchived: archived }],
+  });
+
+  return !result
+    ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
+    : res.status(200).json(result);
+};
+
+const GetBrgyArchivedService = async (req, res) => {
   const { brgy } = req.params;
 
   const result = await Service.find({

@@ -14,7 +14,7 @@ const {
 
 const upload = require("../config/Multer");
 
-router.get("/:brgy", GetBrgyService);
+router.get("/", GetBrgyService);
 router.get("/banner/:brgy", GetBrgyServiceBanner);
 router.get("/showArchived/:brgy", GetArchivedBrgyService);
 router.post("/", upload.array("files", 10), CreateServices);
