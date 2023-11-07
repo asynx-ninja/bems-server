@@ -51,6 +51,10 @@ const AnnouncementsSchema = new Schema(
         type: [FileSchema],
         required: true,
       },
+      logo: {
+        type: [FileSchema],
+        required: true,
+      },
       file: {
         type: [FileSchema],
       },
@@ -66,6 +70,7 @@ const AnnouncementsSchema = new Schema(
     },
     isArchived: {
       type: Boolean,
+      default: true,
       required: true,
     },
   },
