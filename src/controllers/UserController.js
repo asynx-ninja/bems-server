@@ -192,36 +192,16 @@ const StatusUser = async (req, res) => {
 
 const ArchiveUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id, archived } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such user" });
     }
 
-    const result = await Service.findOneAndUpdate(
+    const result = await User.findOneAndUpdate(
       { _id: id },
-      { $set: { isArchived: true } },
-      { new: true }
-    );
-
-    res.status(200).json(result);
-  } catch (err) {
-    res.send(err.message);
-  }
-};
-
-const UnArchiveUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "No such service" });
-    }
-
-    const result = await Service.findOneAndUpdate(
-      { _id: id },
-      { $set: { isArchived: false } },
-      { new: true }
+      { $set: { isArchived: archived } },
+      { returnOriginal: false, upsert: true },
     );
 
     res.status(200).json(result);
@@ -238,5 +218,4 @@ module.exports = {
   UpdateUser,
   StatusUser,
   ArchiveUser,
-  UnArchiveUser,
 };

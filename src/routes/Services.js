@@ -17,6 +17,6 @@ router.get("/banner/:brgy", GetBrgyServiceBanner);
 router.post("/", upload.array("files", 10), CreateServices);
 router.patch("/:id", upload.array("files", 10), UpdateServices);
 router.patch("/status/:id", StatusService);
-router.patch("/archived/:id", ArchiveService);
+router.patch("/archived/:id/:archived", ArchiveService);
 
 module.exports = router;

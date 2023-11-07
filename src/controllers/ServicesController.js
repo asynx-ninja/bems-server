@@ -212,7 +212,7 @@ const StatusService = async (req, res) => {
 
 const ArchiveService = async (req, res) => {
   try {
-    const { id, archived } = req.query;
+    const { id, archived } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such service" });
@@ -221,7 +221,7 @@ const ArchiveService = async (req, res) => {
     const result = await Service.findOneAndUpdate(
       { _id: id },
       { $set: { isArchived: archived } },
-      { new: true }
+      { returnOriginal: false, upsert: true }
     );
 
     res.status(200).json(result);

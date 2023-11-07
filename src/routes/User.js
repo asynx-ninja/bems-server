@@ -20,8 +20,6 @@ router.get("/showArchived/:brgy", GetArchivedUsers);
 router.post("/", CreateUser);
 router.patch("/:doc_id", upload.single("file"), UpdateUser);
 router.patch("/status/:id", StatusUser);
-router.patch("/archived/:id", ArchiveUser);
-router.patch("/unarchived/:id", UnArchiveUser);
-
+router.patch("/archived/:id/:archived", ArchiveUser);
 
 module.exports = router;
