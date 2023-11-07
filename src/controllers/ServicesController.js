@@ -21,18 +21,6 @@ const GetBrgyService = async (req, res) => {
     : res.status(200).json(result);
 };
 
-const GetBrgyArchivedService = async (req, res) => {
-  const { brgy } = req.params;
-
-  const result = await Service.find({
-    $and: [{ brgy: brgy }, { isArchived: false }],
-  });
-
-  return !result
-    ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
-    : res.status(200).json(result);
-};
-
 const GetBrgyServiceBanner = async (req, res) => {
   const { brgy } = req.params;
 
