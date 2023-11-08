@@ -127,7 +127,8 @@ const UpdateUser = async (req, res) => {
       id = obj.id;
       name = obj.name;
 
-      await deletePicDrive(user.profile.id, brgy, "U");
+      if (user.profile.id !== "")
+        await deletePicDrive(user.profile.id, brgy, "U");
     }
 
     const result = await User.findOneAndUpdate(
@@ -201,7 +202,7 @@ const ArchiveUser = async (req, res) => {
     const result = await User.findOneAndUpdate(
       { _id: id },
       { $set: { isArchived: archived } },
-      { returnOriginal: false, upsert: true },
+      { returnOriginal: false, upsert: true }
     );
 
     res.status(200).json(result);

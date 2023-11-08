@@ -17,7 +17,7 @@ const GenerateID = (brgyName = "", code, type = "") => {
 
   const dateStr = todayDate + todayTime;
 
-  if(code === 'S')
+  if(code === 'S' || code === 'U')
     // Return the barangay code.
     return `BRGY-${brgy}-${code}-${type.toUpperCase()}-${dateStr}`;
   else if (code === 'E')
