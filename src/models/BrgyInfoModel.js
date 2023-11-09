@@ -2,13 +2,34 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
+const FileSchema = new Schema(
+  {
+    link: String,
+    id: String,
+    name: String,
+  },
+  { _id: false }
+);
+
 const OfficialsSchema = new Schema(
   {
-    picture: String,
-    name: String,
-    position: String,
-    fromYear: String,
-    toYear: String,
+    picture: {
+      type: FileSchema,
+    },
+    name: {
+      type: String,
+      uppercase: true,
+    },
+    position: {
+      type: String,
+      uppercase: true,
+    },
+    fromYear: {
+      type: Date,
+    },
+    toYear: { 
+      type: Date 
+    },
   },
   { _id: false }
 );
@@ -44,11 +65,11 @@ const BrgyInfoSchema = new Schema(
       index: true,
     },
     banner: {
-      type: String,
+      type: FileSchema,
       required: true,
     },
     logo: {
-      type: String,
+      type: FileSchema,
       required: true,
     },
   },
