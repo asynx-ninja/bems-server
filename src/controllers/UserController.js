@@ -17,6 +17,22 @@ const GetUsers = async (req, res) => {
     : res.status(200).json(result);
 };
 
+const GetSpecificUser = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "No such user" });
+  }
+
+  const result = await User.find({
+    _id: id,
+  });
+
+  return !result
+    ? res.status(400).json({ error: `No such user` })
+    : res.status(200).json(result);
+};
+
 const GetArchivedUsers = async (req, res) => {
   const { brgy } = req.params;
 
@@ -111,7 +127,8 @@ const UpdateUser = async (req, res) => {
       id = obj.id;
       name = obj.name;
 
-      await deletePicDrive(user.profile.id, brgy, "U");
+      if (user.profile.id !== "")
+        await deletePicDrive(user.profile.id, brgy, "U");
     }
 
     const result = await User.findOneAndUpdate(
@@ -137,10 +154,10 @@ const UpdateUser = async (req, res) => {
           isHead: user.isHead,
           profile: file
             ? {
-                link: `https://drive.google.com/uc?export=view&id=${id}`,
-                id,
-                name,
-              }
+              link: `https://drive.google.com/uc?export=view&id=${id}`,
+              id,
+              name,
+            }
             : user.profile,
         },
       },

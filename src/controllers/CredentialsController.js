@@ -9,7 +9,7 @@ const GetCredentials = async (req, res) => {
   try {
     const { username, password, type } = req.params;
 
-    const result = await User.find({ username: username }, { password: 1, type: 1 });
+    const result = await User.find({ username: username }, { password: 1, type: 1, "address.brgy": 1 });
 
     if (result.length === 0 || !result) {
       return res.status(400).json({ error: `No such user` });
@@ -82,7 +82,7 @@ const CheckPIN = async (req, res) => {
 const UpdateCredentials = async (req, res) => {
   try {
     const { id } = req.params;
-    const { username, password } = req.body.user;
+    const { username, password } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such user" });
