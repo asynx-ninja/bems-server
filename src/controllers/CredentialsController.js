@@ -9,10 +9,10 @@ const GetCredentials = async (req, res) => {
   try {
     const { username, password, type } = req.params;
 
-   const result = await User.find(
-     { username: username },
-     { password: 1, type: 1, email: 1, "address.brgy": 1, isApproved: 1 }
-   );
+    const result = await User.find(
+      { username: username },
+      { password: 1, type: 1, email: 1, "address.brgy": 1, isApproved: 1 }
+    );
 
     if (result.length === 0 || !result) {
       return res.status(400).json({ error: `No such user` });
@@ -23,17 +23,27 @@ const GetCredentials = async (req, res) => {
     }
 
     if (type !== result[0].type)
-      return res.status(400).json({ error: `Account didn't registered for this website. Contact admin for concern!` });
+      return res
+        .status(400)
+        .json({
+          error: `Account didn't registered for this website. Contact admin for concern!`,
+        });
 
-      // If the account is not approved, send an error message
+    // If the account is not approved, send an error message
     if (result[0].isApproved === "Denied") {
-      return res.status(400).json({ error: `Your account is ${result[0].isApproved}` });
+      return res
+        .status(400)
+        .json({ error: `Your account is ${result[0].isApproved}` });
     } else if (result[0].isApproved === "Pending") {
       // Mask part of the email address
       const emailParts = result[0].email.split("@");
       const maskedEmail = `${emailParts[0].slice(0, 3)}****@${emailParts[1]}`;
 
-      return res.status(400).json({ error: `Your account is still on pending. Please check your email: ${maskedEmail}` });
+      return res
+        .status(400)
+        .json({
+          error: `Your account is still on pending. Please check your email: ${maskedEmail}`,
+        });
     }
 
     res.status(200).json(result);
@@ -90,7 +100,6 @@ const CheckPIN = async (req, res) => {
   } catch (err) {
     res.send(err.message);
   }
-
 };
 
 const UpdateCredentials = async (req, res) => {
