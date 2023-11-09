@@ -103,14 +103,7 @@ const UserSchema = new Schema(
     },
     type: {
       type: String,
-      enum: [
-        "Head Admin",
-        "Admin",
-        "Barangay Captain",
-        "Barangay Kagawad",
-        "Barangay Staff",
-        "Resident",
-      ],
+      enum: ["Admin", "Staff", "Resident"],
       index: true,
       required: true,
     },
@@ -149,8 +142,8 @@ const UserSchema = new Schema(
     },
     pin: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
   },
   { timestamps: true }
 );

@@ -6,43 +6,55 @@ const GenerateID = require("../functions/GenerateID");
 const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 
 const GetUsers = async (req, res) => {
-  const { brgy } = req.params;
+  try{
+    const { brgy } = req.params;
 
-  const result = await User.find({
-    $and: [{ "address.brgy": brgy }, { isArchived: false }],
-  });
+    const result = await User.find({
+      $and: [{ "address.brgy": brgy }, { isArchived: false }],
+    });
 
-  return !result
-    ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
-    : res.status(200).json(result);
+    return !result
+      ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
+      : res.status(200).json(result);
+  }catch(err){
+    res.send(err.message)
+  }
 };
 
 const GetSpecificUser = async (req, res) => {
-  const { id } = req.params;
+  try{
+    const { id } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ error: "No such user" });
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "No such user" });
+    }
+
+    const result = await User.find({
+      _id: id,
+    });
+
+    return !result
+      ? res.status(400).json({ error: `No such user` })
+      : res.status(200).json(result);
+  }catch(err){
+    res.send(err.message)
   }
-
-  const result = await User.find({
-    _id: id,
-  });
-
-  return !result
-    ? res.status(400).json({ error: `No such user` })
-    : res.status(200).json(result);
 };
 
 const GetArchivedUsers = async (req, res) => {
-  const { brgy } = req.params;
+  try{
+    const { brgy } = req.params;
 
-  const result = await User.find({
-    $and: [{ "address.brgy": brgy }, { isArchived: true }],
-  });
+    const result = await User.find({
+      $and: [{ "address.brgy": brgy }, { isArchived: true }],
+    });
 
-  return !result
-    ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
-    : res.status(200).json(result);
+    return !result
+      ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
+      : res.status(200).json(result);
+  }catch(err){
+    res.send(err.message)
+  }
 };
 
 const CreateUser = async (req, res) => {
@@ -193,36 +205,16 @@ const StatusUser = async (req, res) => {
 
 const ArchiveUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id, archived } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such user" });
     }
 
-    const result = await Service.findOneAndUpdate(
+    const result = await User.findOneAndUpdate(
       { _id: id },
-      { $set: { isArchived: true } },
-      { new: true }
-    );
-
-    res.status(200).json(result);
-  } catch (err) {
-    res.send(err.message);
-  }
-};
-
-const UnArchiveUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "No such service" });
-    }
-
-    const result = await Service.findOneAndUpdate(
-      { _id: id },
-      { $set: { isArchived: false } },
-      { new: true }
+      { $set: { isArchived: archived } },
+      { returnOriginal: false, upsert: true }
     );
 
     res.status(200).json(result);
@@ -239,5 +231,4 @@ module.exports = {
   UpdateUser,
   StatusUser,
   ArchiveUser,
-  UnArchiveUser,
 };

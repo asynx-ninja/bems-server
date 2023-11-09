@@ -4,83 +4,95 @@
     "events": "1FMQgEXhnpFqYkf97VGZIS45QevApGoW_",
     "request": "1HLvFLp40elFRtMcqijQrwGL2ppdK33aR",
     "service": "1YR98ACdOjKzT7VHK3W1pODLuxlcYZVgb",
-    "pfp": "14yUPLv8IZ3IQROrPb7nL28AsCVu3gejQ"
+    "pfp": "14yUPLv8IZ3IQROrPb7nL28AsCVu3gejQ",
+    "official": "1ARQKqIh35BX5pCpFu_7nsNpk8hm0Sbr8"
   },
   "BURGOS": {
     "root": "1SbGqlABNPdG77ja14xo8pEXpCUEvce5-",
     "events": "1F6P4yXlMUX78HtrSO3xksSg6TM-eM4ue",
     "request": "1imH1Fv_IJSd-aJmy77mFhsg6PwoTg4m6",
     "service": "14b5k3BFUFfjYUC_A8uk9zyZnnFFiooNB",
-    "pfp": "1nMeejEX_SbqYwvcP_R7_IAKkD57PPPIp"
+    "pfp": "1nMeejEX_SbqYwvcP_R7_IAKkD57PPPIp",
+    "official": "17CqNJgFxbTTuXlyP0bTtwNzfWR-1-XnW"
   },
   "GERONIMO": {
     "root": "1bcM2yq3Y2G_jWBpOVoG5mjPfud4DITE2",
     "events": "1wcIc587qW1TJePr6E4cfynb8t5F2t47B",
     "request": "1ZweBbUEy5vumuv9BjsQ01qGsibCu1uTM",
     "service": "1xV5MAYV-jPjMR1ywB5uo8Hz0wAKgk1L6",
-    "pfp": "14tKsOAnNGkBFHqlytL6R7pFe0fV4azJ2"
+    "pfp": "14tKsOAnNGkBFHqlytL6R7pFe0fV4azJ2",
+    "official": "1hL55A-EBdvyzjMUHQuclO24C8cnonFLl"
   },
   "MACABUD": {
     "root": "1DPZyOQ07X-ZQf2gwQLXOlUNbWHH5_efK",
     "events": "1HBSdMOFz-HEFRxOq_OAX7Nt-igdxxM24",
     "request": "1SQMaauF0IbWgPxG2afJst_ffVriyLL9S",
     "service": "1pQR-6iKeeP5fWmXPSbmZqELP0t513Iad",
-    "pfp": "1N9TB9CsogpYzfJ-ll6-wIXeWGjOZFN8Z"
+    "pfp": "1N9TB9CsogpYzfJ-ll6-wIXeWGjOZFN8Z",
+    "official": "1nwub5l6jpOCmI-2KqvU8wW3kcjujpg4V"
   },
   "MANGGAHAN": {
     "root": "171bhAY0mf_q6JrFHaBSIiekYm5IUkk3I",
     "events": "14dgJb-OUMQiLiCUuKfx2rbPs_PQZvWBM",
     "request": "1SZBf2khliNs8zSAxptyNUYG1vpvi428t",
     "service": "1ZGVz-iD2X2BqliM_9pHPnfCiDEqBRmL7",
-    "pfp": "1KjbLJys4B1z_71jXaTFIaqcCIXbSm-PM"
+    "pfp": "1KjbLJys4B1z_71jXaTFIaqcCIXbSm-PM",
+    "official": "1rC1RIiLqrMRV6rww0hnCRJ57rmohF82c"
   },
   "MASCAP": {
     "root": "1RJZxCuSFRBOE79mPl35ZJAjEKiQwWje-",
     "events": "1q7TKkTE2lLXjI-GPGd2G6d1RJ3uXy1dr",
     "request": "18sP7HcV6nc1n5gFwk2HTnp1WLtrF24_O",
     "service": "1zDcPdyn8JLRL_wF-uZUEu6J9mx-rMbuN",
-    "pfp": "1gFLd4NoM_MfY8NM064-RN2pUgMQvSvXs"
+    "pfp": "1gFLd4NoM_MfY8NM064-RN2pUgMQvSvXs",
+    "official": "1PXmGx7mozeK8B-QSzhv7LDCqN0-D4f0a"
   },
   "MUNISIPYO": {
     "root": "17_JCdTfp4vkgQ4iWbD_SBpNQDMGMU1hQ",
     "events": "1ikJcgZw70wMxp9Gk0TasmUuQtaG6_n1Q",
     "request": "1P3NZpW9L7ok_vKxGaPfGyIbozoadDFX4",
     "service": "17CJIbuy6d8uLmJNeDWthnacPEIubkHEx",
-    "pfp": "1OV5SdKWNVPR3LQfbn4_3pqlX308nQtVc"
+    "pfp": "1OV5SdKWNVPR3LQfbn4_3pqlX308nQtVc",
+    "official": "1UlffQce3FLFBLC8j7GorphX_rTsVFJDB"
   },
   "PURAY": {
     "root": "1DnZXVHy0NL8FCP13XMrPp5WDPPeVOYVB",
     "events": "1swKfxolGdPm2smwwHIUZC_yc62nSK0Wd",
     "request": "1E4LvsrIyvp3_AYfl0o08sOTZD7q0W23M",
     "service": "1VcVWmQ5I9bKxMKoE-Ha7UJlFhm-lMyDz",
-    "pfp": "1P0JVWX8iGtMoZpc548O0T98eIfWar3WH"
+    "pfp": "1P0JVWX8iGtMoZpc548O0T98eIfWar3WH",
+    "official": "1bcNYyuvKoTIt2PQWTsNSTSbCA2efqrX0"
   },
   "ROSARIO": {
     "root": "1eIbC2tQAovL1KRcDXKSNDYMLss7H0eNe",
     "events": "1jLfl-Ab8i8IdbfjeH3OuUSjiT75zdg1h",
     "request": "1ynvVS2WNVHXTKVfu9V9fJne9b-x3FMSb",
     "service": "1KXkV9utIwCoOBAwZyQ90d7x6DXzqsYiN",
-    "pfp": "1nwZOCpQGlhc1A5heYZw_hYgIaTj0auIo"
+    "pfp": "1nwZOCpQGlhc1A5heYZw_hYgIaTj0auIo",
+    "official": "11F2nibR2-ss7Re_2ZOQbceBnioxUbVh5"
   },
   "SAN_ISIDRO": {
     "root": "1eIbC2tQAovL1KRcDXKSNDYMLss7H0eNe",
     "events": "1SqefEip4Te_GlcOxMJLG5nXrSbKFb7jD",
     "request": "1IOZFgbRTQH7RzZu20JQJlCEs-8FlNJ3I",
     "service": "1uPfmGDXoaNSbOEH_uQXyxSAPXoA3sRmu",
-    "pfp": "1lwO-2eeqELSs11zVvzeOcdsPxbazvfwT"
+    "pfp": "1lwO-2eeqELSs11zVvzeOcdsPxbazvfwT",
+    "official": "1qpmah7XfNIhMDSnA01zMLePnDN-v3ljq"
   },
   "SAN_JOSE": {
     "root": "1mGFnSBUjv9OWWhVNh9-0HKe36eOAPGtV",
     "events": "1FSfqlnFpFdaR4m1EuGbwcjRNbzE7PYnx",
     "request": "1GaxvX9Sfsc5Sp16jv6TfbE6n5l-W1KmE",
     "service": "1dUCzEFWFhEH_oRBPNDA3Hl6u_fPsgdm-",
-    "pfp": "136zfSti6o0dbLXZpfrgy4bwrl39YHw3m"
+    "pfp": "136zfSti6o0dbLXZpfrgy4bwrl39YHw3m",
+    "official": "14JLE_OvzQmdNFG1Sz68Y1O8dpiTjLn8l"
   },
   "SAN_RAFAEL": {
     "root": "1LDcgF340a1iObq_njVfNZCoOgxcNUsZJ",
     "events": "1w8N7f4vz_0PRF6E8yoiAvQQOfnotOLPG",
     "request": "1vnkIQGpoTWUAKODF9CIDOBp0vizMI1lH",
     "service": "19XwHNcBvCeVEwCjzozg0Crdoq5FDM9Qf",
-    "pfp": "1k9zkgZKO1CSFbCq7p7wqRD2HDbKCgxyY"
+    "pfp": "1k9zkgZKO1CSFbCq7p7wqRD2HDbKCgxyY",
+    "official": "16sdNnw0dbczW_8LgqcNKhIMMO7VoqUyo"
   }
 }

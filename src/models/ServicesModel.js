@@ -25,6 +25,16 @@ const ServicesSchema = new Schema(
     },
     type: {
       type: String,
+      enum: [
+        "Healthcare",
+        "Education",
+        "Social Welfare",
+        "Security and Safety",
+        "Infrastructure",
+        "Community",
+        "Administrative",
+        "Environmental",
+      ],
       required: true,
       index: true,
     },
@@ -61,14 +71,14 @@ const ServicesSchema = new Schema(
     },
     isApproved: {
       type: String,
-      enum: ['Approved', 'Disapproved', 'Pending'],
+      enum: ["Approved", "Disapproved", "Pending"],
       required: true,
       index: true,
     },
     isArchived: {
       type: Boolean,
       default: false,
-      index: true
+      index: true,
     },
   },
   { timestamps: true }

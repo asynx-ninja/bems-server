@@ -1,4 +1,4 @@
-const GenerateID = (brgyName = "", code, type) => {
+const GenerateID = (brgyName = "", code, type = "") => {
   let brgy = brgyName.toUpperCase();
   brgy = brgy.replace(/\s/g, "");
 
@@ -17,8 +17,13 @@ const GenerateID = (brgyName = "", code, type) => {
 
   const dateStr = todayDate + todayTime;
 
-  // Return the barangay code.
-  return `BRGY-${brgy}-${code}-${type.toUpperCase()}-${dateStr}`;
+  switch (code) {
+    case "S":
+    case "U":
+      return `BRGY-${brgy}-${code}-${type.toUpperCase()}-${dateStr}`;
+    case "E":
+      return `BRGY-${brgy}-${code}-${dateStr}`;
+  }
 };
 
 module.exports = GenerateID;
