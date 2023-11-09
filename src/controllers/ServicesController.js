@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const Service = require("../models/ServicesModel");
 const GenerateID = require("../functions/GenerateID");
+const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const {
   createFolder,
@@ -10,28 +11,36 @@ const {
 } = require("../utils/Drive");
 
 const GetBrgyService = async (req, res) => {
-  const { brgy, archived } = req.query;
+  try{
+    const { brgy, archived } = req.query;
 
-  const result = await Service.find({
-    $and: [{ brgy: brgy }, { isArchived: archived }],
-  });
+    const result = await Service.find({
+      $and: [{ brgy: brgy }, { isArchived: archived }],
+    });
 
-  return !result
-    ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
-    : res.status(200).json(result);
+    return !result
+      ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
+      : res.status(200).json(result);
+  }catch(err){
+    res.send(err.message)
+  }
 };
 
 const GetBrgyServiceBanner = async (req, res) => {
-  const { brgy } = req.params;
+  try {
+    const { brgy } = req.params;
 
-  const result = await Service.aggregate([
-    { $match: { brgy: brgy, isArchived: false } },
-    { $project: { _id: 0, banner: "$collections.banner.link" } }
-  ]);
+    const result = await Service.aggregate([
+      { $match: { brgy: brgy, isArchived: false } },
+      { $project: { _id: 0, banner: "$collections.banner.link" } },
+    ]);
 
-  return !result
-    ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
-    : res.status(200).json(result);
+    return !result
+      ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
+      : res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
 };
 
 const CreateServices = async (req, res) => {
@@ -43,7 +52,7 @@ const CreateServices = async (req, res) => {
 
     const service_id = GenerateID(brgy, "S", type.toUpperCase());
     const folder_id = await createFolder(
-      brgy.replace(/ /g, "_"),
+      ReturnBrgyFormat(brgy),
       "S",
       service_id
     );

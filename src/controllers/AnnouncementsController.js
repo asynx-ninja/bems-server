@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const Announcement = require("../models/AnnouncementsModel");
 const GenerateID = require("../functions/GenerateID");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
@@ -10,17 +11,21 @@ const {
 } = require("../utils/Drive");
 
 const GetBarangayAnnouncement = async (req, res) => {
-  const { brgy, archived } = req.query;
+  try{
+    const { brgy, archived } = req.query;
 
-  const result = await Announcement.find({
-    $and: [{ brgy: brgy }, { isArchived: archived }],
-  });
+    const result = await Announcement.find({
+      $and: [{ brgy: brgy }, { isArchived: archived }],
+    });
 
-  return !result
-    ? res
-        .status(400)
-        .json({ error: `No such Announcement for Barangay ${brgy}` })
-    : res.status(200).json(result);
+    return !result
+      ? res
+          .status(400)
+          .json({ error: `No such Announcement for Barangay ${brgy}` })
+      : res.status(200).json(result);
+  }catch(err){
+    res.send(err.message)
+  }
 };
 
 const CreateAnnouncement = async (req, res) => {
