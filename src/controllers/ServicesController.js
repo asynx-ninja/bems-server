@@ -11,7 +11,7 @@ const {
 } = require("../utils/Drive");
 
 const GetBrgyService = async (req, res) => {
-  try{
+  try {
     const { brgy, archived } = req.query;
 
     const result = await Service.find({
@@ -21,8 +21,8 @@ const GetBrgyService = async (req, res) => {
     return !result
       ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
       : res.status(200).json(result);
-  }catch(err){
-    res.send(err.message)
+  } catch (err) {
+    res.send(err.message);
   }
 };
 
@@ -71,6 +71,8 @@ const CreateServices = async (req, res) => {
     }
 
     const [banner, logo, ...remainingFiles] = fileArray;
+    const bannerObject = Object.assign({}, banner);
+    const logoObject = Object.assign({}, logo);
 
     const result = await Service.create({
       service_id,
@@ -81,8 +83,8 @@ const CreateServices = async (req, res) => {
       brgy,
       collections: {
         folder_id: folder_id,
-        banner,
-        logo,
+        banner: bannerObject,
+        logo: logoObject,
         file: remainingFiles,
       },
       isApproved: "Pending",
@@ -201,7 +203,7 @@ const UpdateServices = async (req, res) => {
 const StatusService = async (req, res) => {
   try {
     const { id } = req.params;
-    const {isApproved} = req.body;
+    const { isApproved } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such service" });
