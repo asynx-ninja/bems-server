@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const upload = require("../config/Multer");
 const Announcement = require("../models/AnnouncementsModel");
 const GenerateID = require("../functions/GenerateID");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
@@ -31,13 +31,11 @@ const GetBarangayAnnouncement = async (req, res) => {
 const CreateAnnouncement = async (req, res) => {
   try {
     const { body, files } = req;
-    const announcementData = JSON.parse(body.announcement);
-    const { title, details, date, brgy } = announcementData;
-
+    const { title, details, date, brgy } = JSON.parse(body.announcement);
     let fileArray = [];
     const event_id = GenerateID(brgy, "E");
     const folder_id = await createFolder(ReturnBrgyFormat(brgy), "E", event_id);
-
+    
     for (let f = 0; f < files.length; f += 1) {
       const { id, name } = await uploadFileDrive(files[f], folder_id);
 
@@ -52,25 +50,27 @@ const CreateAnnouncement = async (req, res) => {
     }
 
     const [banner, logo, ...remainingFiles] = fileArray;
+    const bannerObject = Object.assign({}, banner);
+    const logoObject = Object.assign({}, logo);
 
     const result = await Announcement.create({
       event_id,
       title,
       details,
       date,
+      brgy,
       collections: {
         folder_id: folder_id,
-        banner,
-        logo,
+        banner: bannerObject,
+        logo: logoObject,
         file: remainingFiles,
       },
       attendees: [],
-      brgy,
     });
-
+    console.log(result)
     res.status(200).json(result);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
 

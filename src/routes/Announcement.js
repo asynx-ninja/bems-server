@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
+const upload = require("../config/Multer");
 const {
   GetBarangayAnnouncement, CreateAnnouncement, UpdateAnnouncement, ArchiveAnnouncement, GetBrgyAnnouncementBanner, UpdateAttendees,
 } = require("../controllers/AnnouncementsController");
 
-const upload = require("../config/Multer");
+
 
 router.get("/", GetBarangayAnnouncement);
 router.get("/banner/:brgy", GetBrgyAnnouncementBanner);
