@@ -63,6 +63,8 @@ const SentPIN = async (req, res) => {
 
     const code = GeneratePIN();
 
+    console.log(code)
+
     const result = await Send(
       email,
       "Password Security Code",

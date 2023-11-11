@@ -48,11 +48,11 @@ const AnnouncementsSchema = new Schema(
         required: true,
       },
       banner: {
-        type: [FileSchema],
+        type: FileSchema,
         required: true,
       },
       logo: {
-        type: [FileSchema],
+        type: FileSchema,
         required: true,
       },
       file: {
