@@ -171,6 +171,11 @@ const UpdateUser = async (req, res) => {
               name,
             }
             : user.profile,
+          socials: {
+            facebook: user.facebook,
+            instagram: user.instagram,
+            twitter: user.twitter,
+          }
         },
       },
       { new: true }

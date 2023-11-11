@@ -156,7 +156,7 @@ const UpdateServices = async (req, res) => {
             name,
           };
 
-          await deleteFileDrive(service.collections.banner[0].id, folder_id);
+          await deleteFileDrive(service.collections.banner.id, folder_id);
         } else if (files[f].originalname === "logo") {
           logo = {
             link: `https://drive.google.com/uc?export=view&id=${id}`,
@@ -164,7 +164,7 @@ const UpdateServices = async (req, res) => {
             name,
           };
 
-          await deleteFileDrive(service.collections.logo[0].id, folder_id);
+          await deleteFileDrive(service.collections.logo.id, folder_id);
         } else {
           fileArray.push({
             link: `https://drive.google.com/file/d/${id}/view`,

@@ -12,7 +12,7 @@ const {
 
 router.get("/check_pin/:email/:pin", CheckPIN);
 router.get("/:username/:password/:type", GetCredentials);
-router.get("/send_pin/:email", SentPIN);
+router.patch("/send_pin/:email", SentPIN);
 router.patch("/pass", UpdatePasswordOnly);
 router.patch("/:id", UpdateCredentials);
 
