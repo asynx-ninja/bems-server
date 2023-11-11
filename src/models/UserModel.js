@@ -24,6 +24,15 @@ const AddressSchema = new Schema(
   { _id: false }
 );
 
+const SocialsSchema = new Schema(
+  {
+    facebook: { type: String, default: "" },
+    instagram: { type: String, default: "" },
+    twitter: { type: String, default: "" },
+  },
+  { _id: false }
+);
+
 const FileSchema = new Schema(
   {
     link: { type: String, default: "" },
@@ -67,7 +76,6 @@ const UserSchema = new Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
       index: true,
     },
     birthday: {
@@ -144,6 +152,7 @@ const UserSchema = new Schema(
       type: String,
       default: "",
     },
+    socials: SocialsSchema,
   },
   { timestamps: true }
 );
