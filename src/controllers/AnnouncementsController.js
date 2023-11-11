@@ -167,8 +167,8 @@ const UpdateAnnouncement = async (req, res) => {
           collections: {
             folder_id,
             banner:
-              banner === null ? announcement.collections.banner[0] : banner,
-            logo: logo === null ? announcement.collections.logo[0] : logo,
+              banner === null ? announcement.collections.banner : banner,
+            logo: logo === null ? announcement.collections.logo : logo,
             file: fileArray,
           },
           brgy: announcement.brgy,
