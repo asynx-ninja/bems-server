@@ -6,7 +6,10 @@ const AnnouncementRoutes = require("./src/routes/Announcement")
 const ServicesRoutes = require("./src/routes/Services");
 const CredentialsRoutes = require("./src/routes/Credentials");
 const UserRoutes = require("./src/routes/User");
+const BrgyInformationRoutes = require("./src/routes/BarangayInfo")
 const connectDB = require("./src/config/DB");
+
+
 
 dotenv.config();
 
@@ -27,7 +30,8 @@ app.use(cors());
 app.use("/api/services", ServicesRoutes);
 app.use("/api/auth", CredentialsRoutes);
 app.use("/api/users", UserRoutes);
-app.use("/api/announcement", AnnouncementRoutes)
+app.use("/api/announcement", AnnouncementRoutes);
+app.use("/api/brgyinfo", BrgyInformationRoutes)
 
 app.get("/", (req, res) => {
   res.status(200).json({

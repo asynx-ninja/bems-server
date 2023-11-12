@@ -185,8 +185,8 @@ const UpdateServices = async (req, res) => {
         brgy: service.brgy,
         collections: {
           folder_id,
-          banner: banner === null ? service.collections.banner[0] : banner,
-          logo: logo === null ? service.collections.logo[0] : logo,
+          banner: banner === null ? service.collections.banner : banner,
+          logo: logo === null ? service.collections.logo : logo,
           file: fileArray,
         },
         isApproved: "Pending",

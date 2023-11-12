@@ -76,6 +76,7 @@ const CreateUser = async (req, res) => {
       type,
       isVoter,
       isHead,
+      isArchived,
       username,
       password,
     } = req.body;
@@ -103,10 +104,11 @@ const CreateUser = async (req, res) => {
       type,
       isVoter,
       isHead,
+      isArchived,
       profile: {},
       username,
       password: hashedPassword, // Save the hashed password
-      isApproved: "Pending",
+      isApproved: "Registered",
     });
 
     res.status(200).json(result);
