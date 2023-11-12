@@ -9,7 +9,6 @@ const {
   UpdateUser,
   StatusUser,
   ArchiveUser,
-  UnArchiveUser,
 } = require("../controllers/UserController");
 
 const upload = require("../config/Multer");

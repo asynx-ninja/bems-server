@@ -13,7 +13,7 @@ const jwtClient = new google.auth.JWT(
 
 jwtClient.authorize(function (err, tokens) {
   if (err) {
-    return;
+    console.log(err.message)
   } else {
     console.log("Google Autorization Complete");
   }

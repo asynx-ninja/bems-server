@@ -1,14 +1,8 @@
 const mongoose = require("mongoose");
 
-const Schema = mongoose.Schema;
+const FormSchema = require("./sub-model/FormModel").schema;
 
-const FormSchema = new Schema(
-  {
-    form: { type: [Schema.Types.Mixed] },
-    version: { type: Number, required: true, index: true },
-  },
-  { _id: false }
-);
+const Schema = mongoose.Schema;
 
 const ServicesFormSchema = new Schema(
   {

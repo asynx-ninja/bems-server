@@ -9,9 +9,9 @@ const {
 const upload = require("../config/Multer");
 
 router.get("/", GetServiceForm);
-router.post("/", upload.array("files", 10), CreateServices);
-router.patch("/:id", upload.array("files", 10), UpdateServices);
-router.patch("/status/:id", StatusService);
-router.patch("/archived/:id/:archived", ArchiveService);
+// router.post("/", upload.array("files", 10), CreateServices);
+// router.patch("/:id", upload.array("files", 10), UpdateServices);
+// router.patch("/status/:id", StatusService);
+// router.patch("/archived/:id/:archived", ArchiveService);
 
 module.exports = router;

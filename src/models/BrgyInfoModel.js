@@ -1,38 +1,9 @@
 const mongoose = require("mongoose");
 
+const FileSchema = require("./sub-model/FileModel").schema;
+const OfficialsSchema = require("./sub-model/OfficialsModel").schema;
+
 const Schema = mongoose.Schema;
-
-const FileSchema = new Schema(
-  {
-    link: String,
-    id: String,
-    name: String,
-  },
-  { _id: false }
-);
-
-const OfficialsSchema = new Schema(
-  {
-    picture: {
-      type: FileSchema,
-    },
-    name: {
-      type: String,
-      uppercase: true,
-    },
-    position: {
-      type: String,
-      uppercase: true,
-    },
-    fromYear: {
-      type: Date,
-    },
-    toYear: { 
-      type: Date 
-    },
-  },
-  { _id: false }
-);
 
 const BrgyInfoSchema = new Schema(
   {

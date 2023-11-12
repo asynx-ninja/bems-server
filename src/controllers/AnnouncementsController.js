@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const upload = require("../config/Multer");
 const Announcement = require("../models/AnnouncementsModel");
 const GenerateID = require("../functions/GenerateID");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
@@ -11,7 +11,7 @@ const {
 } = require("../utils/Drive");
 
 const GetBarangayAnnouncement = async (req, res) => {
-  try{
+  try {
     const { brgy, archived } = req.query;
 
     const result = await Announcement.find({
@@ -23,17 +23,15 @@ const GetBarangayAnnouncement = async (req, res) => {
           .status(400)
           .json({ error: `No such Announcement for Barangay ${brgy}` })
       : res.status(200).json(result);
-  }catch(err){
-    res.send(err.message)
+  } catch (err) {
+    res.send(err.message);
   }
 };
 
 const CreateAnnouncement = async (req, res) => {
   try {
     const { body, files } = req;
-    const announcementData = JSON.parse(body.announcement);
-    const { title, details, date, brgy } = announcementData;
-
+    const { title, details, date, brgy } = JSON.parse(body.announcement);
     let fileArray = [];
     const event_id = GenerateID(brgy, "E");
     const folder_id = await createFolder(ReturnBrgyFormat(brgy), "E", event_id);
@@ -52,25 +50,27 @@ const CreateAnnouncement = async (req, res) => {
     }
 
     const [banner, logo, ...remainingFiles] = fileArray;
+    const bannerObject = Object.assign({}, banner);
+    const logoObject = Object.assign({}, logo);
 
     const result = await Announcement.create({
       event_id,
       title,
       details,
       date,
+      brgy,
       collections: {
         folder_id: folder_id,
-        banner,
-        logo,
+        banner: bannerObject,
+        logo: logoObject,
         file: remainingFiles,
       },
       attendees: [],
-      brgy,
     });
 
     res.status(200).json(result);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
 
@@ -89,13 +89,13 @@ const UpdateAnnouncement = async (req, res) => {
   try {
     const { id } = req.params;
     let { body, files } = req;
-    console.log(body, files);
+
     let currentFiles = [];
     body = JSON.parse(JSON.stringify(req.body));
     let { saved, announcement } = body;
     let banner = null,
       logo = null;
-    console.log(saved, announcement);
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such announcement" });
     }
@@ -166,9 +166,8 @@ const UpdateAnnouncement = async (req, res) => {
           date: announcement.date,
           collections: {
             folder_id,
-            banner:
-              banner === null ? announcement.collections.banner[0] : banner,
-            logo: logo === null ? announcement.collections.logo[0] : logo,
+            banner: banner === null ? announcement.collections.banner : banner,
+            logo: logo === null ? announcement.collections.logo : logo,
             file: fileArray,
           },
           brgy: announcement.brgy,
@@ -186,7 +185,7 @@ const UpdateAnnouncement = async (req, res) => {
 const ArchiveAnnouncement = async (req, res) => {
   try {
     const { id, archived } = req.params;
-    console.log(id, archived);
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such Announcement" });
     }
