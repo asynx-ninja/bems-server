@@ -6,7 +6,7 @@ const GenerateID = require("../functions/GenerateID");
 const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 
 const GetUsers = async (req, res) => {
-  try{
+  try {
     const { brgy } = req.params;
 
     const result = await User.find({
@@ -16,13 +16,13 @@ const GetUsers = async (req, res) => {
     return !result
       ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
       : res.status(200).json(result);
-  }catch(err){
-    res.send(err.message)
+  } catch (err) {
+    res.send(err.message);
   }
 };
 
 const GetSpecificUser = async (req, res) => {
-  try{
+  try {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -36,13 +36,13 @@ const GetSpecificUser = async (req, res) => {
     return !result
       ? res.status(400).json({ error: `No such user` })
       : res.status(200).json(result);
-  }catch(err){
-    res.send(err.message)
+  } catch (err) {
+    res.send(err.message);
   }
 };
 
 const GetArchivedUsers = async (req, res) => {
-  try{
+  try {
     const { brgy } = req.params;
 
     const result = await User.find({
@@ -52,8 +52,8 @@ const GetArchivedUsers = async (req, res) => {
     return !result
       ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
       : res.status(200).json(result);
-  }catch(err){
-    res.send(err.message)
+  } catch (err) {
+    res.send(err.message);
   }
 };
 
@@ -168,16 +168,16 @@ const UpdateUser = async (req, res) => {
           isHead: user.isHead,
           profile: file
             ? {
-              link: `https://drive.google.com/uc?export=view&id=${id}`,
-              id,
-              name,
-            }
+                link: `https://drive.google.com/uc?export=view&id=${id}`,
+                id,
+                name,
+              }
             : user.profile,
           socials: {
             facebook: user.facebook,
             instagram: user.instagram,
             twitter: user.twitter,
-          }
+          },
         },
       },
       { new: true }

@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
-
 const User = require("../models/UserModel");
 const BCrypt = require("../config/BCrypt");
 const Send = require("../config/Nodemailer");
+
 const GeneratePIN = require("../functions/GeneratePIN");
 
 const GetCredentials = async (req, res) => {
@@ -56,18 +56,15 @@ const SentPIN = async (req, res) => {
 
     if (found.length === 0)
       return res.status(400).json({ error: "Email not registered!" });
-    
-      
-    console.log(found[0].type);
 
     if (found[0].type !== "Admin")
       return res
         .status(400)
-        .json({ error: "Access denied: Only registered Admin account can proceed." });
+        .json({
+          error: "Access denied: Only registered Admin account can proceed.",
+        });
 
     const code = GeneratePIN();
-
-    console.log(code);
 
     const result = await Send(
       email,
@@ -85,7 +82,13 @@ const SentPIN = async (req, res) => {
       }
     );
 
-    res.status(200).json({update, type: found[0].type,  message: "Code has been successfully sent to your Email!"});
+    res
+      .status(200)
+      .json({
+        update,
+        type: found[0].type,
+        message: "Code has been successfully sent to your Email!",
+      });
   } catch (err) {
     res.send(err.message);
   }

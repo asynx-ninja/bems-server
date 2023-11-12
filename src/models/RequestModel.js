@@ -1,26 +1,9 @@
 const mongoose = require("mongoose");
 
+const PaymentSchema = require("./sub-model/PaymentModel").schema;
+const ResponseSchema = require("./sub-model/ResponseModel").schema;
+
 const Schema = mongoose.Schema;
-
-const PaymentSchema = new Schema(
-  {
-    sender: String,
-    reference: String,
-    proof: String,
-    fee: Number,
-  },
-  { _id: false }
-);
-
-const ResponseSchema = new Schema(
-  {
-    sender: String,
-    message: String,
-    date: Date,
-    file: String,
-  },
-  { _id: false }
-);
 
 const RequestSchema = new Schema(
   {
@@ -65,8 +48,8 @@ const RequestSchema = new Schema(
       index: true,
     },
     response: {
-        type: [ResponseSchema]
-    }
+      type: [ResponseSchema],
+    },
   },
   { timestamps: true }
 );

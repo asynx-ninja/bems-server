@@ -11,7 +11,7 @@ const {
 } = require("../utils/Drive");
 
 const GetBarangayAnnouncement = async (req, res) => {
-  try{
+  try {
     const { brgy, archived } = req.query;
 
     const result = await Announcement.find({
@@ -23,8 +23,8 @@ const GetBarangayAnnouncement = async (req, res) => {
           .status(400)
           .json({ error: `No such Announcement for Barangay ${brgy}` })
       : res.status(200).json(result);
-  }catch(err){
-    res.send(err.message)
+  } catch (err) {
+    res.send(err.message);
   }
 };
 
@@ -35,7 +35,7 @@ const CreateAnnouncement = async (req, res) => {
     let fileArray = [];
     const event_id = GenerateID(brgy, "E");
     const folder_id = await createFolder(ReturnBrgyFormat(brgy), "E", event_id);
-    
+
     for (let f = 0; f < files.length; f += 1) {
       const { id, name } = await uploadFileDrive(files[f], folder_id);
 
@@ -67,7 +67,7 @@ const CreateAnnouncement = async (req, res) => {
       },
       attendees: [],
     });
-    console.log(result)
+
     res.status(200).json(result);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -89,13 +89,13 @@ const UpdateAnnouncement = async (req, res) => {
   try {
     const { id } = req.params;
     let { body, files } = req;
-    console.log(body, files);
+
     let currentFiles = [];
     body = JSON.parse(JSON.stringify(req.body));
     let { saved, announcement } = body;
     let banner = null,
       logo = null;
-    console.log(saved, announcement);
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such announcement" });
     }
@@ -166,8 +166,7 @@ const UpdateAnnouncement = async (req, res) => {
           date: announcement.date,
           collections: {
             folder_id,
-            banner:
-              banner === null ? announcement.collections.banner : banner,
+            banner: banner === null ? announcement.collections.banner : banner,
             logo: logo === null ? announcement.collections.logo : logo,
             file: fileArray,
           },
@@ -186,7 +185,7 @@ const UpdateAnnouncement = async (req, res) => {
 const ArchiveAnnouncement = async (req, res) => {
   try {
     const { id, archived } = req.params;
-    console.log(id, archived);
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such Announcement" });
     }

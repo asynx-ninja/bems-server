@@ -1,16 +1,8 @@
 const mongoose = require("mongoose");
 
-const Schema = mongoose.Schema;
+const ResponseSchema = require("./sub-model/ResponseModel").schema;
 
-const ResponseSchema = new Schema(
-  {
-    sender: String,
-    message: String,
-    date: Date,
-    file: String,
-  },
-  { _id: false }
-);
+const Schema = mongoose.Schema;
 
 const InquiriesSchema = new Schema(
   {
@@ -38,7 +30,7 @@ const InquiriesSchema = new Schema(
       required: true,
     },
     response: {
-        type: [ResponseSchema]
+      type: [ResponseSchema],
     },
     brgy: {
       type: String,

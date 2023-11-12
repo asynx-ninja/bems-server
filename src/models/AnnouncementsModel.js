@@ -1,26 +1,9 @@
 const mongoose = require("mongoose");
 
+const FileSchema = require("./sub-model/FileModel").schema;
+const AttendeesSchema = require("./sub-model/AttendeesModel").schema;
+
 const Schema = mongoose.Schema;
-
-const AttendeesSchema = new Schema(
-  {
-    firstName: String,
-    lastName: String,
-    email: String,
-    contact: String,
-    brgy: String,
-  },
-  { _id: false }
-);
-
-const FileSchema = new Schema(
-  {
-    link: String,
-    id: String,
-    name: String,
-  },
-  { _id: false }
-);
 
 const AnnouncementsSchema = new Schema(
   {

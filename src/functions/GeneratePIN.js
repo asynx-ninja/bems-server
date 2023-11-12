@@ -12,6 +12,6 @@ const GeneratePIN = () => {
 
   // Return the 4-digit PIN.
   return pinString;
-}
+};
 
-module.exports = GeneratePIN
+module.exports = GeneratePIN;
