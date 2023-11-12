@@ -1,8 +1,44 @@
 const mongoose = require("mongoose");
 
-const ResponseSchema = require("./sub-model/ResponseModel").schema;
-
 const Schema = mongoose.Schema;
+
+const ResponseSchema = new Schema(
+  {
+    sender: {
+      type: String,
+      default: "",
+    },
+    message: {
+      type: String,
+      default: "",
+    },
+    date: {
+      type: Date,
+    },
+    file: {
+      type: [FileSchema],
+    },
+  },
+  { _id: false }
+);
+
+const FileSchema = new Schema(
+  {
+    link: {
+      type: String,
+      default: "",
+    },
+    id: {
+      type: String,
+      default: "",
+    },
+    name: {
+      type: String,
+      default: "",
+    },
+  },
+  { _id: false }
+);
 
 const InquiriesSchema = new Schema(
   {

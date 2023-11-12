@@ -1,8 +1,24 @@
 const mongoose = require("mongoose");
 
-const FileSchema = require("./sub-model/FileModel").schema;
-
 const Schema = mongoose.Schema;
+
+const FileSchema = new Schema(
+  {
+    link: {
+      type: String,
+      default: "",
+    },
+    id: {
+      type: String,
+      default: "",
+    },
+    name: {
+      type: String,
+      default: "",
+    },
+  },
+  { _id: false }
+);
 
 const ServicesSchema = new Schema(
   {
