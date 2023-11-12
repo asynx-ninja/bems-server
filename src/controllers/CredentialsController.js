@@ -23,11 +23,9 @@ const GetCredentials = async (req, res) => {
     }
 
     if (type !== result[0].type)
-      return res
-        .status(400)
-        .json({
-          error: `Account didn't registered for this website. Contact admin for concern!`,
-        });
+      return res.status(400).json({
+        error: `Account didn't registered for this website. Contact admin for concern!`,
+      });
 
     // If the account is not approved, send an error message
     if (result[0].isApproved === "Denied") {
@@ -39,11 +37,9 @@ const GetCredentials = async (req, res) => {
       const emailParts = result[0].email.split("@");
       const maskedEmail = `${emailParts[0].slice(0, 3)}****@${emailParts[1]}`;
 
-      return res
-        .status(400)
-        .json({
-          error: `Your account is still on pending. Please check your email: ${maskedEmail}`,
-        });
+      return res.status(400).json({
+        error: `Your account is still on pending. Please check your email: ${maskedEmail}`,
+      });
     }
 
     res.status(200).json(result);
@@ -60,10 +56,18 @@ const SentPIN = async (req, res) => {
 
     if (found.length === 0)
       return res.status(400).json({ error: "Email not registered!" });
+    
+      
+    console.log(found[0].type);
+
+    if (found[0].type !== "Admin")
+      return res
+        .status(400)
+        .json({ error: "Access denied: Only registered Admin account can proceed." });
 
     const code = GeneratePIN();
 
-    console.log(code)
+    console.log(code);
 
     const result = await Send(
       email,
@@ -81,7 +85,7 @@ const SentPIN = async (req, res) => {
       }
     );
 
-    res.status(200).json(update);
+    res.status(200).json({update, type: found[0].type,  message: "Code has been successfully sent to your Email!"});
   } catch (err) {
     res.send(err.message);
   }
