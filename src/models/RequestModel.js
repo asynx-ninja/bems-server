@@ -1,9 +1,66 @@
 const mongoose = require("mongoose");
 
-const PaymentSchema = require("./sub-model/PaymentModel").schema;
-const ResponseSchema = require("./sub-model/ResponseModel").schema;
-
 const Schema = mongoose.Schema;
+
+const PaymentSchema = new Schema(
+  {
+    sender: {
+      type: String,
+      default: "",
+    },
+    reference: {
+      type: String,
+      default: "",
+    },
+    proof: {
+      type: String,
+      default: "",
+    },
+    fee: {
+      type: Number,
+      default: 0,
+    },
+  },
+  { _id: false }
+);
+
+const FileSchema = new Schema(
+  {
+    link: {
+      type: String,
+      default: "",
+    },
+    id: {
+      type: String,
+      default: "",
+    },
+    name: {
+      type: String,
+      default: "",
+    },
+  },
+  { _id: false }
+);
+
+const ResponseSchema = new Schema(
+  {
+    sender: {
+      type: String,
+      default: "",
+    },
+    message: {
+      type: String,
+      default: "",
+    },
+    date: {
+      type: Date,
+    },
+    file: {
+      type: [FileSchema],
+    },
+  },
+  { _id: false }
+);
 
 const RequestSchema = new Schema(
   {

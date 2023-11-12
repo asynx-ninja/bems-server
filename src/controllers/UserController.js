@@ -77,6 +77,7 @@ const CreateUser = async (req, res) => {
       isVoter,
       isHead,
       isArchived,
+      isApproved,
       username,
       password,
     } = req.body;
@@ -106,9 +107,10 @@ const CreateUser = async (req, res) => {
       isHead,
       isArchived,
       profile: {},
+      socials: {},
       username,
       password: hashedPassword, // Save the hashed password
-      isApproved: "Registered",
+      isApproved: isApproved,
     });
 
     res.status(200).json(result);
@@ -127,6 +129,8 @@ const UpdateUser = async (req, res) => {
     const { doc_id } = req.params;
     const { body, file } = req;
     const user = JSON.parse(body.users);
+
+    console.log(user)
 
     if (!mongoose.Types.ObjectId.isValid(doc_id)) {
       return res.status(400).json({ error: "No such user" });
@@ -174,14 +178,16 @@ const UpdateUser = async (req, res) => {
               }
             : user.profile,
           socials: {
-            facebook: user.facebook,
-            instagram: user.instagram,
-            twitter: user.twitter,
+            facebook: { name: user.socials.facebook.name, link: user.socials.facebook.link },
+            instagram: { name: user.socials.instagram.name, link: user.socials.instagram.link },
+            twitter: { name: user.socials.twitter.name, link: user.socials.twitter.link },
           },
         },
       },
       { new: true }
     );
+
+    console.log("result", result);
 
     res.status(200).json(result);
   } catch (err) {

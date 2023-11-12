@@ -1,10 +1,83 @@
 const mongoose = require("mongoose");
 
-const AddressSchema = require("./sub-model/AddressModel").schema;
-const FileSchema = require("./sub-model/FileModel").schema;
-const SocialsSchema = require("./sub-model/SocialsModel").schema;
-
 const Schema = mongoose.Schema;
+
+// SUB SCHEMA
+const AddressSchema = new Schema(
+  {
+    street: {
+      type: String,
+      uppercase: true,
+      required: true,
+    },
+    brgy: {
+      type: String,
+      uppercase: true,
+      required: true,
+      index: true,
+    },
+    city: {
+      type: String,
+      uppercase: true,
+      required: true,
+    },
+  },
+  { _id: false }
+);
+
+const FileSchema = new Schema(
+  {
+    link: {
+      type: String,
+      default: "",
+    },
+    id: {
+      type: String,
+      default: "",
+    },
+    name: {
+      type: String,
+      default: "",
+    },
+  },
+  { _id: false }
+);
+
+const SocialsSchema = new Schema(
+  {
+    facebook: {
+      link: {
+        type: String,
+        default: "",
+      },
+      name: {
+        type: String,
+        default: "",
+      },
+    },
+    instagram: {
+      link: {
+        type: String,
+        default: "",
+      },
+      name: {
+        type: String,
+        default: "",
+      },
+    },
+    twitter: {
+      link: {
+        type: String,
+        default: "",
+      },
+      name: {
+        type: String,
+        default: "",
+      },
+    },
+  },
+  { _id: false }
+);
 
 const UserSchema = new Schema(
   {
@@ -117,7 +190,9 @@ const UserSchema = new Schema(
       default: "",
     },
     socials: {
-      type: SocialsSchema
+      type: SocialsSchema,
+      required: true,
+      default: {},
     },
   },
   { timestamps: true }
