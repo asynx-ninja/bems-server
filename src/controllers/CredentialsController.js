@@ -51,21 +51,20 @@ const GetCredentials = async (req, res) => {
 const SentPIN = async (req, res) => {
   try {
     const { email } = req.params;
+    const { type } = req.body;
 
     const found = await User.find({ email: email });
-
+    console.log(found[0].type);
     if (found.length === 0)
       return res.status(400).json({ error: "Email not registered!" });
 
-    if (found[0].type !== "Admin")
-      return res
-        .status(400)
-        .json({
-          error: "Access denied: Only registered Admin account can proceed.",
-        });
+    if (type !== found[0].type)
+      return res.status(400).json({
+        error: `Access denied: Only registered ${type} account can proceed.`,
+      });
 
     const code = GeneratePIN();
-
+    console.log(code);
     const result = await Send(
       email,
       "Password Security Code",
@@ -82,13 +81,11 @@ const SentPIN = async (req, res) => {
       }
     );
 
-    res
-      .status(200)
-      .json({
-        update,
-        type: found[0].type,
-        message: "Code has been successfully sent to your Email!",
-      });
+    res.status(200).json({
+      update,
+      type: found[0].type,
+      message: "Code has been successfully sent to your Email!",
+    });
   } catch (err) {
     res.send(err.message);
   }
