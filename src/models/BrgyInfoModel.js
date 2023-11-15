@@ -39,6 +39,11 @@ const OfficialsSchema = new Schema(
     toYear: {
       type: Date,
     },
+    isArchived: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   { _id: false }
 );
@@ -59,10 +64,6 @@ const BrgyInfoSchema = new Schema(
       type: String,
       required: true,
       index: true,
-    },
-    isArchived: {
-      type: Boolean,
-      required: true,
     },
     officials: {
       type: [OfficialsSchema],

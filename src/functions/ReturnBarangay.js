@@ -15,6 +15,8 @@ const ReturnBarangay = (brgyName, type) => {
         return BrgyKeys[brgyName].pfp;
       case "O":
         return BrgyKeys[brgyName].official;
+      case "I":
+        return BrgyKeys[brgyName].info;
     }
   } else return null;
 };
