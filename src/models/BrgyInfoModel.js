@@ -63,6 +63,7 @@ const BrgyInfoSchema = new Schema(
     isArchived: {
       type: Boolean,
       required: true,
+      default: false,
     },
     officials: {
       type: [OfficialsSchema],
@@ -81,6 +82,11 @@ const BrgyInfoSchema = new Schema(
       type: FileSchema,
       required: true,
     },
+    folder_id: {
+      type: String,
+      required: true,
+      index: true,
+    }
   },
   { timestamps: true }
 );
