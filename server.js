@@ -7,6 +7,7 @@ const ServicesRoutes = require("./src/routes/Services");
 const CredentialsRoutes = require("./src/routes/Credentials");
 const UserRoutes = require("./src/routes/User");
 const BrgyInformationRoutes = require("./src/routes/BarangayInfo")
+const BrgyOfficialRoutes = require("./src/routes/BrgyOfficial")
 const connectDB = require("./src/config/DB");
 
 
@@ -32,6 +33,7 @@ app.use("/api/auth", CredentialsRoutes);
 app.use("/api/users", UserRoutes);
 app.use("/api/announcement", AnnouncementRoutes);
 app.use("/api/brgyinfo", BrgyInformationRoutes)
+app.use("/api/brgyofficial", BrgyOfficialRoutes)
 
 app.get("/", (req, res) => {
   res.status(200).json({

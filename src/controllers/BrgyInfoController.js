@@ -23,9 +23,7 @@ const GetBarangayInformation = async (req, res) => {
 const AddBarangayInfo = async (req, res) => {
   try {
     const { body, files } = req;
-    const brgyData = JSON.parse(body.info);
-    const { story, mission, vision, brgy } = brgyData;
-
+    const { story, mission, vision, brgy } = JSON.parse(body.brgyinfo);
     let fileArray = [];
 
     for (let f = 0; f < files.length; f += 1) {
@@ -62,11 +60,68 @@ const AddBarangayInfo = async (req, res) => {
   }
 };
 
+  
+const UpdateBarangayInfo = async (req, res) => {
+    const { brgy } = req.params;
+    const { body, files } = req;
+    console.log(brgy, body, files);
+   
+    const brgyData = JSON.parse(body.brgyinfo);
+    const { story, mission, vision, banner, logo } = brgyData;
+    
+    let bannerNew = null,
+      logoNew = null;
+  
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        const { id, name } = await uploadPicDrive(
+          files[i],
+          ReturnBrgyFormat(brgy),
+          "I"
+        );
+  
+        if (files[i].originalname === "banner") {
+          bannerNew = {
+            link: `https://drive.google.com/uc?export=view&id=${id}`,
+            id,
+            name,
+          };
+          await deletePicDrive(banner.id, ReturnBrgyFormat(brgy), "I");
+
+        } else if (files[i].originalname === "logo") {
+          logoNew = {
+            link: `https://drive.google.com/uc?export=view&id=${id}`,
+            id,
+            name,
+          };
+          await deletePicDrive(logo.id, ReturnBrgyFormat(brgy), "I");
+        }
+      }
+    }
+  
+    const updateFields = {
+      story,
+      mission,
+      vision,
+      banner: banner === null ? banner : bannerNew,
+      logo: logo === null ? logo : logoNew,
+    };
+  
+    const result = await BrgyInformation.findOneAndUpdate(
+      { brgy: brgy },
+      { $set: updateFields },
+      { new: true }
+    );
+  
+    return !result
+      ? res.status(400).json({ error: "Info is not updated" })
+      : res.status(200).json(result);
+  };
+  
+  
+
 module.exports = {
   GetBarangayInformation,
   AddBarangayInfo,
-  // Updatebrgyinfo,
-  // Archivebrgyinfo,
-  // GetBrgybrgyinfoBanner,
-  // UpdateAttendees
+  UpdateBarangayInfo,
 };

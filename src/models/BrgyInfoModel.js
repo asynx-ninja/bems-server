@@ -45,7 +45,6 @@ const OfficialsSchema = new Schema(
       default: false,
     },
   },
-  { _id: false }
 );
 
 const BrgyInfoSchema = new Schema(
