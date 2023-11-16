@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const ServicesForm = require("../models/ServicesFormModel");
+const GenerateVersionID = require("../functions/GenerateVersionID");
 
 const GetServiceForm = async (req, res) => {
   try {
@@ -17,9 +18,22 @@ const GetServiceForm = async (req, res) => {
 
 const CreateServiceForm = async (req, res) => {
   try {
-    const { form } = req.body;
+    const { brgy } = req.query;
+    const form = JSON.parse(JSON.stringify(req.body.form));
+    const inputFields = JSON.parse(JSON.stringify(req.body.inputFields));
 
-    console.log(form);
+    const newForm = [form, ...inputFields];
+
+    const result = await ServicesForm.create({
+      service_id: "1",
+      form: {
+        structure: newForm,
+        version: GenerateVersionID(brgy),
+      },
+      brgy,
+    });
+
+    return res.json(result);
   } catch (err) {
     res.send(err.message);
   }

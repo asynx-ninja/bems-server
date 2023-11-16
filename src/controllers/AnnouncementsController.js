@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const upload = require("../config/Multer");
+
 const Announcement = require("../models/AnnouncementsModel");
 const GenerateID = require("../functions/GenerateID");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
@@ -31,7 +31,9 @@ const GetBarangayAnnouncement = async (req, res) => {
 const CreateAnnouncement = async (req, res) => {
   try {
     const { body, files } = req;
-    const { title, details, date, brgy } = JSON.parse(body.announcement);
+    const { title, details, date, brgy, isOpen } = JSON.parse(
+      body.announcement
+    );
     let fileArray = [];
     const event_id = GenerateID(brgy, "E");
     const folder_id = await createFolder(ReturnBrgyFormat(brgy), "E", event_id);
@@ -65,6 +67,7 @@ const CreateAnnouncement = async (req, res) => {
         logo: logoObject,
         file: remainingFiles,
       },
+      isOpen,
       attendees: [],
     });
 
@@ -171,6 +174,7 @@ const UpdateAnnouncement = async (req, res) => {
             file: fileArray,
           },
           brgy: announcement.brgy,
+          isOpen: announcement.isOpen,
         },
       },
       { new: true }

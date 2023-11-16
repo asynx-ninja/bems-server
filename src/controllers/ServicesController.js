@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Service = require("../models/ServicesModel");
 const GenerateID = require("../functions/GenerateID");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
+const GenerateVersionID = require("../functions/GenerateVersionID");
 
 const {
   createFolder,
@@ -73,6 +74,11 @@ const CreateServices = async (req, res) => {
     const bannerObject = Object.assign({}, banner);
     const logoObject = Object.assign({}, logo);
 
+    const form = JSON.parse(body.form);
+    const inputFields = JSON.parse(body.inputFields);
+
+    const newForm = [form, ...inputFields];
+
     const result = await Service.create({
       service_id,
       name,
@@ -86,8 +92,13 @@ const CreateServices = async (req, res) => {
         logo: logoObject,
         file: remainingFiles,
       },
+      form: {
+        structure: newForm,
+        version: GenerateVersionID(brgy),
+      },
       isApproved: "Pending",
     });
+    
 
     res.status(200).json(result);
   } catch (err) {
