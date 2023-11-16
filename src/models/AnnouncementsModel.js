@@ -45,7 +45,6 @@ const AttendeesSchema = new Schema(
   { _id: false }
 );
 
-
 const AnnouncementsSchema = new Schema(
   {
     event_id: {
@@ -91,6 +90,11 @@ const AnnouncementsSchema = new Schema(
       uppercase: true,
       required: true,
       index: true,
+    },
+    isOpen: {
+      type: Boolean,
+      default: false,
+      required: true,
     },
     isArchived: {
       type: Boolean,
