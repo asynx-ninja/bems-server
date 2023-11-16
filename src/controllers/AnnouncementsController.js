@@ -28,6 +28,22 @@ const GetBarangayAnnouncement = async (req, res) => {
   }
 };
 
+const GetAllOpenBrgyAnnouncement = async (req, res) => {
+  try {
+    const { archived } = req.query;
+
+    const result = await Announcement.find({
+      $and: [{ isArchived: archived }, { isOpen: true }],
+    });
+
+    return !result
+      ? res.status(400).json({ error: `No such Announcement` })
+      : res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 const CreateAnnouncement = async (req, res) => {
   try {
     const { body, files } = req;
@@ -243,6 +259,7 @@ const UpdateAttendees = async (req, res) => {
 
 module.exports = {
   GetBarangayAnnouncement,
+  GetAllOpenBrgyAnnouncement,
   CreateAnnouncement,
   UpdateAnnouncement,
   ArchiveAnnouncement,
