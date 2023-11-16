@@ -4,11 +4,11 @@ const Schema = mongoose.Schema;
 
 const FormSchema = new Schema(
   {
-    form: {
+    structure: {
       type: [Schema.Types.Mixed],
     },
     version: {
-      type: Number,
+      type: String,
       required: true,
       index: true,
     },
@@ -27,8 +27,17 @@ const ServicesFormSchema = new Schema(
       type: [FormSchema],
       required: true,
     },
+    brgy: {
+      type: String,
+      required: true,
+    },
+    isArchived: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("ServicesForm", ServicesFormSchema);
+module.exports = mongoose.model("Services_Forms", ServicesFormSchema);
