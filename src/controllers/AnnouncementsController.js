@@ -30,11 +30,18 @@ const GetBarangayAnnouncement = async (req, res) => {
 
 const GetAllOpenBrgyAnnouncement = async (req, res) => {
   try {
-    const { archived } = req.query;
+    const { brgy } = req.query;
 
-    const result = await Announcement.find({
-      $and: [{ isArchived: archived }, { isOpen: true }],
-    });
+    const result = await Announcement.aggregate([
+      {
+        $match: {
+          $and: [
+            { isArchived: false },
+            { $or: [{ brgy: brgy }, { isOpen: true }] },
+          ],
+        },
+      },
+    ]);
 
     return !result
       ? res.status(400).json({ error: `No such Announcement` })

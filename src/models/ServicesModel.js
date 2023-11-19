@@ -20,25 +20,6 @@ const FileSchema = new Schema(
   { _id: false }
 );
 
-const FormSchema = new Schema(
-  {
-    structure: {
-      type: [Schema.Types.Mixed],
-    },
-    version: {
-      type: String,
-      required: true,
-      index: true,
-    },
-    isArchived: {
-      type: Boolean,
-      default: false,
-      index: true,
-    },
-  },
-  { _id: false }
-);
-
 const ServicesSchema = new Schema(
   {
     service_id: {
@@ -96,10 +77,6 @@ const ServicesSchema = new Schema(
       file: {
         type: [FileSchema],
       },
-    },
-    form: {
-      type: [FormSchema],
-      required: true,
     },
     isApproved: {
       type: String,
