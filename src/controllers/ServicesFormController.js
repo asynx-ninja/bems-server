@@ -2,13 +2,15 @@ const mongoose = require("mongoose");
 const ServicesForm = require("../models/ServicesFormModel");
 const GenerateVersionID = require("../functions/GenerateVersionID");
 
-const GetServiceForm = async (req, res) => {
+const GetAllServiceForm = async (req, res) => {
   try {
-    const { service_id } = req.query;
+    const { brgy, service_id } = req.query;
 
-    const result = ServicesForm.find({ service_id: service_id });
+    const result = await ServicesForm.find({
+      $and: [{ brgy: brgy }, { service_id: service_id }],
+    });
 
-    return result.length === 0 || !result
+    return !result
       ? res.status(400).json({ error: "No such Service Form" })
       : res.status(200).json(result);
   } catch (err) {
@@ -18,19 +20,17 @@ const GetServiceForm = async (req, res) => {
 
 const CreateServiceForm = async (req, res) => {
   try {
-    const { brgy } = req.query;
-    const form = JSON.parse(JSON.stringify(req.body.form));
-    const inputFields = JSON.parse(JSON.stringify(req.body.inputFields));
+    const { brgy, service_id, checked } = req.query;
+    const { form, inputFields } = req.body;
 
-    const newForm = [form, ...inputFields];
+    const newForm = [form, inputFields];
 
     const result = await ServicesForm.create({
-      service_id: "1",
-      form: {
-        structure: newForm,
-        version: GenerateVersionID(brgy),
-      },
+      service_id: service_id,
+      form: newForm,
+      version: GenerateVersionID(brgy),
       brgy,
+      isActive: checked,
     });
 
     return res.json(result);
@@ -39,7 +39,33 @@ const CreateServiceForm = async (req, res) => {
   }
 };
 
+const UpdateServiceForm = async (req, res) => {
+  try {
+    const { detail } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(detail._id)) {
+      return res.status(400).json({ error: "No such service form" });
+    }
+
+    const result = await ServicesForm.findByIdAndUpdate(
+      { _id: detail._id },
+      {
+        $set: {
+          form: detail.form,
+          isActive: detail.isActive,
+        },
+      },
+      { new: true }
+    );
+
+    return res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 module.exports = {
-  GetServiceForm,
+  GetAllServiceForm,
   CreateServiceForm,
+  UpdateServiceForm,
 };

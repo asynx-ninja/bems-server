@@ -4,6 +4,7 @@ const express = require("express");
 
 const AnnouncementRoutes = require("./src/routes/Announcement");
 const ServicesRoutes = require("./src/routes/Services");
+const ServicesFormRoutes = require("./src/routes/ServicesForm");
 const CredentialsRoutes = require("./src/routes/Credentials");
 const UserRoutes = require("./src/routes/User");
 const BrgyInformationRoutes = require("./src/routes/BarangayInfo");
@@ -27,6 +28,7 @@ app.use(cors());
 
 // Routes
 app.use("/api/services", ServicesRoutes);
+app.use("/api/forms", ServicesFormRoutes);
 app.use("/api/auth", CredentialsRoutes);
 app.use("/api/users", UserRoutes);
 app.use("/api/announcement", AnnouncementRoutes);
