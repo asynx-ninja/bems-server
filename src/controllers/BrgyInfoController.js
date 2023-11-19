@@ -63,9 +63,10 @@ const AddBarangayInfo = async (req, res) => {
 const UpdateBarangayInfo = async (req, res) => {
   const { brgy } = req.params;
   const { body, files } = req;
-  console.log(brgy, body, files);
+  console.log(body, files);
 
   const brgyData = JSON.parse(body.brgyinfo);
+  console.log("Brgyinfo:", brgyData);
   const { story, mission, vision, banner, logo } = brgyData;
 
   let bannerNew = null,
@@ -85,29 +86,31 @@ const UpdateBarangayInfo = async (req, res) => {
           id,
           name,
         };
-        await deletePicDrive(banner.id, ReturnBrgyFormat(brgy), "I");
+        if (banner.id !== "")
+          await deletePicDrive(banner.id, ReturnBrgyFormat(brgy), "I");
       } else if (files[i].originalname === "logo") {
         logoNew = {
           link: `https://drive.google.com/uc?export=view&id=${id}`,
           id,
           name,
         };
-        await deletePicDrive(logo.id, ReturnBrgyFormat(brgy), "I");
+        if (logo.id !== "")
+          await deletePicDrive(logo.id, ReturnBrgyFormat(brgy), "I");
       }
     }
   }
 
-  const updateFields = {
-    story,
-    mission,
-    vision,
-    banner: banner === null ? banner : bannerNew,
-    logo: logo === null ? logo : logoNew,
-  };
-
   const result = await BrgyInformation.findOneAndUpdate(
     { brgy: brgy },
-    { $set: updateFields },
+    {
+      $set: {
+        story,
+        mission,
+        vision,
+        banner: bannerNew === null ? banner : bannerNew,
+        logo: logoNew === null ? logo : logoNew,
+      },
+    },
     { new: true }
   );
 
