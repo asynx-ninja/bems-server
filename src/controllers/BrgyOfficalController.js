@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const BrgyOfficial = require("../models/BrgyOfficialModel");
 
 const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
@@ -9,7 +10,7 @@ const GetBarangayOfficial = async (req, res) => {
     const { brgy } = req.query;
 
     const result = await BrgyOfficial.find({ brgy: brgy });
-   
+
     return !result
       ? res
           .status(400)
@@ -22,9 +23,7 @@ const GetBarangayOfficial = async (req, res) => {
 
 const AddBarangayOfficial = async (req, res) => {
   const { brgy } = req.query;
- 
   const { body, file } = req;
-
   const { name, position, fromYear, toYear } = JSON.parse(body.official);
 
   var file_id = null,
@@ -36,31 +35,23 @@ const AddBarangayOfficial = async (req, res) => {
     file_name = obj.name;
   }
 
-  const result = await BrgyOfficial.findOneAndUpdate(
-    { brgy: brgy },
-    {
-      $push: {
-        officials: {
-          picture: file
-            ? {
-                link: `https://drive.google.com/uc?export=view&id=${file_id}`,
-                id: file_id,
-                name: file_name,
-              }
-            : {
-                link: "",
-                id: "",
-                name: "",
-              },
-          name,
-          position,
-          fromYear,
-          toYear,
+  const result = await BrgyOfficial.create({
+    picture: file
+      ? {
+          link: `https://drive.google.com/uc?export=view&id=${file_id}`,
+          id: file_id,
+          name: file_name,
+        }
+      : {
+          link: "",
+          id: "",
+          name: "",
         },
-      },
-    },
-    { new: true }
-  );
+    name,
+    position,
+    fromYear,
+    toYear,
+  });
 
   return res.json(result);
 };
@@ -97,7 +88,7 @@ const GetSpecificOfficial = async (req, res) => {
 const UpdateBarangayOfficial = async (req, res) => {
   try {
     const { brgy, id } = req.params;
-    console.log(brgy, id)
+    console.log(brgy, id);
 
     const { updatedDetails } = req.body;
 
@@ -125,7 +116,7 @@ const UpdateBarangayOfficial = async (req, res) => {
     });
 
     const updatedResult = await BrgyInformation.findOneAndUpdate(
-      { 'officials._id': id },
+      { "officials._id": id },
       {
         $set: {
           officials: updatedOfficials,
@@ -138,7 +129,13 @@ const UpdateBarangayOfficial = async (req, res) => {
       return res.status(404).json({ error: `No official found with ID ${id}` });
     }
 
-    return res.status(200).json({ specificOfficial: updatedResult.officials.find(official => official._id.toString() === id) });
+    return res
+      .status(200)
+      .json({
+        specificOfficial: updatedResult.officials.find(
+          (official) => official._id.toString() === id
+        ),
+      });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
