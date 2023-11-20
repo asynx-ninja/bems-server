@@ -1,6 +1,7 @@
 const ReturnBrgyFormat = (brgy) => {
   brgy = brgy.toUpperCase();
   switch (brgy) {
+    case "BALITE":
     case "SAN JOSE":
     case "SAN RAFAEL":
     case "SAN ISIDRO":
