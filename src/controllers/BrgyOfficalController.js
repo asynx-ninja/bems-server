@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const BrgyInformation = require("../models/BrgyInfoModel");
+const BrgyOfficial = require("../models/BrgyOfficialModel");
 
 const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
@@ -8,8 +8,8 @@ const GetBarangayOfficial = async (req, res) => {
   try {
     const { brgy } = req.query;
 
-    const result = await BrgyInformation.find({ brgy: brgy });
-
+    const result = await BrgyOfficial.find({ brgy: brgy });
+   
     return !result
       ? res
           .status(400)
@@ -22,8 +22,9 @@ const GetBarangayOfficial = async (req, res) => {
 
 const AddBarangayOfficial = async (req, res) => {
   const { brgy } = req.query;
+ 
   const { body, file } = req;
-  console.log(body, file);
+
   const { name, position, fromYear, toYear } = JSON.parse(body.official);
 
   var file_id = null,
@@ -35,7 +36,7 @@ const AddBarangayOfficial = async (req, res) => {
     file_name = obj.name;
   }
 
-  const result = await BrgyInformation.findOneAndUpdate(
+  const result = await BrgyOfficial.findOneAndUpdate(
     { brgy: brgy },
     {
       $push: {
@@ -64,52 +65,88 @@ const AddBarangayOfficial = async (req, res) => {
   return res.json(result);
 };
 
-const UpdateBarangayOfficial = async (req, res) => {
-  const { doc_id } = req.query;
-  const { body, file } = req;
-  const { picture, name, position, fromYear, toYear } = JSON.parse(
-    body.official
-  );
+const GetSpecificOfficial = async (req, res) => {
+  try {
+    const { brgy, id } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(doc_id)) {
-    return res.status(400).json({ error: "No such user" });
-  }
+    const result = await BrgyInformation.findOne({
+      brgy: brgy,
+      "officials._id": id,
+    });
 
-  var id = null,
-    file_name = null;
-
-  if (file) {
-    const obj = await uploadPicDrive(file, ReturnBrgyFormat(brgy), "O");
-    file_id = obj.id;
-    file_name = obj.name;
-
-    if (picture.id !== "") await deletePicDrive(picture.id, brgy, "O");
-  }
-
-  const result = await BrgyInformation.findOneAndUpdate(
-    { brgy: brgy },
-    {
-      $set: {
-        picture: file
-          ? {
-              link: `https://drive.google.com/uc?export=view&id=${id}`,
-              id: file_id,
-              name: file_name,
-            }
-          : picture,
-        name,
-        position,
-        fromYear,
-        toYear,
-      },
+    if (!result || !result.officials || result.officials.length === 0) {
+      return res
+        .status(400)
+        .json({ error: `No officials found for Barangay ${brgy}` });
     }
-  );
 
-  return res.json(result);
+    const specificOfficial = result.officials.filter(
+      (official) => official._id.toString() === id
+    );
+
+    if (!specificOfficial || specificOfficial.length === 0) {
+      return res.status(404).json({ error: `No official found with ID ${id}` });
+    }
+
+    return res.status(200).json({ specificOfficial: specificOfficial[0] });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
+const UpdateBarangayOfficial = async (req, res) => {
+  try {
+    const { brgy, id } = req.params;
+    console.log(brgy, id)
+
+    const { updatedDetails } = req.body;
+
+    const result = await BrgyInformation.findOne({
+      brgy: brgy,
+      "officials._id": id,
+    });
+
+    if (!result || !result.officials || result.officials.length === 0) {
+      return res
+        .status(400)
+        .json({ error: `No officials found for Barangay ${brgy}` });
+    }
+
+    const updatedOfficials = result.officials.map((official) => {
+      if (official._id.toString() === id) {
+        // Update details within the specific official
+        return {
+          ...official,
+          ...updatedDetails,
+        };
+      } else {
+        return official;
+      }
+    });
+
+    const updatedResult = await BrgyInformation.findOneAndUpdate(
+      { 'officials._id': id },
+      {
+        $set: {
+          officials: updatedOfficials,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedResult) {
+      return res.status(404).json({ error: `No official found with ID ${id}` });
+    }
+
+    return res.status(200).json({ specificOfficial: updatedResult.officials.find(official => official._id.toString() === id) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 module.exports = {
   GetBarangayOfficial,
+  GetSpecificOfficial,
   AddBarangayOfficial,
   UpdateBarangayOfficial,
 };

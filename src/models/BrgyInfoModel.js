@@ -20,31 +20,6 @@ const FileSchema = new Schema(
   { _id: false }
 );
 
-const OfficialsSchema = new Schema({
-  picture: {
-    type: FileSchema,
-  },
-  name: {
-    type: String,
-    uppercase: true,
-  },
-  position: {
-    type: String,
-    uppercase: true,
-  },
-  fromYear: {
-    type: Date,
-  },
-  toYear: {
-    type: Date,
-  },
-  isArchived: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
-});
-
 const BrgyInfoSchema = new Schema(
   {
     story: {
@@ -61,9 +36,6 @@ const BrgyInfoSchema = new Schema(
       type: String,
       required: true,
       index: true,
-    },
-    officials: {
-      type: [OfficialsSchema],
     },
     brgy: {
       type: String,
