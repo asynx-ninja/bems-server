@@ -57,13 +57,25 @@ const InquiriesSchema = new Schema(
       required: true,
       index: true,
     },
-    subject: {
-      type: String,
-      required: true,
-    },
-    message: {
-      type: String,
-      required: true,
+    compose: {
+      subject: {
+        type: String,
+        required: true,
+      },
+      message: {
+        type: String,
+        default: "",
+      },
+      date: {
+        type: Date,
+      },
+      file: {
+        type: [FileSchema],
+      },
+      to: {
+        type: String,
+        enum: ["Admin", "Staff"],
+      },
     },
     response: {
       type: [ResponseSchema],
