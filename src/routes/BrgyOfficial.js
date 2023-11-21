@@ -7,12 +7,12 @@ const {
   GetBarangayOfficial,
   AddBarangayOfficial,
   UpdateBarangayOfficial,
-  GetSpecificOfficial,
+  ArchiveOfficial,
 } = require("../controllers/BrgyOfficalController");
 
 router.get("/", GetBarangayOfficial);
-router.get("/official/:brgy/:id", GetSpecificOfficial);
 router.post("/", upload.single("file"), AddBarangayOfficial);
-router.patch("/official/:brgy/:id", upload.single("file"), UpdateBarangayOfficial);
+router.patch("/", upload.single("file"), UpdateBarangayOfficial);
+router.patch("/archived/:id/:archived", ArchiveOfficial);
 
 module.exports = router;
