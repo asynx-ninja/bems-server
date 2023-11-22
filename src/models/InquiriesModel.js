@@ -2,26 +2,6 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const ResponseSchema = new Schema(
-  {
-    sender: {
-      type: String,
-      default: "",
-    },
-    message: {
-      type: String,
-      default: "",
-    },
-    date: {
-      type: Date,
-    },
-    file: {
-      type: [FileSchema],
-    },
-  },
-  { _id: false }
-);
-
 const FileSchema = new Schema(
   {
     link: {
@@ -39,6 +19,28 @@ const FileSchema = new Schema(
   },
   { _id: false }
 );
+
+const ResponseSchema = new Schema(
+  {
+    sender: {
+      type: String,
+      default: "",
+    },
+    message: {
+      type: String,
+      default: "",
+    },
+    date: {
+      type: Date,
+    },
+    file: {
+      type: [FileSchema],
+    },
+  },
+
+  { _id: false }
+);
+
 
 const InquiriesSchema = new Schema(
   {
@@ -74,11 +76,12 @@ const InquiriesSchema = new Schema(
       },
       to: {
         type: String,
-        enum: ["Admin", "Staff"],
+        enum: ["Admin", "Staff", "Resident"],
       },
     },
     response: {
       type: [ResponseSchema],
+
     },
     brgy: {
       type: String,
@@ -88,6 +91,10 @@ const InquiriesSchema = new Schema(
     },
     isArchived: {
       type: Boolean,
+      required: true,
+    },
+    folder_id: {
+      type: String,
       required: true,
     },
   },
