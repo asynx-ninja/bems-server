@@ -20,9 +20,14 @@ const GenerateID = (brgyName = "", code, type = "") => {
   switch (code) {
     case "S":
     case "U":
-      return brgy === "MUNISIPYO" ? `${brgy}-${code}-${type.toUpperCase()}-${dateStr}` : `BRGY-${brgy}-${code}-${type.toUpperCase()}-${dateStr}`;
+      return brgy === "MUNISIPYO"
+        ? `${brgy}-${code}-${type.toUpperCase()}-${dateStr}`
+        : `BRGY-${brgy}-${code}-${type.toUpperCase()}-${dateStr}`;
     case "E":
-      return brgy === "MUNISIPYO" ? `${brgy}-${code}-${dateStr}` : `BRGY-${brgy}-${code}-${dateStr}`;
+    case "Q":
+      return brgy === "MUNISIPYO"
+        ? `${brgy}-${code}-${dateStr}`
+        : `BRGY-${brgy}-${code}-${dateStr}`;
   }
 };
 

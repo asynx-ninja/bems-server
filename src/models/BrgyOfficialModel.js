@@ -38,9 +38,15 @@ const OfficialsSchema = new Schema({
   },
   isArchived: {
     type: Boolean,
-    required: true,
     default: false,
+    required: true,
   },
+   brgy: {
+      type: String,
+      uppercase: true,
+      required: true,
+      index: true,
+    },
 });
 
 module.exports = mongoose.model("Brgy_Official", OfficialsSchema);
