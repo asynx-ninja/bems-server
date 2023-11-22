@@ -57,12 +57,12 @@ const SentPIN = async (req, res) => {
     if (found.length === 0)
       return res.status(400).json({ error: "Email not registered!" });
 
-    if (found[0].type !== "Admin")
-      return res
-        .status(400)
-        .json({
-          error: "Access denied: Only registered Admin account can proceed.",
-        });
+    // if (found[0].type !== "Admin")
+    //   return res
+    //     .status(400)
+    //     .json({
+    //       error: "Access denied: Only registered Admin account can proceed.",
+    //     });
 
     const code = GeneratePIN();
 
