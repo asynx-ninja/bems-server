@@ -37,10 +37,8 @@ const ResponseSchema = new Schema(
       type: [FileSchema],
     },
   },
-
   { _id: false }
 );
-
 
 const InquiriesSchema = new Schema(
   {
@@ -81,7 +79,6 @@ const InquiriesSchema = new Schema(
     },
     response: {
       type: [ResponseSchema],
-
     },
     brgy: {
       type: String,
@@ -96,6 +93,13 @@ const InquiriesSchema = new Schema(
     folder_id: {
       type: String,
       required: true,
+    },
+    isApproved: {
+      type: String,
+      enum: ["Completed", "In Progress", "Not Responded"],
+      default: "Not Responded",
+      required: true,
+      index: true,
     },
   },
   { timestamps: true }
