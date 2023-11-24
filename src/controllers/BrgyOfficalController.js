@@ -27,7 +27,15 @@ const AddBarangayOfficial = async (req, res) => {
   try {
     const { brgy } = req.query;
     const { body, file } = req;
-    const { name, position, fromYear, toYear } = JSON.parse(body.official);
+    const {
+      firstName,
+      middleName,
+      lastName,
+      suffix,
+      position,
+      fromYear,
+      toYear,
+    } = JSON.parse(body.official);
 
     var file_id = null,
       file_name = null;
@@ -51,7 +59,10 @@ const AddBarangayOfficial = async (req, res) => {
             id: "",
             name: "",
           },
-      name,
+      firstName,
+      middleName,
+      lastName,
+      suffix,
       position,
       fromYear,
       toYear,
@@ -63,17 +74,15 @@ const AddBarangayOfficial = async (req, res) => {
   }
 };
 
-
-
 const UpdateBarangayOfficial = async (req, res) => {
   try {
     const { brgy, doc_id } = req.query;
     const { body, file } = req;
-    
+
     // Parse the official details from the request body
     const official = JSON.parse(body.official);
     const { picture, name, position, fromYear, toYear } = official;
-   
+
     var file_id = null,
       file_name = null;
 
@@ -97,11 +106,20 @@ const UpdateBarangayOfficial = async (req, res) => {
       },
       {
         $set: {
-          name,
+          firstName,
+          middleName,
+          lastName,
+          suffix,
           position,
           fromYear,
           toYear,
-          picture: file ? {id: file_id, name: file_name,   link: `https://drive.google.com/uc?export=view&id=${file_id}` } : picture,
+          picture: file
+            ? {
+                id: file_id,
+                name: file_name,
+                link: `https://drive.google.com/uc?export=view&id=${file_id}`,
+              }
+            : picture,
         },
       },
       { new: true }
@@ -137,5 +155,5 @@ module.exports = {
   GetBarangayOfficial,
   AddBarangayOfficial,
   UpdateBarangayOfficial,
-  ArchiveOfficial
+  ArchiveOfficial,
 };
