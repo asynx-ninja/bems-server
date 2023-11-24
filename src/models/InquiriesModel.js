@@ -94,6 +94,13 @@ const InquiriesSchema = new Schema(
       type: String,
       required: true,
     },
+    isApproved: {
+      type: String,
+      enum: ["Completed", "In Progress", "Not Responded"],
+      default: "Not Responded",
+      required: true,
+      index: true,
+    },
   },
   { timestamps: true }
 );
