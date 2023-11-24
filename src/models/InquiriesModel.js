@@ -97,6 +97,12 @@ const InquiriesSchema = new Schema(
       type: String,
       required: true,
     },
+    isApproved: {
+      type: String,
+      enum: ["Approved", "Pending"],
+      default: "Pending",
+      index: true,
+    },
   },
   { timestamps: true }
 );

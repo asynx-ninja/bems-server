@@ -56,11 +56,12 @@ const CreateInquiries = async (req, res) => {
         message: compose.message || "",
         date: new Date(),
         file: fileArray,
-        to: compose.to || "Admin",
+        to: compose.to || "",
       },
       brgy,
       folder_id,
       isArchived: false,
+      isApproved: "Pending", 
     });
 
     res.status(200).json(result);
@@ -117,12 +118,15 @@ const RespondToInquiry = async (req, res) => {
       { _id: inq_id },
       {
         $push: {
-            response:{
-                sender: sender,
-                message: message,
-                date: date,
-                file: fileArray.length > 0 ? fileArray : null,
-            }
+          response: {
+            sender: sender,
+            message: message,
+            date: date,
+            file: fileArray.length > 0 ? fileArray : null,
+          },
+        },
+        $set: {
+          isApproved: "Approved",
         },
       },
       { new: true }
@@ -134,9 +138,12 @@ const RespondToInquiry = async (req, res) => {
   }
 };
 
+
+
 module.exports = {
   GetInquiries,
   ArchiveInquiry,
   CreateInquiries,
   RespondToInquiry,
+ 
 };
