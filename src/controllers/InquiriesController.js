@@ -117,12 +117,12 @@ const RespondToInquiry = async (req, res) => {
       { _id: inq_id },
       {
         $push: {
-            response:{
-                sender: sender,
-                message: message,
-                date: date,
-                file: fileArray.length > 0 ? fileArray : null,
-            }
+          response: {
+            sender: sender,
+            message: message,
+            date: date,
+            file: fileArray.length > 0 ? fileArray : null,
+          },
         },
       },
       { new: true }

@@ -24,8 +24,21 @@ const OfficialsSchema = new Schema({
   picture: {
     type: FileSchema,
   },
-  name: {
+  firstName: {
     type: String,
+    default: "",
+  },
+  middleName: {
+    type: String,
+    default: "",
+  },
+  lastName: {
+    type: String,
+    default: "",
+  },
+  suffix: {
+    type: String,
+    default: "",
   },
   position: {
     type: String,
@@ -41,12 +54,12 @@ const OfficialsSchema = new Schema({
     default: false,
     required: true,
   },
-   brgy: {
-      type: String,
-      uppercase: true,
-      required: true,
-      index: true,
-    },
+  brgy: {
+    type: String,
+    uppercase: true,
+    required: true,
+    index: true,
+  },
 });
 
 module.exports = mongoose.model("Brgy_Official", OfficialsSchema);
