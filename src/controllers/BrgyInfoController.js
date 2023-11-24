@@ -6,9 +6,12 @@ const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const GetBarangayInformation = async (req, res) => {
   try {
-    const { brgy } = req.query;
+    const { brgy, logo } = req.query;
 
-    const result = await BrgyInformation.find({ brgy: brgy });
+    const result = await BrgyInformation.find(
+      { brgy: brgy },
+      logo !== undefined ? { logo: 1, _id: 0 } : null
+    );
 
     return !result
       ? res
