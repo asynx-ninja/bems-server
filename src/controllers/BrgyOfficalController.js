@@ -81,7 +81,7 @@ const UpdateBarangayOfficial = async (req, res) => {
 
     // Parse the official details from the request body
     const official = JSON.parse(body.official);
-    const { picture, name, position, fromYear, toYear } = official;
+    const { picture, firstName, middleName, lastName, suffix, position, fromYear, toYear } = official;
 
     var file_id = null,
       file_name = null;
