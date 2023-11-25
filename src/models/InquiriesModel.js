@@ -37,10 +37,8 @@ const ResponseSchema = new Schema(
       type: [FileSchema],
     },
   },
-
   { _id: false }
 );
-
 
 const InquiriesSchema = new Schema(
   {
@@ -81,7 +79,6 @@ const InquiriesSchema = new Schema(
     },
     response: {
       type: [ResponseSchema],
-
     },
     brgy: {
       type: String,
