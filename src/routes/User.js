@@ -15,7 +15,7 @@ const upload = require("../config/Multer");
 
 router.get("/", GetUsers);
 router.get("/specific/:id", GetSpecificUser);
-router.get("/showArchived/:brgy", GetArchivedUsers);
+router.get("/showArchived/", GetArchivedUsers);
 router.post("/", CreateUser);
 router.patch("/:doc_id", upload.single("file"), UpdateUser);
 router.patch("/status/:id", StatusUser);
