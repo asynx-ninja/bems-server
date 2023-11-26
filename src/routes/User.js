@@ -13,7 +13,7 @@ const {
 
 const upload = require("../config/Multer");
 
-router.get("/:brgy", GetUsers);
+router.get("/", GetUsers);
 router.get("/specific/:id", GetSpecificUser);
 router.get("/showArchived/:brgy", GetArchivedUsers);
 router.post("/", CreateUser);

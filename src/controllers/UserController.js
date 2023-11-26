@@ -7,10 +7,10 @@ const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 
 const GetUsers = async (req, res) => {
   try {
-    const { brgy } = req.params;
+    const { brgy, type } = req.query;
 
     const result = await User.find({
-      $and: [{ "address.brgy": brgy }, { isArchived: false }],
+      $and: [{ "address.brgy": brgy }, {type: type}, { isArchived: false }],
     });
 
     return !result
