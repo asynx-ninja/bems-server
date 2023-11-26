@@ -12,6 +12,7 @@ const BrgyInformationRoutes = require("./src/routes/BarangayInfo");
 const BrgyOfficialRoutes = require("./src/routes/BrgyOfficial");
 const BrgyInquiries = require("./src/routes/Inquiries");
 const StaffRoutes = require("./src/routes/Staff");
+const MunicipalityOfficials = require("./src/routes/MunicipalityOfficials")
 
 const connectDB = require("./src/config/DB");
 
@@ -41,6 +42,7 @@ app.use("/api/brgyinfo", BrgyInformationRoutes);
 app.use("/api/brgyofficial", BrgyOfficialRoutes);
 app.use("/api/inquiries", BrgyInquiries);
 app.use("/api/staffs", StaffRoutes);
+app.use("/api/municipalityofficials", MunicipalityOfficials);
 
 app.get("/", (req, res) => {
   res.status(200).json({
