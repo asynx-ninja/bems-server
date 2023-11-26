@@ -126,7 +126,7 @@ const CreateUser = async (req, res) => {
 
 const UpdateUser = async (req, res) => {
   try {
-    const { doc_id } = req.params;
+    const { doc_id } = req.query;
     const { body, file } = req;
     const user = JSON.parse(body.users);
 
