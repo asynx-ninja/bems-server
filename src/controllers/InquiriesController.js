@@ -158,6 +158,7 @@ const RespondToInquiry = async (req, res) => {
       }
     }
 
+    console.log(response);
     const result = await Inquiries.findByIdAndUpdate(
       { _id: inq_id },
       {

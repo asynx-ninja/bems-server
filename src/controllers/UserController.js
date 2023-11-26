@@ -7,10 +7,10 @@ const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 
 const GetUsers = async (req, res) => {
   try {
-    const { brgy } = req.params;
+    const { brgy, type } = req.query;
 
     const result = await User.find({
-      $and: [{ "address.brgy": brgy }, { isArchived: false }],
+      $and: [{ "address.brgy": brgy }, { type: type }, { isArchived: false }],
     });
 
     return !result
@@ -43,10 +43,10 @@ const GetSpecificUser = async (req, res) => {
 
 const GetArchivedUsers = async (req, res) => {
   try {
-    const { brgy } = req.params;
+    const { brgy, type } = req.query;
 
     const result = await User.find({
-      $and: [{ "address.brgy": brgy }, { isArchived: true }],
+      $and: [{ "address.brgy": brgy }, { type: type }, { isArchived: true }],
     });
 
     return !result
@@ -126,11 +126,11 @@ const CreateUser = async (req, res) => {
 
 const UpdateUser = async (req, res) => {
   try {
-    const { doc_id } = req.params;
+    const { doc_id } = req.query;
     const { body, file } = req;
     const user = JSON.parse(body.users);
 
-    console.log(user)
+    console.log(user);
 
     if (!mongoose.Types.ObjectId.isValid(doc_id)) {
       return res.status(400).json({ error: "No such user" });
@@ -178,9 +178,18 @@ const UpdateUser = async (req, res) => {
               }
             : user.profile,
           socials: {
-            facebook: { name: user.socials.facebook.name, link: user.socials.facebook.link },
-            instagram: { name: user.socials.instagram.name, link: user.socials.instagram.link },
-            twitter: { name: user.socials.twitter.name, link: user.socials.twitter.link },
+            facebook: {
+              name: user.socials.facebook.name,
+              link: user.socials.facebook.link,
+            },
+            instagram: {
+              name: user.socials.instagram.name,
+              link: user.socials.instagram.link,
+            },
+            twitter: {
+              name: user.socials.twitter.name,
+              link: user.socials.twitter.link,
+            },
           },
         },
       },
