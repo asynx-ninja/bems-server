@@ -79,7 +79,7 @@ const ArchiveInquiry = async (req, res) => {
       return res.status(400).json({ error: "No such official" });
     }
 
-    const result = await Inquiry.findOneAndUpdate(
+    const result = await Inquiries.findOneAndUpdate(
       { _id: id },
       { $set: { isArchived: archived } },
       { returnOriginal: false, upsert: true }
@@ -142,6 +142,7 @@ const RespondToInquiry = async (req, res) => {
 const StatusInquiry = async (req, res) => {
   try {
     const { id } = req.params;
+    const { isApproved } = req.body;
    
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such Inquiry" });
@@ -149,7 +150,7 @@ const StatusInquiry = async (req, res) => {
 
     const result = await Inquiries.findOneAndUpdate(
       { _id: id },
-      { $set: { isApproved: "Completed"} },
+      { $set: { isApproved: isApproved} },
       { new: true }
     );
 
