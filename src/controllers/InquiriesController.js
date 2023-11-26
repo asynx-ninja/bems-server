@@ -16,6 +16,7 @@ const GetInquiries = async (req, res) => {
 
     const result = await Inquiries.find({
       $and: [{ brgy: brgy }, { isArchived: archived }],
+      
     });
 
     return !result
@@ -27,11 +28,53 @@ const GetInquiries = async (req, res) => {
     res.send(err.message);
   }
 };
+const GetAdminInquiries = async (req, res) => {
+  try {
+    const { to, archived } = req.query;
+
+    const result = await Inquiries.find({
+      $and: [
+        { 'compose.to': to }, // Convert to lowercase for case-insensitive comparison
+        { isArchived: archived },
+      ],
+    });
+    console.log('Result:', result);
+    return !result
+      ? res
+          .status(400)
+          .json({ error: `No such Announcement for ${to}` })
+      : res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
+const GetStaffInquiries = async (req, res) => {
+  try {
+    const { to, brgy, archived } = req.query;
+console.log(brgy)
+    const result = await Inquiries.find({
+      $and: [
+        { brgy: brgy },
+        { 'compose.to': to }, // Convert to lowercase for case-insensitive comparison
+        { isArchived: archived },
+      ],
+    });
+    console.log('Result:', result);
+    return !result
+      ? res
+          .status(400)
+          .json({ error: `No such Announcement for ${brgy}` })
+      : res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
 
 const CreateInquiries = async (req, res) => {
   try {
     const { body, files } = req;
-    const { name, email, compose, brgy } = JSON.parse(body.inquiries);
+    const { name, email, compose, brgy} = JSON.parse(body.inquiries);
 
     let fileArray = [];
     const inq_id = GenerateID(brgy, "Q");
@@ -56,11 +99,13 @@ const CreateInquiries = async (req, res) => {
         message: compose.message || "",
         date: new Date(),
         file: fileArray,
-        to: compose.to || "Admin",
+        to: compose.to || "",
       },
       brgy,
       folder_id,
+      isApproved: "Not Responded",
       isArchived: false,
+      
     });
 
     res.status(200).json(result);
@@ -77,7 +122,7 @@ const ArchiveInquiry = async (req, res) => {
       return res.status(400).json({ error: "No such official" });
     }
 
-    const result = await Inquiry.findOneAndUpdate(
+    const result = await Inquiries.findOneAndUpdate(
       { _id: id },
       { $set: { isArchived: archived } },
       { returnOriginal: false, upsert: true }
@@ -95,8 +140,8 @@ const RespondToInquiry = async (req, res) => {
     const { body, files } = req;
     console.log(body, files);
     const response = JSON.parse(body.response);
-    const { sender, message, date, folder_id } = response;
-    console.log(sender, message, date, folder_id);
+    const { sender, message, date, folder_id} = response;
+   
     let fileArray = [];
 
     if (files) {
@@ -124,6 +169,9 @@ const RespondToInquiry = async (req, res) => {
             file: fileArray.length > 0 ? fileArray : null,
           },
         },
+        $set: {
+          isApproved: "In Progress",
+        },
       },
       { new: true }
     );
@@ -134,9 +182,33 @@ const RespondToInquiry = async (req, res) => {
   }
 };
 
+const StatusInquiry = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isApproved } = req.body;
+   
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "No such Inquiry" });
+    }
+
+    const result = await Inquiries.findOneAndUpdate(
+      { _id: id },
+      { $set: { isApproved: isApproved} },
+      { new: true }
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 module.exports = {
   GetInquiries,
+  GetAdminInquiries,
+  GetStaffInquiries,
   ArchiveInquiry,
   CreateInquiries,
   RespondToInquiry,
+  StatusInquiry
 };
