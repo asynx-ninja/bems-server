@@ -7,7 +7,7 @@ const GeneratePIN = require("../functions/GeneratePIN");
 
 const GetCredentials = async (req, res) => {
   try {
-    const { username, password, type } = req.params;
+    const { username, password } = req.params;
 
     const result = await User.find(
       { username: username },

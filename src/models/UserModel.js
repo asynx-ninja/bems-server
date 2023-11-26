@@ -148,7 +148,7 @@ const UserSchema = new Schema(
     },
     type: {
       type: String,
-      enum: ["Admin", "Staff", "Resident"],
+      enum: ["Head Admin", "Admin", "Brgy Admin", "Staff", "Resident"],
       index: true,
       required: true,
     },
