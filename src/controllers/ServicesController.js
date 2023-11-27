@@ -24,7 +24,21 @@ const GetBrgyService = async (req, res) => {
     res.send(err.message);
   }
 };
+const GetAllBrgyService = async (req, res) => {
+  try {
+    const { archived } = req.query;
 
+    const result = await Service.find({ isArchived: archived });
+
+    if (result.length === 0) {
+      return res.status(400).json({ error: "No services found." });
+    }
+
+    return res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
 const GetBrgyServiceBanner = async (req, res) => {
   try {
     const { brgy } = req.params;
@@ -242,6 +256,7 @@ const ArchiveService = async (req, res) => {
 
 module.exports = {
   GetBrgyService,
+  GetAllBrgyService,
   GetBrgyServiceBanner,
   CreateServices,
   UpdateServices,

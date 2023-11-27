@@ -14,7 +14,7 @@ const {
 router.get("/", GetInquiries);
 router.post("/", upload.array("files", 10), CreateInquiries);
 router.patch("/", upload.array("files", 10), RespondToInquiry);
-router.patch("/archived", ArchiveInquiry);
+router.patch("/archived/:id/:archived", ArchiveInquiry);
 router.patch("/status/:id", StatusInquiry);
 
 module.exports = router;

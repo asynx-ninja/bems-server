@@ -67,9 +67,8 @@ const RequestSchema = new Schema(
     req_id: {
       type: String,
       required: true,
-      index: true,
     },
-    user_name: {
+    service_id: {
       type: String,
       required: true,
       index: true,
@@ -88,15 +87,15 @@ const RequestSchema = new Schema(
       type: String,
       required: true,
     },
-    payment: {
-      type: [PaymentSchema],
-    },
-    status: {
-      type: String,
+    fee: {
+      type: Number,
       required: true,
     },
+    form: {
+      type: Schema.Types.Mixed,
+    },
     file: {
-      type: String,
+      type: [FileSchema],
     },
     brgy: {
       type: String,
@@ -104,8 +103,30 @@ const RequestSchema = new Schema(
       required: true,
       index: true,
     },
+    payment: {
+      type: PaymentSchema,
+    },
+    status: {
+      type: String,
+      required: true,
+      enum: [
+        "Not Responded",
+        "In Progress",
+        "Paid",
+        "Pending",
+        "Cancelled",
+        "Rejected",
+      ],
+      default: "Not Responded",
+      index: true,
+    },
     response: {
       type: [ResponseSchema],
+    },
+    isArchived: {
+      type: Boolean,
+      default: false,
+      required: true,
     },
   },
   { timestamps: true }
