@@ -21,7 +21,7 @@ const GetInquiries = async (req, res) => {
     return !result
       ? res
           .status(400)
-          .json({ error: `No such Announcement for Barangay ${brgy}` })
+          .json({ error: `No such inquiries for Barangay ${brgy}` })
       : res.status(200).json(result);
   } catch (err) {
     res.send(err.message);
@@ -76,7 +76,7 @@ const ArchiveInquiry = async (req, res) => {
     const { id, archived } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "No such official" });
+      return res.status(400).json({ error: "No such inquiry" });
     }
 
     const result = await Inquiries.findOneAndUpdate(
@@ -146,7 +146,7 @@ const StatusInquiry = async (req, res) => {
     const { isApproved } = req.body;
    
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "No such Inquiry" });
+      return res.status(400).json({ error: "No such inquiry" });
     }
 
     const result = await Inquiries.findOneAndUpdate(
