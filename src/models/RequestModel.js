@@ -54,10 +54,15 @@ const ResponseSchema = new Schema(
     },
     date: {
       type: Date,
+      default: new Date()
     },
     file: {
       type: [FileSchema],
     },
+    isRepliable: {
+      type: Boolean,
+      default: false,
+    }
   },
   { _id: false }
 );
@@ -115,6 +120,7 @@ const RequestSchema = new Schema(
         "Paid",
         "Pending",
         "Cancelled",
+        "Completed",
         "Rejected",
       ],
       default: "Not Responded",
@@ -128,6 +134,10 @@ const RequestSchema = new Schema(
       default: false,
       required: true,
     },
+    folder_id: {
+      type: String,
+      required: true
+    }
   },
   { timestamps: true }
 );

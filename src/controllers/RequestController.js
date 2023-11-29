@@ -11,16 +11,21 @@ const {
 
 const GetAllRequest = async (req, res) => {
   try {
-    const { brgy, archived } = req.query;
+    const { brgy, archived, id } = req.query;
+    let result;
 
-    const result = await Request.find({
-      $and: [{ brgy: brgy }, { isArchived: archived }],
-    });
+    if (id !== undefined) {
+      result = await Request.find({
+        $and: [{ brgy: brgy }, { isArchived: archived }, { _id: id }],
+      });
+    } else {
+      result = await Request.find({
+        $and: [{ brgy: brgy }, { isArchived: archived }],
+      });
+    }
 
     return !result
-      ? res
-          .status(400)
-          .json({ error: `No such request for Barangay ${brgy}` })
+      ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
       : res.status(200).json(result);
   } catch (err) {
     res.status(400).json(err.message);
@@ -67,6 +72,8 @@ const CreateRequest = async (req, res) => {
       brgy: newBody.brgy,
       payment: {},
       response: [],
+      version: newBody.version,
+      folder_id: folder_id,
     });
 
     return res.status(200).json(result);
@@ -75,7 +82,61 @@ const CreateRequest = async (req, res) => {
   }
 };
 
+const RespondToRequest = async (req, res) => {
+  try {
+    const { req_id } = req.query;
+    const { body, files } = req;
+
+    const { sender, message, status, isRepliable, folder_id } = JSON.parse(
+      body.response
+    );
+
+    let fileArray = [];
+
+    if (!mongoose.Types.ObjectId.isValid(req_id)) {
+      return res.status(400).json({ error: "No such request" });
+    }
+
+    if (files) {
+      for (let f = 0; f < files.length; f++) {
+        const { id, name } = await uploadFileDrive(files[f], folder_id);
+
+        fileArray.push({
+          link: files[f].mimetype.includes("image")
+            ? `https://drive.google.com/uc?export=view&id=${id}`
+            : `https://drive.google.com/file/d/${id}/view`,
+          id,
+          name,
+        });
+      }
+    }
+
+    const result = await Request.findByIdAndUpdate(
+      { _id: req_id },
+      {
+        $push: {
+          response: {
+            sender: sender,
+            message: message,
+            file: fileArray.length > 0 ? fileArray : null,
+            isRepliable: isRepliable,
+          },
+        },
+        $set: {
+          isApproved: status,
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
 module.exports = {
   GetAllRequest,
   CreateRequest,
+  RespondToRequest,
 };
