@@ -116,9 +116,9 @@ const RequestSchema = new Schema(
       required: true,
       enum: [
         "Not Responded",
-        "In Progress",
-        "Paid",
         "Pending",
+        "Paid",
+        "Processing",
         "Cancelled",
         "Completed",
         "Rejected",
@@ -136,8 +136,8 @@ const RequestSchema = new Schema(
     },
     folder_id: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   { timestamps: true }
 );
