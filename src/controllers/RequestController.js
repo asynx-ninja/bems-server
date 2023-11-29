@@ -123,7 +123,7 @@ const RespondToRequest = async (req, res) => {
           },
         },
         $set: {
-          isApproved: status,
+          status: status,
         },
       },
       { new: true }
