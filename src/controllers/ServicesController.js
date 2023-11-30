@@ -11,10 +11,14 @@ const {
 
 const GetBrgyService = async (req, res) => {
   try {
-    const { brgy, archived } = req.query;
+    const { brgy, archived, approved } = req.query;
 
     const result = await Service.find({
-      $and: [{ brgy: brgy }, { isArchived: archived }],
+      $and: [
+        { brgy: brgy },
+        { isArchived: archived },
+        { isApproved: approved },
+      ],
     });
 
     return !result
@@ -24,6 +28,36 @@ const GetBrgyService = async (req, res) => {
     res.send(err.message);
   }
 };
+
+const GetServiceAndForm = async (req, res) => {
+  try {
+    const { service_id } = req.query;
+
+    const result = await Service.aggregate([
+      {
+        $lookup: {
+          from: "service_forms",
+          localField: "service_id",
+          foreignField: "service_id",
+          as: "service_form",
+        },
+      },
+      { $unwind: "$service_form" }, // $unwind used for getting data in object or for one record only
+      {
+        $match: {
+          $and: [{ service_id: service_id }],
+        },
+      },
+    ]);
+
+    return !result
+      ? res.status(400).json({ error: "No such Service Form" })
+      : res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 const GetAllBrgyService = async (req, res) => {
   try {
     const { archived } = req.query;
@@ -39,6 +73,7 @@ const GetAllBrgyService = async (req, res) => {
     res.send(err.message);
   }
 };
+
 const GetBrgyServiceBanner = async (req, res) => {
   try {
     const { brgy } = req.params;
@@ -262,4 +297,5 @@ module.exports = {
   UpdateServices,
   StatusService,
   ArchiveService,
+  GetServiceAndForm,
 };
