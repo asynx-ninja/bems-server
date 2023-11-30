@@ -43,7 +43,7 @@ app.use("/api/brgyinfo", BrgyInformationRoutes);
 app.use("/api/brgyofficial", BrgyOfficialRoutes);
 app.use("/api/inquiries", BrgyInquiriesRoutes);
 app.use("/api/staffs", StaffRoutes);
-app.use("/api/municipalityofficials", MunicipalityOfficialsRoutes);
+app.use("/api/mofficials", MunicipalityOfficialsRoutes);
 app.use("/api/admin", AdminRoutes);
 
 app.get("/", (req, res) => {
