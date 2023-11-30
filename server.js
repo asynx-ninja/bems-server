@@ -12,7 +12,7 @@ const BrgyInformationRoutes = require("./src/routes/BarangayInfo");
 const BrgyOfficialRoutes = require("./src/routes/BrgyOfficial");
 const BrgyInquiriesRoutes = require("./src/routes/Inquiries");
 const StaffRoutes = require("./src/routes/Staff");
-const MunicipalityOfficialsRoutes = require("./src/routes/MunicipalityOfficials")
+const MunicipalityOfficialsRoutes = require("./src/routes/MunicipalityOfficials");
 const AdminRoutes = require("./src/routes/BrgyAdmin");
 
 const connectDB = require("./src/config/DB");
@@ -30,7 +30,12 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
 
 // Routes
 app.use("/api/services", ServicesRoutes);
