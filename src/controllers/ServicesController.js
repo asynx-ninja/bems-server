@@ -11,10 +11,14 @@ const {
 
 const GetBrgyService = async (req, res) => {
   try {
-    const { brgy, archived } = req.query;
+    const { brgy, archived, approved } = req.query;
 
     const result = await Service.find({
-      $and: [{ brgy: brgy }, { isArchived: archived }],
+      $and: [
+        { brgy: brgy },
+        { isArchived: archived },
+        { isApproved: approved === undefined ? null : approved },
+      ],
     });
 
     return !result
