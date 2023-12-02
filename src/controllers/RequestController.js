@@ -65,7 +65,6 @@ const CreateRequest = async (req, res) => {
       service_id: newBody.service_id,
       service_name: newBody.name,
       type: newBody.service_type,
-      purpose: newBody.purpose,
       fee: newBody.fee,
       form: newBody.form,
       file: fileArray.length > 0 ? fileArray : [],
