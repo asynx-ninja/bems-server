@@ -88,10 +88,6 @@ const RequestSchema = new Schema(
       required: true,
       index: true,
     },
-    purpose: {
-      type: String,
-      required: true,
-    },
     fee: {
       type: Number,
       required: true,
