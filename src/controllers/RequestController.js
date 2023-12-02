@@ -32,6 +32,20 @@ const GetAllRequest = async (req, res) => {
   }
 };
 
+const GetRequestByUser = async (req, res) => {
+  try{
+    const { id } = req.query;
+
+    const result = await Request.find({"form[0].user_id.value": id})
+
+    return !result
+      ? res.status(400).json({ error: `No such request` })
+      : res.status(200).json(result);
+  }catch(error){
+    console.log(error)
+  }
+};
+
 const CreateRequest = async (req, res) => {
   try {
     const { body, files } = req;
@@ -86,7 +100,7 @@ const RespondToRequest = async (req, res) => {
     const { req_id } = req.query;
     const { body, files } = req;
 
-    const { sender, message, status, isRepliable, folder_id } = JSON.parse(
+    const { sender, message, status, date, isRepliable, folder_id } = JSON.parse(
       body.response
     );
 
@@ -117,6 +131,7 @@ const RespondToRequest = async (req, res) => {
           response: {
             sender: sender,
             message: message,
+            date: date,
             file: fileArray.length > 0 ? fileArray : null,
             isRepliable: isRepliable,
           },
@@ -136,6 +151,7 @@ const RespondToRequest = async (req, res) => {
 
 module.exports = {
   GetAllRequest,
+  GetRequestByUser,
   CreateRequest,
   RespondToRequest,
 };
