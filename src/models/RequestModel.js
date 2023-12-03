@@ -127,7 +127,6 @@ const RequestSchema = new Schema(
     },
     isArchived: {
       type: Boolean,
-      default: false,
       required: true,
     },
     folder_id: {

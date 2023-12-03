@@ -149,9 +149,30 @@ const RespondToRequest = async (req, res) => {
   }
 };
 
+const ArchiveRequest = async (req, res) => {
+  try {
+    const { id, archived } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "No such official" });
+    }
+
+    const result = await Request.findOneAndUpdate(
+      { _id: id },
+      { $set: { isArchived: archived } },
+      { returnOriginal: false, upsert: true }
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 module.exports = {
   GetAllRequest,
   GetRequestByUser,
   CreateRequest,
   RespondToRequest,
+  ArchiveRequest
 };
