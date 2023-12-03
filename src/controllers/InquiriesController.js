@@ -31,7 +31,7 @@ const GetInquiries = async (req, res) => {
 const CreateInquiries = async (req, res) => {
   try {
     const { body, files } = req;
-    const { name, email, compose, brgy} = JSON.parse(body.inquiries);
+    const { name, email, compose, brgy } = JSON.parse(body.inquiries);
 
     let fileArray = [];
     const inq_id = GenerateID(brgy, "Q");
@@ -62,7 +62,6 @@ const CreateInquiries = async (req, res) => {
       folder_id,
       isApproved: "Not Responded",
       isArchived: false,
-      
     });
 
     res.status(200).json(result);
@@ -79,7 +78,7 @@ const ArchiveInquiry = async (req, res) => {
       return res.status(400).json({ error: "No such official" });
     }
 
-    const result = await Inquiry.findOneAndUpdate(
+    const result = await Inquiries.findOneAndUpdate(
       { _id: id },
       { $set: { isArchived: archived } },
       { returnOriginal: false, upsert: true }
@@ -97,8 +96,8 @@ const RespondToInquiry = async (req, res) => {
     const { body, files } = req;
     console.log(body, files);
     const response = JSON.parse(body.response);
-    const { sender, message, date, folder_id} = response;
-   
+    const { sender, message, date, folder_id } = response;
+
     let fileArray = [];
 
     if (files) {
@@ -142,14 +141,14 @@ const RespondToInquiry = async (req, res) => {
 const StatusInquiry = async (req, res) => {
   try {
     const { id } = req.params;
-   
+    const { isApproved } = req.body;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such Inquiry" });
     }
 
     const result = await Inquiries.findOneAndUpdate(
       { _id: id },
-      { $set: { isApproved: "Completed"} },
+      { $set: { isApproved: isApproved } },
       { new: true }
     );
 
@@ -164,5 +163,5 @@ module.exports = {
   ArchiveInquiry,
   CreateInquiries,
   RespondToInquiry,
-  StatusInquiry
+  StatusInquiry,
 };
