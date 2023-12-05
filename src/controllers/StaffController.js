@@ -5,55 +5,27 @@ const GenerateID = require("../functions/GenerateID");
 
 const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 
-const GetUsers = async (req, res) => {
+const GetBrgyStaffs = async (req, res) => {
   try {
-    const { brgy, type } = req.query;
+    const { brgy } = req.params;
 
     const result = await User.find({
-      $and: [{ "address.brgy": brgy }, { type: type }, { isArchived: false }],
+      $and: [
+        { "address.brgy": brgy },
+        { type: "Staff" },
+        { isArchived: false },
+      ],
     });
 
     return !result
-      ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
+      ? res.status(400).json({ error: `No such staff for Barangay ${brgy}` })
       : res.status(200).json(result);
   } catch (err) {
     res.send(err.message);
   }
 };
 
-const GetAdminUsers = async (req, res) => {
-  try {
-    const { brgy } = req.query;
-
-    const result = await User.find({
-      $and: [{ "address.brgy": brgy },{ isArchived: false }],
-    });
-
-    return !result
-      ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
-      : res.status(200).json(result);
-  } catch (err) {
-    res.send(err.message);
-  }
-};
-
-const GetArchivedAdminUsers = async (req, res) => {
-  try {
-    const { brgy } = req.query;
-
-    const result = await User.find({
-      $and: [{ "address.brgy": brgy },{ isArchived: true }],
-    });
-
-    return !result
-      ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
-      : res.status(200).json(result);
-  } catch (err) {
-    res.send(err.message);
-  }
-};
-
-const GetSpecificUser = async (req, res) => {
+const GetSpecificBrgyStaff = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -73,23 +45,7 @@ const GetSpecificUser = async (req, res) => {
   }
 };
 
-const GetArchivedUsers = async (req, res) => {
-  try {
-    const { brgy, type } = req.query;
-
-    const result = await User.find({
-      $and: [{ "address.brgy": brgy }, { type: type }, { isArchived: true }],
-    });
-
-    return !result
-      ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
-      : res.status(200).json(result);
-  } catch (err) {
-    res.send(err.message);
-  }
-};
-
-const CreateUser = async (req, res) => {
+const CreateBrgyStaff = async (req, res) => {
   try {
     const {
       firstName,
@@ -156,16 +112,16 @@ const CreateUser = async (req, res) => {
   }
 };
 
-const UpdateUser = async (req, res) => {
+const UpdateBrgyStaff = async (req, res) => {
   try {
-    const { doc_id } = req.query;
+    const { doc_id } = req.params;
     const { body, file } = req;
     const user = JSON.parse(body.users);
 
     console.log(user);
 
     if (!mongoose.Types.ObjectId.isValid(doc_id)) {
-      return res.status(400).json({ error: "No such user" });
+      return res.status(400).json({ error: "No such staff" });
     }
 
     var id = null,
@@ -236,33 +192,28 @@ const UpdateUser = async (req, res) => {
   }
 };
 
-const StatusUser = async (req, res) => {
+const GetArchivedStaffs = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { isApproved } = req.body;
+    const { brgy } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "No such user" });
-    }
+    const result = await User.find({
+      $and: [{ "address.brgy": brgy }, { type: "Staff" }, { isArchived: true }],
+    });
 
-    const result = await User.findOneAndUpdate(
-      { _id: id },
-      { $set: { isApproved: isApproved } },
-      { new: true }
-    );
-
-    res.status(200).json(result);
+    return !result
+      ? res.status(400).json({ error: `No such staff for Barangay ${brgy}` })
+      : res.status(200).json(result);
   } catch (err) {
     res.send(err.message);
   }
 };
 
-const ArchiveUser = async (req, res) => {
+const ArchiveStaff = async (req, res) => {
   try {
     const { id, archived } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "No such user" });
+      return res.status(400).json({ error: "No such staff" });
     }
 
     const result = await User.findOneAndUpdate(
@@ -278,13 +229,10 @@ const ArchiveUser = async (req, res) => {
 };
 
 module.exports = {
-  GetUsers,
-  GetAdminUsers,
-  GetArchivedAdminUsers,
-  GetSpecificUser,
-  GetArchivedUsers,
-  CreateUser,
-  UpdateUser,
-  StatusUser,
-  ArchiveUser,
+  GetBrgyStaffs,
+  GetSpecificBrgyStaff,
+  GetArchivedStaffs,
+  CreateBrgyStaff,
+  UpdateBrgyStaff,
+  ArchiveStaff,
 };

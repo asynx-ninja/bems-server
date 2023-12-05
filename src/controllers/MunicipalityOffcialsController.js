@@ -1,15 +1,15 @@
 const mongoose = require("mongoose");
 
-const BrgyOfficial = require("../models/BrgyOfficialModel");
+const MunicipalityOfficial = require("../models/MunicipalityOfficialsModel");
 
 const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
-const GetBarangayOfficial = async (req, res) => {
+const GetMunicipalityOfficial = async (req, res) => {
   try {
     const { brgy, archived } = req.query;
 
-    const result = await BrgyOfficial.find({
+    const result = await MunicipalityOfficial.find({
       $and: [{ brgy: brgy }, { isArchived: archived }],
     });
 
@@ -17,17 +17,17 @@ const GetBarangayOfficial = async (req, res) => {
       ? res.status(200).json(result)
       : res
           .status(400)
-          .json({ error: `No officials found for Barangay ${brgy}` });
+          .json({ error: `No officials found for Municipality ${brgy}` });
   } catch (err) {
     res.status(500).send(err.message);
   }
 };
 
-const AddBarangayOfficial = async (req, res) => {
+const AddMunicipalityOfficial = async (req, res) => {
   try {
     const { brgy } = req.query;
     const { body, file } = req;
-    const { firstName, lastName, middleName, suffix, position, fromYear, toYear } = JSON.parse(body.official);
+    const { firstName, lastName, middleName, suffix, details, position, fromYear, toYear } = JSON.parse(body.official);
 
     var file_id = null,
       file_name = null;
@@ -38,7 +38,7 @@ const AddBarangayOfficial = async (req, res) => {
       file_name = obj.name;
     }
 
-    const result = await BrgyOfficial.create({
+    const result = await MunicipalityOfficial.create({
       brgy,
       picture: file
         ? {
@@ -55,6 +55,7 @@ const AddBarangayOfficial = async (req, res) => {
       lastName,
       middleName,
       suffix,
+      details,
       position,
       fromYear,
       toYear,
@@ -66,14 +67,16 @@ const AddBarangayOfficial = async (req, res) => {
   }
 };
 
-const UpdateBarangayOfficial = async (req, res) => {
+
+
+const UpdateMunicipalityOfficial = async (req, res) => {
   try {
     const { brgy, doc_id } = req.query;
     const { body, file } = req;
-
+    
     // Parse the official details from the request body
     const official = JSON.parse(body.official);
-    const { picture, firstName, lastName, middleName, suffix, position, fromYear, toYear } = official;
+    const { picture, firstName, lastName, middleName, suffix, details, position, fromYear, toYear } = official;
    
     var file_id = null,
       file_name = null;
@@ -92,7 +95,7 @@ const UpdateBarangayOfficial = async (req, res) => {
       }
     }
 
-    const result = await BrgyOfficial.findByIdAndUpdate(
+    const result = await MunicipalityOfficial.findByIdAndUpdate(
       {
         _id: doc_id,
       },
@@ -102,16 +105,11 @@ const UpdateBarangayOfficial = async (req, res) => {
           lastName,
           middleName,
           suffix,
+          details,
           position,
           fromYear,
           toYear,
-          picture: file
-            ? {
-                id: file_id,
-                name: file_name,
-                link: `https://drive.google.com/uc?export=view&id=${file_id}`,
-              }
-            : picture,
+          picture: file ? {id: file_id, name: file_name,   link: `https://drive.google.com/uc?export=view&id=${file_id}` } : picture,
         },
       },
       { new: true }
@@ -131,7 +129,7 @@ const ArchiveOfficial = async (req, res) => {
       return res.status(400).json({ error: "No such official" });
     }
 
-    const result = await BrgyOfficial.findOneAndUpdate(
+    const result = await MunicipalityOfficial.findOneAndUpdate(
       { _id: id },
       { $set: { isArchived: archived } },
       { returnOriginal: false, upsert: true }
@@ -144,8 +142,8 @@ const ArchiveOfficial = async (req, res) => {
 };
 
 module.exports = {
-  GetBarangayOfficial,
-  AddBarangayOfficial,
-  UpdateBarangayOfficial,
-  ArchiveOfficial,
+  GetMunicipalityOfficial,
+  AddMunicipalityOfficial,
+  UpdateMunicipalityOfficial,
+  ArchiveOfficial
 };

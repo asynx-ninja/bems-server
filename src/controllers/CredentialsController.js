@@ -7,7 +7,7 @@ const GeneratePIN = require("../functions/GeneratePIN");
 
 const GetCredentials = async (req, res) => {
   try {
-    const { username, password, type } = req.params;
+    const { username, password } = req.params;
 
     const result = await User.find(
       { username: username },
@@ -21,11 +21,6 @@ const GetCredentials = async (req, res) => {
     if (!(await BCrypt.compare(password, result[0].password))) {
       return res.status(400).json({ error: `Wrong password` });
     }
-
-    if (type !== result[0].type)
-      return res.status(400).json({
-        error: `Account didn't registered for this website. Contact admin for concern!`,
-      });
 
     // If the account is not approved, send an error message
     if (result[0].isApproved === "Denied") {

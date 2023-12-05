@@ -69,7 +69,6 @@ const UpdateBarangayInfo = async (req, res) => {
   console.log(body, files);
 
   const brgyData = JSON.parse(body.brgyinfo);
-  console.log("Brgyinfo:", brgyData);
   const { story, mission, vision, banner, logo } = brgyData;
 
   let bannerNew = null,
