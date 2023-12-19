@@ -54,7 +54,7 @@ const ResponseSchema = new Schema(
     },
     date: {
       type: Date,
-      default: new Date()
+      default: new Date(),
     },
     file: {
       type: [FileSchema],
@@ -62,7 +62,7 @@ const ResponseSchema = new Schema(
     isRepliable: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   { _id: false }
 );
@@ -111,15 +111,14 @@ const RequestSchema = new Schema(
       type: String,
       required: true,
       enum: [
-        "Not Responded",
         "Pending",
         "Paid",
         "Processing",
         "Cancelled",
-        "Completed",
+        "Transaction Completed",
         "Rejected",
       ],
-      default: "Not Responded",
+      default: "Pending",
       index: true,
     },
     response: {
@@ -127,7 +126,7 @@ const RequestSchema = new Schema(
     },
     version: {
       type: String,
-      required: true
+      required: true,
     },
     isArchived: {
       type: Boolean,
