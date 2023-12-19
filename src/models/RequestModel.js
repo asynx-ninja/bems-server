@@ -88,10 +88,6 @@ const RequestSchema = new Schema(
       required: true,
       index: true,
     },
-    purpose: {
-      type: String,
-      required: true,
-    },
     fee: {
       type: Number,
       required: true,
@@ -129,10 +125,14 @@ const RequestSchema = new Schema(
     response: {
       type: [ResponseSchema],
     },
+    version: {
+      type: String,
+      required: true
+    },
     isArchived: {
       type: Boolean,
-      default: false,
       required: true,
+      default: false,
     },
     folder_id: {
       type: String,
