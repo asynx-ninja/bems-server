@@ -1,31 +1,30 @@
 const mongoose = require("mongoose");
-const BrgyInformation = require("../models/BrgyInfoModel");
+const ServicesInformation = require("../models/MServicesInfoModel");
 
 const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
-const GetBarangayInformation = async (req, res) => {
+const GetServicesInformation = async (req, res) => {
   try {
-    const { brgy, logo } = req.query;
+    const { brgy, archived } = req.query;
 
-    const result = await BrgyInformation.find(
-      { brgy: brgy },
-      logo !== undefined ? { logo: 1, _id: 0 } : null
-    );
+    const result = await ServicesInformation.find({
+      $and: [{ brgy: brgy }, { isArchived: archived }],
+    });
 
-    return !result
-      ? res
+    return result
+      ? res.status(200).json(result)
+      : res
           .status(400)
-          .json({ error: `No such Information for Barangay ${brgy}` })
-      : res.status(200).json(result);
+          .json({ error: `No officials found for Municipality ${brgy}` });
   } catch (err) {
-    res.send(err.message);
+    res.status(500).send(err.message);
   }
 };
-const GetAllBarangay = async (req, res) => {
+const GetAllServicesInfo = async (req, res) => {
   try {
     // Retrieve logo, barangay name, and banner link
-    const allinfo = await BrgyInformation.aggregate([
+    const allinfo = await ServicesInformation.aggregate([
       {
         $project: {
           _id: 0,
@@ -56,17 +55,17 @@ const GetAllBarangay = async (req, res) => {
   }
 };
 
-const AddBarangayInfo = async (req, res) => {
+const AddServicesInfo = async (req, res) => {
   try {
     const { body, files } = req;
-    const { story, mission, vision, brgy } = JSON.parse(body.brgyinfo);
+    const { name, details, brgy } = JSON.parse(body.servicesinfo);
     let fileArray = [];
 
     for (let f = 0; f < files.length; f += 1) {
       const { id, name } = await uploadPicDrive(
         files[f],
         ReturnBrgyFormat(brgy),
-        "I"
+        "SI"
       );
 
       fileArray.push({
@@ -76,18 +75,14 @@ const AddBarangayInfo = async (req, res) => {
       });
     }
 
-    const [banner, logo] = fileArray;
-    const bannerObject = Object.assign({}, banner);
-    const logoObject = Object.assign({}, logo);
+    const [icon] = fileArray;
+    const iconObject = Object.assign({}, icon);
 
-    const result = await BrgyInformation.create({
-      story,
-      mission,
-      vision,
-      officials: [],
+    const result = await ServicesInformation.create({
+      name,
+      details,
       brgy,
-      banner: bannerObject,
-      logo: logoObject,
+      icon: iconObject,
     });
 
     res.status(200).json(result);
@@ -96,7 +91,7 @@ const AddBarangayInfo = async (req, res) => {
   }
 };
 
-const UpdateBarangayInfo = async (req, res) => {
+const UpdateServicesInfo = async (req, res) => {
   const { brgy } = req.params;
   const { body, files } = req;
   console.log(body, files);
@@ -135,7 +130,7 @@ const UpdateBarangayInfo = async (req, res) => {
     }
   }
 
-  const result = await BrgyInformation.findOneAndUpdate(
+  const result = await ServicesInformation.findOneAndUpdate(
     { brgy: brgy },
     {
       $set: {
@@ -155,8 +150,8 @@ const UpdateBarangayInfo = async (req, res) => {
 };
 
 module.exports = {
-  GetBarangayInformation,
-  GetAllBarangay,
-  AddBarangayInfo,
-  UpdateBarangayInfo,
+  GetServicesInformation,
+  GetAllServicesInfo,
+  AddServicesInfo,
+  UpdateServicesInfo,
 };

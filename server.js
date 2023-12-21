@@ -14,6 +14,8 @@ const BrgyInquiriesRoutes = require("./src/routes/Inquiries");
 const StaffRoutes = require("./src/routes/Staff");
 const MunicipalityOfficialsRoutes = require("./src/routes/MunicipalityOfficials");
 const AdminRoutes = require("./src/routes/BrgyAdmin");
+const MAboutusRoute = require("./src/routes/MAboutus");
+const MServicesRoute = require("./src/routes/MServices");
 
 const connectDB = require("./src/config/DB");
 
@@ -50,6 +52,8 @@ app.use("/api/inquiries", BrgyInquiriesRoutes);
 app.use("/api/staffs", StaffRoutes);
 app.use("/api/mofficials", MunicipalityOfficialsRoutes);
 app.use("/api/admin", AdminRoutes);
+app.use("/api/aboutus", MAboutusRoute);
+app.use("/api/services_info", MServicesRoute);
 
 app.get("/", (req, res) => {
   res.status(200).json({
