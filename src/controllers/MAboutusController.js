@@ -21,39 +21,6 @@ const GetAboutusInformation = async (req, res) => {
     res.status(500).send(err.message);
   }
 };
-const GetAllAboutusInfo = async (req, res) => {
-  try {
-    // Retrieve logo, barangay name, and banner link
-    const allinfo = await HomepageInformation.aggregate([
-      {
-        $project: {
-          _id: 0,
-          brgy: 1,
-          mission: 1,
-          story: 1,
-          vision: 1,
-          banner: "$banner.link",
-          logo: "$logo.link",
-        },
-      }, // Project the desired fields
-    ]);
-
-    // Send successful response with the retrieved data
-    res.status(200).json(allinfo);
-
-    // Log the first document
-    console.log("aa", allinfo);
-
-    // Check if no barangays found
-    if (allinfo.length === 0) {
-      return res.status(400).json({ error: "No barangays found." });
-    }
-  } catch (error) {
-    // Handle errors and send error response
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
 
 const AddAboutusInfo = async (req, res) => {
   try {
@@ -100,7 +67,7 @@ const UpdateAboutusInfo = async (req, res) => {
     let id = null,
       name = null;
 
-    if (file) {
+    if (file !== undefined) {
       const obj = await uploadPicDrive(file, aboutusInfos.brgy, "H");
       id = obj.id;
       name = obj.name;
@@ -114,7 +81,7 @@ const UpdateAboutusInfo = async (req, res) => {
         $set: {
           title: aboutusInfos.title,
           details: aboutusInfos.details,
-          banner: file
+          banner: file !== undefined
             ? {
                 link: `https://drive.google.com/uc?export=view&id=${id}`,
                 id,
@@ -136,10 +103,28 @@ const UpdateAboutusInfo = async (req, res) => {
     return res.status(500).send(err.message);
   }
 };
+const ArchiveAboutus = async (req, res) => {
+  try {
+    const { id, archived } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "No such official" });
+    }
+
+    const result = await HomepageInformation.findOneAndUpdate(
+      { _id: id },
+      { $set: { isArchived: archived } },
+      { returnOriginal: false, upsert: true }
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
 module.exports = {
   GetAboutusInformation,
-  GetAllAboutusInfo,
   AddAboutusInfo,
   UpdateAboutusInfo,
+  ArchiveAboutus,
 };
