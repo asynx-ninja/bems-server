@@ -172,6 +172,8 @@ const UpdateServices = async (req, res) => {
     let banner = null,
       logo = null;
 
+    console.log(saved, service);
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such service" });
     }

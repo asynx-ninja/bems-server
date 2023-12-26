@@ -21,33 +21,14 @@ const GetServicesInformation = async (req, res) => {
     res.status(500).send(err.message);
   }
 };
+
 const GetAllServicesInfo = async (req, res) => {
   try {
     // Retrieve logo, barangay name, and banner link
-    const allinfo = await ServicesInformation.aggregate([
-      {
-        $project: {
-          _id: 0,
-          brgy: 1,
-          mission: 1,
-          story: 1,
-          vision: 1,
-          banner: "$banner.link",
-          logo: "$logo.link",
-        },
-      }, // Project the desired fields
-    ]);
+    const allinfo = await ServicesInformation.find({});
 
     // Send successful response with the retrieved data
     res.status(200).json(allinfo);
-
-    // Log the first document
-    console.log("aa", allinfo);
-
-    // Check if no barangays found
-    if (allinfo.length === 0) {
-      return res.status(400).json({ error: "No barangays found." });
-    }
   } catch (error) {
     // Handle errors and send error response
     console.error(error);
