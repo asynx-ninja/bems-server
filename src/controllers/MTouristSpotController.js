@@ -60,6 +60,7 @@ const AddTouristSpotInfo = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 const compareArrays = (array1, array2) => {
     const difference = array1.filter((object1) => {
       return !array2.some((object2) => {
@@ -70,6 +71,7 @@ const compareArrays = (array1, array2) => {
     });
     return difference;
   };
+
 const UpdateTouristSpotInfo = async (req, res) => {
     try {
       const { id } = req.params;
