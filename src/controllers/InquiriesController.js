@@ -16,12 +16,55 @@ const GetInquiries = async (req, res) => {
 
     const result = await Inquiries.find({
       $and: [{ brgy: brgy }, { isArchived: archived }],
+      
     });
 
     return !result
       ? res
           .status(400)
           .json({ error: `No such inquiries for Barangay ${brgy}` })
+      : res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+const GetAdminInquiries = async (req, res) => {
+  try {
+    const { to, archived } = req.query;
+
+    const result = await Inquiries.find({
+      $and: [
+        { 'compose.to': to }, // Convert to lowercase for case-insensitive comparison
+        { isArchived: archived },
+      ],
+    });
+    console.log('Result:', result);
+    return !result
+      ? res
+          .status(400)
+          .json({ error: `No such Announcement for ${to}` })
+      : res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
+const GetStaffInquiries = async (req, res) => {
+  try {
+    const { to, brgy, archived } = req.query;
+console.log(brgy)
+    const result = await Inquiries.find({
+      $and: [
+        { brgy: brgy },
+        { 'compose.to': to }, // Convert to lowercase for case-insensitive comparison
+        { isArchived: archived },
+      ],
+    });
+    console.log('Result:', result);
+    return !result
+      ? res
+          .status(400)
+          .json({ error: `No such Announcement for ${brgy}` })
       : res.status(200).json(result);
   } catch (err) {
     res.send(err.message);
@@ -161,6 +204,8 @@ const StatusInquiry = async (req, res) => {
 
 module.exports = {
   GetInquiries,
+  GetAdminInquiries,
+  GetStaffInquiries,
   ArchiveInquiry,
   CreateInquiries,
   RespondToInquiry,

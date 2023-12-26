@@ -13,7 +13,7 @@ const GetMunicipalityOfficial = async (req, res) => {
       $and: [{ brgy: brgy }, { isArchived: archived }],
     });
 
-    return result.length > 0
+    return result
       ? res.status(200).json(result)
       : res
           .status(400)
@@ -27,7 +27,16 @@ const AddMunicipalityOfficial = async (req, res) => {
   try {
     const { brgy } = req.query;
     const { body, file } = req;
-    const { firstName, lastName, middleName, suffix, details, position, fromYear, toYear } = JSON.parse(body.official);
+    const {
+      firstName,
+      lastName,
+      middleName,
+      suffix,
+      details,
+      position,
+      fromYear,
+      toYear,
+    } = JSON.parse(body.official);
 
     var file_id = null,
       file_name = null;
@@ -67,17 +76,25 @@ const AddMunicipalityOfficial = async (req, res) => {
   }
 };
 
-
-
 const UpdateMunicipalityOfficial = async (req, res) => {
   try {
     const { brgy, doc_id } = req.query;
     const { body, file } = req;
-    
+
     // Parse the official details from the request body
     const official = JSON.parse(body.official);
-    const { picture, firstName, lastName, middleName, suffix, details, position, fromYear, toYear } = official;
-   
+    const {
+      picture,
+      firstName,
+      lastName,
+      middleName,
+      suffix,
+      details,
+      position,
+      fromYear,
+      toYear,
+    } = official;
+
     var file_id = null,
       file_name = null;
 
@@ -109,7 +126,13 @@ const UpdateMunicipalityOfficial = async (req, res) => {
           position,
           fromYear,
           toYear,
-          picture: file ? {id: file_id, name: file_name,   link: `https://drive.google.com/uc?export=view&id=${file_id}` } : picture,
+          picture: file
+            ? {
+                id: file_id,
+                name: file_name,
+                link: `https://drive.google.com/uc?export=view&id=${file_id}`,
+              }
+            : picture,
         },
       },
       { new: true }
@@ -145,5 +168,5 @@ module.exports = {
   GetMunicipalityOfficial,
   AddMunicipalityOfficial,
   UpdateMunicipalityOfficial,
-  ArchiveOfficial
+  ArchiveOfficial,
 };

@@ -6,26 +6,28 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-const oAuth2Client = new google.auth.OAuth2(
-  process.env.OAUTH_CLIENTID,
-  process.env.OAUTH_CLIENT_SECRET,
-  "https://developers.google.com/oauthplayground"
-);
+// const oAuth2Client = new google.auth.OAuth2(
+//   process.env.OAUTH_CLIENTID,
+//   process.env.OAUTH_CLIENT_SECRET,
+//   "https://developers.google.com/oauthplayground"
+// );
 
-oAuth2Client.setCredentials({
-  access_token: process.env.OAUTH_ACCESS_TOKEN,
-});
+// oAuth2Client.setCredentials({
+//   access_token: process.env.OAUTH_ACCESS_TOKEN,
+// });
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
+  port: 465,
+  secure: true,
   auth: {
-    type: "OAuth2",
+    // type: "OAuth2",
     user: process.env.MAIL_USERNAME,
     pass: process.env.MAIL_PASSWORD,
-    clientId: process.env.OAUTH_CLIENTID,
-    clientSecret: process.env.OAUTH_CLIENT_SECRET,
-    refreshToken: process.env.OAUTH_REFRESH_TOKEN,
-    accessToken: oAuth2Client.getAccessToken(),
+    // clientId: process.env.OAUTH_CLIENTID,
+    // clientSecret: process.env.OAUTH_CLIENT_SECRET,
+    // refreshToken: process.env.OAUTH_REFRESH_TOKEN,
+    // accessToken: oAuth2Client.getAccessToken(),
   },
 });
 

@@ -96,8 +96,8 @@ const InquiriesSchema = new Schema(
     },
     isApproved: {
       type: String,
-      enum: ["Completed", "In Progress", "Not Responded"],
-      default: "Not Responded",
+      enum: ["Completed", "In Progress", "Pending"],
+      default: "Pending",
       required: true,
       index: true,
     },

@@ -12,14 +12,21 @@ const {
 const GetBrgyService = async (req, res) => {
   try {
     const { brgy, archived, approved } = req.query;
+    let result;
 
-    const result = await Service.find({
-      $and: [
-        { brgy: brgy },
-        { isArchived: archived },
-        { isApproved: approved },
-      ],
-    });
+    if (approved !== undefined) {
+      result = await Service.find({
+        $and: [
+          { brgy: brgy },
+          { isArchived: archived },
+          { isApproved: approved },
+        ],
+      });
+    } else {
+      result = await Service.find({
+        $and: [{ brgy: brgy }, { isArchived: archived }],
+      });
+    }
 
     return !result
       ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
@@ -164,6 +171,8 @@ const UpdateServices = async (req, res) => {
     let { saved, service } = body;
     let banner = null,
       logo = null;
+
+    console.log(saved, service);
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such service" });
