@@ -5,14 +5,14 @@ const upload = require("../config/Multer");
 
 const {
   GetServicesInformation,
-  GetAllServicesInfo,
   AddServicesInfo,
   UpdateServicesInfo,
+  ArchiveServicesInfo,
 } = require("../controllers/MServicesController");
 
 router.get("/", GetServicesInformation);
-router.get("/allinfo", GetAllServicesInfo);
 router.post("/", upload.array("files", 10), AddServicesInfo);
-router.patch("/:brgy", upload.array("files", 10), UpdateServicesInfo);
+router.patch("/manage", upload.single("file"), UpdateServicesInfo);
+router.patch("/archived/:id/:archived", ArchiveServicesInfo);
 
 module.exports = router;

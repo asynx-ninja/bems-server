@@ -20,9 +20,9 @@ const FileSchema = new Schema(
   { _id: false }
 );
 
-const HomepageInfoSchema = new Schema(
+const TouristSpotSchema = new Schema(
   {
-    title: {
+    name: {
       type: String,
       required: true,
       index: true,
@@ -32,12 +32,23 @@ const HomepageInfoSchema = new Schema(
       required: true,
       index: true,
     },
-    banner: {
-      type: FileSchema,
+    brgy: {
+      type: String,
+      uppercase: true,
+      required: true,
+      index: true,
+    },
+    isArchived: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
+    image: {
+      type: [FileSchema],
       required: true,
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("M_Homepage_Info", HomepageInfoSchema);
+module.exports = mongoose.model("M_TouristSpot_Info", TouristSpotSchema);

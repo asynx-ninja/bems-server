@@ -22,20 +22,6 @@ const GetServicesInformation = async (req, res) => {
   }
 };
 
-const GetAllServicesInfo = async (req, res) => {
-  try {
-    // Retrieve logo, barangay name, and banner link
-    const allinfo = await ServicesInformation.find({});
-
-    // Send successful response with the retrieved data
-    res.status(200).json(allinfo);
-  } catch (error) {
-    // Handle errors and send error response
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
 const AddServicesInfo = async (req, res) => {
   try {
     const { body, files } = req;
@@ -73,66 +59,78 @@ const AddServicesInfo = async (req, res) => {
 };
 
 const UpdateServicesInfo = async (req, res) => {
-  const { brgy } = req.params;
-  const { body, files } = req;
-  console.log(body, files);
+  try {
+    const { doc_id } = req.query;
+    const { body, file } = req;
 
-  const brgyData = JSON.parse(body.brgyinfo);
-  const { story, mission, vision, banner, logo } = brgyData;
+    const servicesInfos = JSON.parse(body.servicesinfo);
 
-  let bannerNew = null,
-    logoNew = null;
-
-  if (files) {
-    for (let i = 0; i < files.length; i++) {
-      const { id, name } = await uploadPicDrive(
-        files[i],
-        ReturnBrgyFormat(brgy),
-        "I"
-      );
-
-      if (files[i].originalname === "banner") {
-        bannerNew = {
-          link: `https://drive.google.com/uc?export=view&id=${id}`,
-          id,
-          name,
-        };
-        if (banner.id !== "")
-          await deletePicDrive(banner.id, ReturnBrgyFormat(brgy), "I");
-      } else if (files[i].originalname === "logo") {
-        logoNew = {
-          link: `https://drive.google.com/uc?export=view&id=${id}`,
-          id,
-          name,
-        };
-        if (logo.id !== "")
-          await deletePicDrive(logo.id, ReturnBrgyFormat(brgy), "I");
-      }
+    if (!mongoose.Types.ObjectId.isValid(doc_id)) {
+      return res.status(400).json({ error: "Invalid ID" });
     }
-  }
 
-  const result = await ServicesInformation.findOneAndUpdate(
-    { brgy: brgy },
-    {
-      $set: {
-        story,
-        mission,
-        vision,
-        banner: bannerNew === null ? banner : bannerNew,
-        logo: logoNew === null ? logo : logoNew,
+    let id = null,
+      name = null;
+
+    if (file) {
+      const obj = await uploadPicDrive(file, servicesInfos.brgy, "SI");
+      id = obj.id;
+      name = obj.name;
+
+      if (servicesInfos.icon.id !== "")
+        await deletePicDrive(servicesInfos.icon.id, servicesInfos.brgy, "SI");
+    }
+    const result = await ServicesInformation.findOneAndUpdate(
+      { _id: doc_id },
+      {
+        $set: {
+          name: servicesInfos.name,
+          details: servicesInfos.details,
+          icon: file
+            ? {
+                link: `https://drive.google.com/uc?export=view&id=${id}`,
+                id,
+                name,
+              }
+            : servicesInfos.icon,
+        },
       },
-    },
-    { new: true }
-  );
+      { new: true }
+    );
 
-  return !result
-    ? res.status(400).json({ error: "Info is not updated" })
-    : res.status(200).json(result);
+    if (!result) {
+      return res.status(400).json({ error: "Info is not updated" });
+    }
+
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send(err.message);
+  }
 };
 
+const ArchiveServicesInfo = async (req, res) => {
+  try {
+    const { id, archived } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "No such information" });
+    }
+
+    const result = await ServicesInformation.findOneAndUpdate(
+      { _id: id },
+      { $set: { isArchived: archived } },
+      { returnOriginal: false, upsert: true }
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
 module.exports = {
   GetServicesInformation,
-  GetAllServicesInfo,
   AddServicesInfo,
   UpdateServicesInfo,
+  ArchiveServicesInfo,
 };

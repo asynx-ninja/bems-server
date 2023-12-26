@@ -23,6 +23,8 @@ const ReturnBarangay = (brgyName, type) => {
         return BrgyKeys[brgyName].homepage;
       case "SI":
         return BrgyKeys[brgyName].services;
+      case "T":
+        return BrgyKeys[brgyName].touristspot;
     }
   } else return null;
 };

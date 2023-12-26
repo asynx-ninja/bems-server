@@ -5,14 +5,14 @@ const upload = require("../config/Multer");
 
 const {
   GetAboutusInformation,
-  GetAllAboutusInfo,
   AddAboutusInfo,
   UpdateAboutusInfo,
+  ArchiveAboutus,
 } = require("../controllers/MAboutusController");
 
 router.get("/", GetAboutusInformation);
-router.get("/allinfo", GetAllAboutusInfo);
 router.post("/", upload.single("file"), AddAboutusInfo);
 router.patch("/manage", upload.single("file"), UpdateAboutusInfo);
+router.patch("/archived/:id/:archived", ArchiveAboutus);
 
 module.exports = router;
