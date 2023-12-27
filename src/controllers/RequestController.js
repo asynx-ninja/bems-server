@@ -34,9 +34,9 @@ const GetAllRequest = async (req, res) => {
 
 const GetRequestByUser = async (req, res) => {
   try{
-    const { id } = req.query;
+    const { user_id } = req.query;
 
-    const result = await Request.find({"form[0].user_id.value": id})
+    const result = await Request.find({"form.user_id.value": user_id})
 
     return !result
       ? res.status(400).json({ error: `No such request` })
