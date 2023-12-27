@@ -60,7 +60,7 @@ const CreateInquiries = async (req, res) => {
       },
       brgy,
       folder_id,
-      isApproved: "Not Responded",
+      isApproved: "Pending",
       isArchived: false,
       
     });
