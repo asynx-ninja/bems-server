@@ -97,7 +97,7 @@ const CreateRequest = async (req, res) => {
 
 const RespondToRequest = async (req, res) => {
   try {
-    const { req_id } = req.query;
+    const { req_id, last_response, user_type } = req.query;
     const { body, files } = req;
 
     const { sender, message, status, date, isRepliable, folder_id } = JSON.parse(
@@ -122,6 +122,19 @@ const RespondToRequest = async (req, res) => {
           name,
         });
       }
+    }
+
+    if(user_type){
+      await Request.findByIdAndUpdate(
+        { _id: req_id},
+        {
+          $set: {
+            [`response.${last_response}`]: {
+                isRepliable: false,
+            }
+          }
+        }
+      )
     }
 
     const result = await Request.findByIdAndUpdate(
