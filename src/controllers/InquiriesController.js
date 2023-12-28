@@ -100,7 +100,6 @@ const CreateInquiries = async (req, res) => {
       email,
       compose: {
         subject: compose.subject || "",
-        sender: compose.sender || "",
         type: compose.type || "",
         message: compose.message || "",
         date: new Date(),
