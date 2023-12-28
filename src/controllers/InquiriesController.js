@@ -12,22 +12,25 @@ const {
 
 const GetInquiries = async (req, res) => {
   try {
-    const { brgy, archived } = req.query;
+    const { brgy, archived, status } = req.query;
 
-    const result = await Inquiries.find({
-      $and: [{ brgy: brgy }, { isArchived: archived }],
-      
-    });
+    const query = { brgy, isArchived: archived };
+
+    if (status && status.toLowerCase() !== "all") {
+      query.isApproved = status;
+    }
+
+    const result = await Inquiries.find(query);
 
     return !result
-      ? res
-          .status(400)
-          .json({ error: `No such inquiries for Barangay ${brgy}` })
+      ? res.status(400).json({ error: `No such inquiries for Barangay ${brgy}` })
       : res.status(200).json(result);
   } catch (err) {
     res.send(err.message);
   }
 };
+
+
 const GetAdminInquiries = async (req, res) => {
   try {
     const { to, archived } = req.query;
