@@ -97,10 +97,10 @@ const CreateRequest = async (req, res) => {
 
 const RespondToRequest = async (req, res) => {
   try {
-    const { req_id, last_response, user_type } = req.query;
+    const { req_id, user_type } = req.query;
     const { body, files } = req;
 
-    const { sender, message, status, date, isRepliable, folder_id } = JSON.parse(
+    const { sender, message, status, date, isRepliable, folder_id, last_sender, last_array } = JSON.parse(
       body.response
     );
 
@@ -129,7 +129,11 @@ const RespondToRequest = async (req, res) => {
         { _id: req_id},
         {
           $set: {
-            [`response.${last_response}`]: {
+            [`response.${last_array}`]: {
+                sender: last_sender.sender,
+                message: last_sender.message,
+                date: last_sender.date,
+                file: last_sender.file,
                 isRepliable: false,
             }
           }
