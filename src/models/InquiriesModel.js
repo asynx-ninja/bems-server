@@ -26,6 +26,10 @@ const ResponseSchema = new Schema(
       type: String,
       default: "",
     },
+    type: {
+      type: String,
+      enum: ["Admin", "Staff", "Resident"],
+    },
     message: {
       type: String,
       default: "",
@@ -62,6 +66,14 @@ const InquiriesSchema = new Schema(
         type: String,
         required: true,
       },
+      sender: {
+        type: String,
+        default: "",
+      },
+      type: {
+        type: String,
+        enum: ["Admin", "Staff", "Resident"],
+      },
       message: {
         type: String,
         default: "",
@@ -72,6 +84,7 @@ const InquiriesSchema = new Schema(
       file: {
         type: [FileSchema],
       },
+
       to: {
         type: String,
         enum: ["Admin", "Staff", "Resident"],
