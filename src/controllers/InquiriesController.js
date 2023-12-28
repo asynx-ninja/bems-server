@@ -16,6 +16,7 @@ const GetInquiries = async (req, res) => {
 
     const query = { brgy, isArchived: archived };
 
+    
     if (status && status.toLowerCase() !== "all") {
       query.isApproved = status;
     }
@@ -99,6 +100,8 @@ const CreateInquiries = async (req, res) => {
       email,
       compose: {
         subject: compose.subject || "",
+        sender: compose.sender || "",
+        type: compose.type || "",
         message: compose.message || "",
         date: new Date(),
         file: fileArray,
@@ -142,7 +145,7 @@ const RespondToInquiry = async (req, res) => {
     const { body, files } = req;
     console.log(body, files);
     const response = JSON.parse(body.response);
-    const { sender, message, date, folder_id } = response;
+    const { sender, type, message, date, folder_id } = response;
 
     let fileArray = [];
 
@@ -167,6 +170,7 @@ const RespondToInquiry = async (req, res) => {
         $push: {
           response: {
             sender: sender,
+            type: type,
             message: message,
             date: date,
             file: fileArray.length > 0 ? fileArray : null,
