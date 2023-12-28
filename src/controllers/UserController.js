@@ -159,6 +159,7 @@ const UpdateUser = async (req, res) => {
           suffix: user.suffix,
           religion: user.religion,
           email: user.email,
+          username:user.username,
           birthday: user.birthday,
           birthplace: user.birthplace,
           age: user.age,
