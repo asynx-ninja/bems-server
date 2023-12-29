@@ -21,6 +21,38 @@ const GetUsers = async (req, res) => {
   }
 };
 
+const GetAdminUsers = async (req, res) => {
+  try {
+    const { brgy } = req.query;
+
+    const result = await User.find({
+      $and: [{ "address.brgy": brgy },{ isArchived: false }],
+    });
+
+    return !result
+      ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
+      : res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
+const GetArchivedAdminUsers = async (req, res) => {
+  try {
+    const { brgy } = req.query;
+
+    const result = await User.find({
+      $and: [{ "address.brgy": brgy },{ isArchived: true }],
+    });
+
+    return !result
+      ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
+      : res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 const GetSpecificUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -247,6 +279,8 @@ const ArchiveUser = async (req, res) => {
 
 module.exports = {
   GetUsers,
+  GetAdminUsers,
+  GetArchivedAdminUsers,
   GetSpecificUser,
   GetArchivedUsers,
   CreateUser,
