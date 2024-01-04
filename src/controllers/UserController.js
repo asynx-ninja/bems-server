@@ -7,11 +7,20 @@ const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 
 const GetUsers = async (req, res) => {
   try {
-    const { brgy, type } = req.query;
+    const { brgy, type, status } = req.query;
 
-    const result = await User.find({
-      $and: [{ "address.brgy": brgy }, { type: type }, { isArchived: false }],
-    });
+    let query = {
+      "address.brgy": brgy,
+      type: type,
+      isArchived: false,
+    };
+
+    // If status is provided and not "all", add it to the query
+    if (status && status.toLowerCase() !== "all") {
+      query.isApproved = status;
+    }
+
+    const result = await User.find(query);
 
     return !result
       ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
@@ -20,6 +29,7 @@ const GetUsers = async (req, res) => {
     res.send(err.message);
   }
 };
+
 
 const GetAdminUsers = async (req, res) => {
   try {
