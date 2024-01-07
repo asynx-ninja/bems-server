@@ -6,17 +6,25 @@ const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const GetServicesInformation = async (req, res) => {
   try {
-    const { brgy, archived } = req.query;
+    const { brgy, archived, page } = req.query;
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const result = await ServicesInformation.find({
+    const totalInformation = await ServicesInformation.countDocuments({
       $and: [{ brgy: brgy }, { isArchived: archived }],
     });
 
+    const result = await ServicesInformation.find({
+      $and: [{ brgy: brgy }, { isArchived: archived }],
+    })
+      .skip(skip)
+      .limit(itemsPerPage);
+
+    const pageCount = Math.ceil(totalInformation / itemsPerPage);
+    console.log(result)
     return result
-      ? res.status(200).json(result)
-      : res
-          .status(400)
-          .json({ error: `No officials found for Municipality ${brgy}` });
+      ? res.status(200).json({ result, pageCount })
+      : res.status(400).json({ error: `No officials found for Municipality ${brgy}` });
   } catch (err) {
     res.status(500).send(err.message);
   }
