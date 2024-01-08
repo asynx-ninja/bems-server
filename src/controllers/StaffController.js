@@ -204,14 +204,23 @@ const UpdateBrgyStaff = async (req, res) => {
 const GetArchivedStaffs = async (req, res) => {
   try {
     const { brgy } = req.params;
+    const { page } = req.query;
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const result = await User.find({
+    const query = {
       $and: [{ "address.brgy": brgy }, { type: "Staff" }, { isArchived: true }],
-    });
+    };
+
+    const totalStaffs = await User.countDocuments(query);
+
+    const result = await User.find(query)
+      .skip(skip)
+      .limit(itemsPerPage);
 
     return !result
       ? res.status(400).json({ error: `No such staff for Barangay ${brgy}` })
-      : res.status(200).json(result);
+      : res.status(200).json({ result, pageCount: Math.ceil(totalStaffs / itemsPerPage) });
   } catch (err) {
     res.send(err.message);
   }
