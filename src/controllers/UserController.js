@@ -7,19 +7,24 @@ const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 
 const GetUsers = async (req, res) => {
   try {
-    const { brgy, type, page } = req.query;
+    const { brgy, type, status, page } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const result = await User.find({
+    let query = {
       $and: [{ "address.brgy": brgy }, { type: type }, { isArchived: false }],
-    })
+    };
+
+    // If status is provided and not "all", add it to the query
+    if (status && status.toLowerCase() !== "all") {
+      query.$and.push({ isApproved: status });
+    }
+
+    const result = await User.find(query)
       .skip(skip)
       .limit(itemsPerPage);
 
-    const totalUsers = await User.countDocuments({
-      $and: [{ "address.brgy": brgy }, { type: type }, { isArchived: false }],
-    });
+    const totalUsers = await User.countDocuments(query);
 
     const pageCount = Math.ceil(totalUsers / itemsPerPage);
 
@@ -30,6 +35,7 @@ const GetUsers = async (req, res) => {
     res.send(err.message);
   }
 };
+
 
 const GetAdminUsers = async (req, res) => {
   try {
@@ -85,19 +91,24 @@ const GetSpecificUser = async (req, res) => {
 
 const GetArchivedUsers = async (req, res) => {
   try {
-    const { brgy, type, page } = req.query;
+    const { brgy, type, status, page } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const result = await User.find({
+    let query = {
       $and: [{ "address.brgy": brgy }, { type: type }, { isArchived: true }],
-    })
+    };
+
+    // If status is provided and not "all", add it to the query
+    if (status && status.toLowerCase() !== "all") {
+      query.$and.push({ isApproved: status });
+    }
+
+    const result = await User.find(query)
       .skip(skip)
       .limit(itemsPerPage);
 
-    const totalUsers = await User.countDocuments({
-      $and: [{ "address.brgy": brgy }, { type: type }, { isArchived: true }],
-    });
+    const totalUsers = await User.countDocuments(query);
 
     const pageCount = Math.ceil(totalUsers / itemsPerPage);
 
@@ -108,6 +119,7 @@ const GetArchivedUsers = async (req, res) => {
     res.send(err.message);
   }
 };
+
 
 const CreateUser = async (req, res) => {
   try {
