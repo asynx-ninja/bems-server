@@ -85,11 +85,18 @@ const GetSpecificUser = async (req, res) => {
 
 const GetArchivedUsers = async (req, res) => {
   try {
-    const { brgy, type } = req.query;
+    const { brgy, type, status } = req.query;
 
-    const result = await User.find({
+    let query = {
       $and: [{ "address.brgy": brgy }, { type: type }, { isArchived: true }],
-    });
+    };
+
+    
+    if (status && status.toLowerCase() !== "all") {
+      query.isApproved = status;
+    }
+
+    const result = await User.find(query);
 
     return !result
       ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
@@ -98,6 +105,7 @@ const GetArchivedUsers = async (req, res) => {
     res.send(err.message);
   }
 };
+
 
 const CreateUser = async (req, res) => {
   try {

@@ -11,22 +11,20 @@ const {
 
 const GetBrgyService = async (req, res) => {
   try {
-    const { brgy, archived, approved } = req.query;
+    const { brgy, archived, approved, status } = req.query;
     let result;
 
+    const query = { brgy, isArchived: archived };
+
     if (approved !== undefined) {
-      result = await Service.find({
-        $and: [
-          { brgy: brgy },
-          { isArchived: archived },
-          { isApproved: approved },
-        ],
-      });
-    } else {
-      result = await Service.find({
-        $and: [{ brgy: brgy }, { isArchived: archived }],
-      });
+      query.isApproved = approved;
     }
+
+    if (status && status.toLowerCase() !== "all") {
+      query.isApproved = status;
+    }
+
+    result = await Service.find(query);
 
     return !result
       ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })

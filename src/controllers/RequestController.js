@@ -11,18 +11,20 @@ const {
 
 const GetAllRequest = async (req, res) => {
   try {
-    const { brgy, archived, id } = req.query;
+    const { brgy, archived, id, status } = req.query;
     let result;
 
+    const query = { brgy, isArchived: archived };
+
     if (id !== undefined) {
-      result = await Request.find({
-        $and: [{ brgy: brgy }, { isArchived: archived }, { _id: id }],
-      });
-    } else {
-      result = await Request.find({
-        $and: [{ brgy: brgy }, { isArchived: archived }],
-      });
+      query._id = id;
     }
+
+    if (status && status.toLowerCase() !== "all") {
+      query.status = status;
+    }
+
+    result = await Request.find(query);
 
     return !result
       ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
@@ -31,6 +33,7 @@ const GetAllRequest = async (req, res) => {
     res.status(400).json(err.message);
   }
 };
+
 
 const GetRequestByUser = async (req, res) => {
   try{
