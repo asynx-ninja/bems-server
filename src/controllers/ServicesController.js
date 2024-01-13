@@ -24,7 +24,7 @@ const GetBrgyService = async (req, res) => {
     }
 
     if (status && status.toLowerCase() !== "all") {
-      query.$and.push({ status: status });
+      query.isApproved = status;
     }
 
     const totalServices = await Service.countDocuments(query);
