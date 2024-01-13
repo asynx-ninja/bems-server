@@ -11,7 +11,7 @@ const {
 
 const GetBrgyService = async (req, res) => {
   try {
-    const { brgy, archived, approved, status, page } = req.query;
+    const { brgy, archived, approved, status, page, type } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
@@ -26,7 +26,9 @@ const GetBrgyService = async (req, res) => {
     if (status && status.toLowerCase() !== "all") {
       query.isApproved = status;
     }
-
+    if (type && type.toLowerCase() !== "all") {
+      query.type = type;
+    }
     const totalServices = await Service.countDocuments(query);
 
     const result = await Service.find(query)

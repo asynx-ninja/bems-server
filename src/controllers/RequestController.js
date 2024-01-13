@@ -10,7 +10,7 @@ const {
 } = require("../utils/Drive");
 const GetAllRequest = async (req, res) => {
   try {
-    const { brgy, archived, id, status, page } = req.query;
+    const { brgy, archived, id, status, type, page } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
@@ -23,7 +23,10 @@ const GetAllRequest = async (req, res) => {
     }
 
     if (status && status.toLowerCase() !== "all") {
-      query.$and.push({ status: status });
+      query.status = status;
+    }
+    if (type && type.toLowerCase() !== "all") {
+      query.type = type;
     }
 
     const totalRequests = await Request.countDocuments(query);
