@@ -6,25 +6,25 @@ const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const GetTouristSpotInformation = async (req, res) => {
   try {
-    const { brgy, archived } = req.query;
+    const { brgy, archived, page } = req.query;
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    if (brgy === "All") {
-      const result = await TouristSpot.find({});
-
-      return result ? res.status(200).json(result)
-        : res
-          .status(400)
-    }
-
-    const result = await TouristSpot.find({
-      $and: [{ brgy: brgy }, { isArchived: archived }],
+    const totalInformation = await TouristSpot.countDocuments({
+      $and: [ { isArchived: archived }],
     });
 
+    const result = await TouristSpot.find({
+      $and: [ { isArchived: archived }],
+    })
+      .skip(skip)
+      .limit(itemsPerPage);
+
+    const pageCount = Math.ceil(totalInformation / itemsPerPage);
+
     return result
-      ? res.status(200).json(result)
-      : res
-        .status(400)
-        .json({ error: `No officials found for Municipality ${brgy}` });
+      ? res.status(200).json({ result, pageCount })
+      : res.status(400).json({ error: "No officials found for Municipality" });
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -53,7 +53,7 @@ const GetSpecificTouristInfo = async (req, res) => {
 const AddTouristSpotInfo = async (req, res) => {
   try {
     const { body, files } = req; // 'files' instead of 'file' for multiple files
-    const { name, details, brgy } = JSON.parse(body.touristspot);
+    const { name, details, brgy, section } = JSON.parse(body.touristspot);
     console.log(files);
 
     if (!files || files.length === 0) {
@@ -65,7 +65,7 @@ const AddTouristSpotInfo = async (req, res) => {
     for (let f = 0; f < files.length; f += 1) {
       const { id, name } = await uploadPicDrive(
         files[f],
-        ReturnBrgyFormat(brgy),
+        ReturnBrgyFormat(section),
         "T"
       );
 
@@ -79,6 +79,7 @@ const AddTouristSpotInfo = async (req, res) => {
     const result = await TouristSpot.create({
       name,
       details,
+      section,
       brgy,
       image: images, // Store the array of banners
     });

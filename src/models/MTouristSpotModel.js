@@ -32,10 +32,15 @@ const TouristSpotSchema = new Schema(
       required: true,
       index: true,
     },
+    section: {
+      type: String,
+      required: true,
+      index: true,
+    },
     brgy: {
       type: String,
       uppercase: true,
-      required: true,
+      required: false,
       index: true,
     },
     isArchived: {

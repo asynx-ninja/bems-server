@@ -11,26 +11,31 @@ const {
 
 const GetBrgyService = async (req, res) => {
   try {
-    const { brgy, archived, approved } = req.query;
-    let result;
+    const { brgy, archived, approved, status, page } = req.query;
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
+
+    let query = {
+      $and: [{ brgy: brgy }, { isArchived: archived }],
+    };
 
     if (approved !== undefined) {
-      result = await Service.find({
-        $and: [
-          { brgy: brgy },
-          { isArchived: archived },
-          { isApproved: approved },
-        ],
-      });
-    } else {
-      result = await Service.find({
-        $and: [{ brgy: brgy }, { isArchived: archived }],
-      });
+      query.$and.push({ isApproved: approved });
     }
+
+    if (status && status.toLowerCase() !== "all") {
+      query.$and.push({ status: status });
+    }
+
+    const totalServices = await Service.countDocuments(query);
+
+    const result = await Service.find(query)
+      .skip(skip)
+      .limit(itemsPerPage);
 
     return !result
       ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
-      : res.status(200).json(result);
+      : res.status(200).json({ result, pageCount: Math.ceil(totalServices / itemsPerPage) });
   } catch (err) {
     res.send(err.message);
   }
@@ -69,7 +74,23 @@ const GetAllBrgyService = async (req, res) => {
   try {
     const { archived } = req.query;
 
-    const result = await Service.find({ isArchived: archived });
+    const result = await Service.find({ isArchived: archived});
+
+    if (result.length === 0) {
+      return res.status(400).json({ error: "No services found." });
+    }
+
+    return res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
+const GetAllPenBrgyService = async (req, res) => {
+  try {
+    const { archived, status } = req.query;
+
+    const result = await Service.find({ isArchived: archived, isApproved: status });
 
     if (result.length === 0) {
       return res.status(400).json({ error: "No services found." });
@@ -301,6 +322,7 @@ const ArchiveService = async (req, res) => {
 module.exports = {
   GetBrgyService,
   GetAllBrgyService,
+  GetAllPenBrgyService,
   GetBrgyServiceBanner,
   CreateServices,
   UpdateServices,

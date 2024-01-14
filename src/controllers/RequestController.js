@@ -8,29 +8,38 @@ const {
   uploadFileDrive,
   deleteFileDrive,
 } = require("../utils/Drive");
-
 const GetAllRequest = async (req, res) => {
   try {
-    const { brgy, archived, id } = req.query;
-    let result;
+    const { brgy, archived, id, status, page } = req.query;
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
+
+    let query = {
+      $and: [{ brgy: brgy }, { isArchived: archived }],
+    };
 
     if (id !== undefined) {
-      result = await Request.find({
-        $and: [{ brgy: brgy }, { isArchived: archived }, { _id: id }],
-      });
-    } else {
-      result = await Request.find({
-        $and: [{ brgy: brgy }, { isArchived: archived }],
-      });
+      query.$and.push({ _id: id });
     }
+
+    if (status && status.toLowerCase() !== "all") {
+      query.$and.push({ status: status });
+    }
+
+    const totalRequests = await Request.countDocuments(query);
+
+    const result = await Request.find(query)
+      .skip(skip)
+      .limit(itemsPerPage);
 
     return !result
       ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
-      : res.status(200).json(result);
+      : res.status(200).json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage) });
   } catch (err) {
     res.status(400).json(err.message);
   }
 };
+
 
 const GetRequestByUser = async (req, res) => {
   try{

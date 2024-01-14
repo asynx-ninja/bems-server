@@ -12,17 +12,27 @@ const {
 
 const GetBarangayAnnouncement = async (req, res) => {
   try {
-    const { brgy, archived } = req.query;
+    const { brgy, archived, page } = req.query;
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
+
+    const totalAnnouncements = await Announcement.countDocuments({
+      $and: [{ brgy: brgy }, { isArchived: archived }],
+    });
 
     const result = await Announcement.find({
       $and: [{ brgy: brgy }, { isArchived: archived }],
-    });
+    })
+      .skip(skip)
+      .limit(itemsPerPage);
+
+    const pageCount = Math.ceil(totalAnnouncements / itemsPerPage);
 
     return !result
       ? res
           .status(400)
           .json({ error: `No such Announcement for Barangay ${brgy}` })
-      : res.status(200).json(result);
+      : res.status(200).json({ result, pageCount });
   } catch (err) {
     res.send(err.message);
   }
