@@ -11,8 +11,8 @@
     "sex": "Male",
     "address": {
       "street": "123 Main Street",
-      "brgy": "Balite",
-      "city": "Metroville"
+      "brgy": "Munisipyo",
+      "city": "Rodriguez, Rizal"
     },
     "username": "antoniogomez",
     "password": "securepass123",
@@ -31,8 +31,8 @@
     "sex": "Female",
     "address": {
       "street": "456 Oak Avenue",
-      "brgy": "Burgos",
-      "city": "Cityville"
+      "brgy": "Munisipyo",
+      "city": "Rodriguez, Rizal"
     },
     "username": "isabelluna",
     "password": "strongpassword456",
@@ -51,8 +51,8 @@
     "sex": "Male",
     "address": {
       "street": "789 Pine Street",
-      "brgy": "Geronimo",
-      "city": "Villageton"
+      "brgy": "Munisipyo",
+      "city": "Rodriguez, Rizal"
     },
     "username": "juanitoramos",
     "password": "securepass789",
@@ -71,8 +71,8 @@
     "sex": "Female",
     "address": {
       "street": "234 Cedar Lane",
-      "brgy": "Macabud",
-      "city": "Townsville"
+      "brgy": "Munisipyo",
+      "city": "Rodriguez, Rizal"
     },
     "username": "elenacastillo",
     "password": "strongpass234",
@@ -91,8 +91,8 @@
     "sex": "Male",
     "address": {
       "street": "567 Birch Street",
-      "brgy": "Manggahan",
-      "city": "Hamletville"
+      "brgy": "Munisipyo",
+      "city": "Rodriguez, Rizal"
     },
     "username": "ricardogarcia",
     "password": "securepass567",

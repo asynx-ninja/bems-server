@@ -12,7 +12,7 @@
     "address": {
       "street": "123 Main Street",
       "brgy": "Balite",
-      "city": "Metroville"
+      "city": "Rodriguez, Rizal"
     },
     "username": "joselopez",
     "password": "securepass123",
@@ -32,7 +32,7 @@
     "address": {
       "street": "456 Oak Avenue",
       "brgy": "Burgos",
-      "city": "Cityville"
+      "city": "Rodriguez, Rizal"
     },
     "username": "lourdesgonzalez",
     "password": "strongpassword456",
@@ -52,7 +52,7 @@
     "address": {
       "street": "789 Pine Street",
       "brgy": "Geronimo",
-      "city": "Villageton"
+      "city": "Rodriguez, Rizal"
     },
     "username": "ramonsantos",
     "password": "securepass789",
@@ -72,7 +72,7 @@
     "address": {
       "street": "234 Cedar Lane",
       "brgy": "Macabud",
-      "city": "Townsville"
+      "city": "Rodriguez, Rizal"
     },
     "username": "imeldarivera",
     "password": "strongpass234",
@@ -92,7 +92,7 @@
     "address": {
       "street": "567 Birch Street",
       "brgy": "Manggahan",
-      "city": "Hamletville"
+      "city": "Rodriguez, Rizal"
     },
     "username": "manuelguzman",
     "password": "securepass567",
