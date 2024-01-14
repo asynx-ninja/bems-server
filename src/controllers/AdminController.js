@@ -157,7 +157,7 @@ const UpdateBrgyAdmin = async (req, res) => {
           isHead: user.isHead,
           profile: file
             ? {
-                link: `https://drive.google.com/uc?export=view&id=${id}`,
+                link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
                 id,
                 name,
               }

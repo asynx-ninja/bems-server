@@ -16,7 +16,9 @@ const MunicipalityOfficialsRoutes = require("./src/routes/MunicipalityOfficials"
 const AdminRoutes = require("./src/routes/BrgyAdmin");
 const MAboutusRoute = require("./src/routes/MAboutus");
 const MServicesRoute = require("./src/routes/MServices");
-const MTouristSpot = require("./src/routes/MTouristSpot")
+const MTouristSpot = require("./src/routes/MTouristSpot");
+const NotificationRoutes = require("./src/routes/Notification");
+const AnnouncementFormRoutes = require("./src/routes/AnnouncementForm");
 
 const connectDB = require("./src/config/DB");
 
@@ -33,13 +35,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.json());
-app.use(
-  cors({
-    origin: "*", 
-    
-    credentials: true,
-  })
-);
+app.use(cors());
 
 // Routes
 app.use("/api/services", ServicesRoutes);
@@ -57,6 +53,8 @@ app.use("/api/admin", AdminRoutes);
 app.use("/api/aboutus", MAboutusRoute);
 app.use("/api/services_info", MServicesRoute);
 app.use("/api/tourist_spot", MTouristSpot);
+app.use("/api/notification", NotificationRoutes);
+app.use("/api/event_form", AnnouncementFormRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({
