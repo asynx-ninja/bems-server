@@ -114,4 +114,4 @@ const InquiriesSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Inquiries", InquiriesSchema);
+module.exports = mongoose.model("inquiries", InquiriesSchema);

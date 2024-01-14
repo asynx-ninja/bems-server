@@ -56,4 +56,4 @@ const TouristSpotSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("M_TouristSpot_Info", TouristSpotSchema);
+module.exports = mongoose.model("m_touristspots_info", TouristSpotSchema);

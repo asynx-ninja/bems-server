@@ -1,0 +1,97 @@
+[
+  {
+    "firstName": "Carmen",
+    "middleName": "A.",
+    "lastName": "Rodriguez",
+    "suffix": "",
+    "age": "32",
+    "email": "carmen.rodriguez@example.com",
+    "birthday": "1990-11-30",
+    "contact": "+1234567890",
+    "sex": "Female",
+    "address": {
+      "street": "123 Main Street",
+      "brgy": "Mascap",
+      "city": "Metroville"
+    },
+    "username": "carmenrodriguez",
+    "password": "securepass123",
+    "type": "Admin"
+  },
+  {
+    "firstName": "Alejandro",
+    "middleName": "B.",
+    "lastName": "Fernandez",
+    "suffix": "",
+    "age": "28",
+    "email": "alejandro.fernandez@example.com",
+    "birthday": "1994-02-17",
+    "contact": "+9876543210",
+    "sex": "Male",
+    "address": {
+      "street": "456 Oak Avenue",
+      "brgy": "Puray",
+      "city": "Cityville"
+    },
+    "username": "alejandrofernandez",
+    "password": "strongpassword456",
+    "type": "Admin"
+  },
+  {
+    "firstName": "Sofia",
+    "middleName": "C.",
+    "lastName": "Torres",
+    "suffix": "",
+    "age": "35",
+    "email": "sofia.torres@example.com",
+    "birthday": "1987-06-25",
+    "contact": "+1122334455",
+    "sex": "Female",
+    "address": {
+      "street": "789 Pine Street",
+      "brgy": "Rosario",
+      "city": "Villageton"
+    },
+    "username": "sofiatorres",
+    "password": "securepass789",
+    "type": "Admin"
+  },
+  {
+    "firstName": "Carlos",
+    "middleName": "D.",
+    "lastName": "Alvarez",
+    "suffix": "",
+    "age": "30",
+    "email": "carlos.alvarez@example.com",
+    "birthday": "1992-09-12",
+    "contact": "+9988776655",
+    "sex": "Male",
+    "address": {
+      "street": "234 Cedar Lane",
+      "brgy": "San Isidro",
+      "city": "Townsville"
+    },
+    "username": "carlosalvarez",
+    "password": "strongpass234",
+    "type": "Admin"
+  },
+  {
+    "firstName": "Margarita",
+    "middleName": "E.",
+    "lastName": "Ramos",
+    "suffix": "",
+    "age": "33",
+    "email": "margarita.ramos@example.com",
+    "birthday": "1989-04-07",
+    "contact": "+5544332211",
+    "sex": "Female",
+    "address": {
+      "street": "567 Birch Street",
+      "brgy": "San Jose",
+      "city": "Hamletville"
+    },
+    "username": "margaritaramos",
+    "password": "securepass567",
+    "type": "Admin"
+  }
+]

@@ -62,4 +62,4 @@ const OfficialsSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("Brgy_Official", OfficialsSchema);
+module.exports = mongoose.model("brgy_official", OfficialsSchema);

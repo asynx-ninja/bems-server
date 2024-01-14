@@ -51,4 +51,4 @@ const ServicesInfoSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("M_Services_Info", ServicesInfoSchema);
+module.exports = mongoose.model("m_services_info", ServicesInfoSchema);
