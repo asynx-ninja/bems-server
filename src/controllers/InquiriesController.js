@@ -45,7 +45,7 @@ const GetAdminInquiries = async (req, res) => {
 
     const result = await Inquiries.find({
       $and: [
-        { 'compose.to': to }, // Convert to lowercase for case-insensitive comparison
+        { 'compose.to': to }, 
         { isArchived: archived },
       ],
     })
