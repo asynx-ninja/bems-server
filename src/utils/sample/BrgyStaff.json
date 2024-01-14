@@ -16,7 +16,8 @@
     },
     "username": "juansantos",
     "password": "securepass123",
-    "type": "Staff"
+    "type": "Staff",
+    "isApproved": "Registered"
   },
   {
     "firstName": "Maria",
@@ -35,7 +36,8 @@
     },
     "username": "marialopez",
     "password": "strongpassword456",
-    "type": "Staff"
+    "type": "Staff",
+    "isApproved": "Registered"
   },
   {
     "firstName": "Roberto",
@@ -54,7 +56,8 @@
     },
     "username": "robertoreyes",
     "password": "securepass789",
-    "type": "Staff"
+    "type": "Staff",
+    "isApproved": "Registered"
   },
   {
     "firstName": "Elena",
@@ -73,7 +76,8 @@
     },
     "username": "elenagarcia",
     "password": "strongpass234",
-    "type": "Staff"
+    "type": "Staff",
+    "isApproved": "Registered"
   },
   {
     "firstName": "Miguel",
@@ -92,6 +96,7 @@
     },
     "username": "migueldelacruz",
     "password": "securepass567",
-    "type": "Staff"
+    "type": "Staff",
+    "isApproved": "Registered"
   }
 ]
