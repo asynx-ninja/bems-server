@@ -139,7 +139,7 @@ const CreateServices = async (req, res) => {
       fileArray.push({
         link:
           f === 0 || f === 1
-            ? `https://drive.google.com/uc?export=view&id=${id}`
+            ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000`
             : `https://drive.google.com/file/d/${id}/view`,
         id,
         name,
@@ -229,7 +229,7 @@ const UpdateServices = async (req, res) => {
 
         if (files[f].originalname === "banner") {
           banner = {
-            link: `https://drive.google.com/uc?export=view&id=${id}`,
+            link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
             id,
             name,
           };
@@ -237,7 +237,7 @@ const UpdateServices = async (req, res) => {
           await deleteFileDrive(service.collections.banner.id, folder_id);
         } else if (files[f].originalname === "logo") {
           logo = {
-            link: `https://drive.google.com/uc?export=view&id=${id}`,
+            link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
             id,
             name,
           };

@@ -44,7 +44,7 @@ const AddServicesInfo = async (req, res) => {
       );
 
       fileArray.push({
-        link: `https://drive.google.com/uc?export=view&id=${id}`,
+        link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
         id,
         name,
       });
@@ -96,7 +96,7 @@ const UpdateServicesInfo = async (req, res) => {
           details: servicesInfos.details,
           icon: file
             ? {
-                link: `https://drive.google.com/uc?export=view&id=${id}`,
+                link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
                 id,
                 name,
               }
