@@ -94,4 +94,4 @@ const ServicesSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Services", ServicesSchema);
+module.exports = mongoose.model("services", ServicesSchema);

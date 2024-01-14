@@ -51,4 +51,4 @@ const HomepageInfoSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("M_Homepage_Info", HomepageInfoSchema);
+module.exports = mongoose.model("m_about_us", HomepageInfoSchema);

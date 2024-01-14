@@ -42,7 +42,7 @@ const AddAboutusInfo = async (req, res) => {
     const { id, name } = await uploadPicDrive(file, ReturnBrgyFormat(brgy), "H");
 
     const banner = {
-      link: `https://drive.google.com/uc?export=view&id=${id}`,
+      link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
       id,
       name,
     };
@@ -89,13 +89,14 @@ const UpdateAboutusInfo = async (req, res) => {
         $set: {
           title: aboutusInfos.title,
           details: aboutusInfos.details,
-          banner: file !== undefined
-            ? {
-                link: `https://drive.google.com/uc?export=view&id=${id}`,
-                id,
-                name,
-              }
-            : aboutusInfos.banner,
+          banner:
+            file !== undefined
+              ? {
+                  link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+                  id,
+                  name,
+                }
+              : aboutusInfos.banner,
         },
       },
       { new: true }

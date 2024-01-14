@@ -112,7 +112,7 @@ const CreateInquiries = async (req, res) => {
       const { id, name } = await uploadFileDrive(files[f], folder_id);
 
       fileArray.push({
-        link: `https://drive.google.com/uc?export=view&id=${id}`,
+        link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
         id,
         name,
       });
@@ -178,7 +178,7 @@ const RespondToInquiry = async (req, res) => {
 
         fileArray.push({
           link: files[f].mimetype.includes("image")
-            ? `https://drive.google.com/uc?export=view&id=${id}`
+            ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000`
             : `https://drive.google.com/file/d/${id}/view`,
           id,
           name,

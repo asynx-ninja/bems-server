@@ -78,7 +78,7 @@ const CreateRequest = async (req, res) => {
 
         fileArray.push({
           link: files[f].mimetype.includes("image")
-            ? `https://drive.google.com/uc?export=view&id=${id}`
+            ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000`
             : `https://drive.google.com/file/d/${id}/view`,
           id,
           name,
@@ -128,7 +128,7 @@ const RespondToRequest = async (req, res) => {
 
         fileArray.push({
           link: files[f].mimetype.includes("image")
-            ? `https://drive.google.com/uc?export=view&id=${id}`
+            ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000`
             : `https://drive.google.com/file/d/${id}/view`,
           id,
           name,

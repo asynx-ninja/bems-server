@@ -155,4 +155,4 @@ const NotificationSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Notifications", NotificationSchema);
+module.exports = mongoose.model("notifications", NotificationSchema);
