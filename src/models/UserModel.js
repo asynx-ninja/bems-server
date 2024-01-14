@@ -108,7 +108,6 @@ const UserSchema = new Schema(
     },
     religion: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
@@ -130,7 +129,6 @@ const UserSchema = new Schema(
     sex: {
       type: String,
       enum: ["Male", "Female"],
-      required: true,
       index: true,
     },
     address: {
@@ -139,12 +137,10 @@ const UserSchema = new Schema(
     },
     occupation: {
       type: String,
-      required: true,
     },
     civil_status: {
       type: String,
       enum: ["Single", "Married", "Widowed", "Legally Separated"],
-      required: true,
     },
     type: {
       type: String,
@@ -155,16 +151,13 @@ const UserSchema = new Schema(
     isVoter: {
       type: Boolean,
       index: true,
-      required: true,
     },
     isHead: {
       type: Boolean,
       index: true,
-      required: true,
     },
     profile: {
       type: FileSchema,
-      required: true,
     },
     username: {
       type: String,
@@ -191,11 +184,10 @@ const UserSchema = new Schema(
     },
     socials: {
       type: SocialsSchema,
-      required: true,
       default: {},
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("users", UserSchema);

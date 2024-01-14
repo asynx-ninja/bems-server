@@ -65,4 +65,4 @@ const MunicipalityOfficialsSchema = new Schema({
     },
   });
 
-module.exports = mongoose.model("municipality_Official", MunicipalityOfficialsSchema);
+module.exports = mongoose.model("m_officials", MunicipalityOfficialsSchema);
