@@ -11,12 +11,13 @@
     "sex": "Female",
     "address": {
       "street": "123 Main Street",
-      "brgy": "Mascap",
+      "brgy": "Balite",
       "city": "Metroville"
     },
     "username": "carmenrodriguez",
     "password": "securepass123",
-    "type": "Admin"
+    "type": "Admin",
+    "isApproved": "Registered"
   },
   {
     "firstName": "Alejandro",
@@ -30,12 +31,13 @@
     "sex": "Male",
     "address": {
       "street": "456 Oak Avenue",
-      "brgy": "Puray",
+      "brgy": "Burgos",
       "city": "Cityville"
     },
     "username": "alejandrofernandez",
     "password": "strongpassword456",
-    "type": "Admin"
+    "type": "Admin",
+    "isApproved": "Registered"
   },
   {
     "firstName": "Sofia",
@@ -49,12 +51,13 @@
     "sex": "Female",
     "address": {
       "street": "789 Pine Street",
-      "brgy": "Rosario",
+      "brgy": "Geronimo",
       "city": "Villageton"
     },
     "username": "sofiatorres",
     "password": "securepass789",
-    "type": "Admin"
+    "type": "Admin",
+    "isApproved": "Registered"
   },
   {
     "firstName": "Carlos",
@@ -68,12 +71,13 @@
     "sex": "Male",
     "address": {
       "street": "234 Cedar Lane",
-      "brgy": "San Isidro",
+      "brgy": "Macabud",
       "city": "Townsville"
     },
     "username": "carlosalvarez",
     "password": "strongpass234",
-    "type": "Admin"
+    "type": "Admin",
+    "isApproved": "Registered"
   },
   {
     "firstName": "Margarita",
@@ -87,11 +91,12 @@
     "sex": "Female",
     "address": {
       "street": "567 Birch Street",
-      "brgy": "San Jose",
+      "brgy": "Manggahan",
       "city": "Hamletville"
     },
     "username": "margaritaramos",
     "password": "securepass567",
-    "type": "Admin"
+    "type": "Admin",
+    "isApproved": "Registered"
   }
 ]

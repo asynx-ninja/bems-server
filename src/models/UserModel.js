@@ -172,6 +172,7 @@ const UserSchema = new Schema(
       type: String,
       enum: ["Registered", "Denied", "Pending"],
       index: true,
+      default: "Pending",
     },
     isArchived: {
       type: Boolean,

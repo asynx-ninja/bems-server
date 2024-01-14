@@ -16,7 +16,8 @@
     },
     "username": "john_doe",
     "password": "password123",
-    "type": "Head Admin"
+    "type": "Resident",
+    "isApproved": "Pending"
   },
   {
     "firstName": "Jane",
@@ -35,7 +36,8 @@
     },
     "username": "jane_a",
     "password": "pass123",
-    "type": "Resident"
+    "type": "Resident",
+    "isApproved": "Pending"
   },
   {
     "firstName": "Alex",
@@ -54,7 +56,8 @@
     },
     "username": "alex_m",
     "password": "securepass",
-    "type": "Resident"
+    "type": "Resident",
+    "isApproved": "Pending"
   },
   {
     "firstName": "Emily",
@@ -73,7 +76,8 @@
     },
     "username": "emily_r",
     "password": "em123",
-    "type": "Resident"
+    "type": "Resident",
+    "isApproved": "Pending"
   },
   {
     "firstName": "Michael",
@@ -92,6 +96,7 @@
     },
     "username": "michael_g",
     "password": "mikepass",
-    "type": "Resident"
+    "type": "Resident",
+    "isApproved": "Pending"
   }
 ]
