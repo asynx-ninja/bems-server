@@ -19,6 +19,7 @@ const MServicesRoute = require("./src/routes/MServices");
 const MTouristSpot = require("./src/routes/MTouristSpot");
 const NotificationRoutes = require("./src/routes/Notification");
 const AnnouncementFormRoutes = require("./src/routes/AnnouncementForm");
+const EventsApplicationRoutes = require("./src/routes/EventsApplication")
 
 const connectDB = require("./src/config/DB");
 
@@ -60,6 +61,7 @@ app.use("/api/services_info", MServicesRoute);
 app.use("/api/tourist_spot", MTouristSpot);
 app.use("/api/notification", NotificationRoutes);
 app.use("/api/event_form", AnnouncementFormRoutes);
+app.use("/api/events_application", EventsApplicationRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({
