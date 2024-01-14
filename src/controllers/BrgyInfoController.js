@@ -70,7 +70,7 @@ const AddBarangayInfo = async (req, res) => {
       );
 
       fileArray.push({
-        link: `https://drive.google.com/uc?export=view&id=${id}`,
+        link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
         id,
         name,
       });
@@ -117,7 +117,7 @@ const UpdateBarangayInfo = async (req, res) => {
 
       if (files[i].originalname === "banner") {
         bannerNew = {
-          link: `https://drive.google.com/uc?export=view&id=${id}`,
+          link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
           id,
           name,
         };
@@ -125,7 +125,7 @@ const UpdateBarangayInfo = async (req, res) => {
           await deletePicDrive(banner.id, ReturnBrgyFormat(brgy), "I");
       } else if (files[i].originalname === "logo") {
         logoNew = {
-          link: `https://drive.google.com/uc?export=view&id=${id}`,
+          link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
           id,
           name,
         };
