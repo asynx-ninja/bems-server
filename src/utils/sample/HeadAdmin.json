@@ -1,0 +1,102 @@
+[
+  {
+    "firstName": "Antonio",
+    "middleName": "M.",
+    "lastName": "Gomez",
+    "suffix": "",
+    "age": "35",
+    "email": "antonio.gomez@example.com",
+    "birthday": "1987-09-22",
+    "contact": "+1234567890",
+    "sex": "Male",
+    "address": {
+      "street": "123 Main Street",
+      "brgy": "Munisipyo",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "antoniogomez",
+    "password": "securepass123",
+    "type": "Head Admin",
+    "isApproved": "Registered"
+  },
+  {
+    "firstName": "Isabel",
+    "middleName": "P.",
+    "lastName": "Luna",
+    "suffix": "",
+    "age": "40",
+    "email": "isabel.luna@example.com",
+    "birthday": "1982-12-15",
+    "contact": "+9876543210",
+    "sex": "Female",
+    "address": {
+      "street": "456 Oak Avenue",
+      "brgy": "Munisipyo",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "isabelluna",
+    "password": "strongpassword456",
+    "type": "Head Admin",
+    "isApproved": "Registered"
+  },
+  {
+    "firstName": "Juanito",
+    "middleName": "C.",
+    "lastName": "Ramos",
+    "suffix": "",
+    "age": "45",
+    "email": "juanito.ramos@example.com",
+    "birthday": "1977-05-10",
+    "contact": "+1122334455",
+    "sex": "Male",
+    "address": {
+      "street": "789 Pine Street",
+      "brgy": "Munisipyo",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "juanitoramos",
+    "password": "securepass789",
+    "type": "Head Admin",
+    "isApproved": "Registered"
+  },
+  {
+    "firstName": "Elena",
+    "middleName": "D.",
+    "lastName": "Castillo",
+    "suffix": "",
+    "age": "38",
+    "email": "elena.castillo@example.com",
+    "birthday": "1984-03-18",
+    "contact": "+9988776655",
+    "sex": "Female",
+    "address": {
+      "street": "234 Cedar Lane",
+      "brgy": "Munisipyo",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "elenacastillo",
+    "password": "strongpass234",
+    "type": "Head Admin",
+    "isApproved": "Registered"
+  },
+  {
+    "firstName": "Ricardo",
+    "middleName": "E.",
+    "lastName": "Garcia",
+    "suffix": "",
+    "age": "42",
+    "email": "ricardo.garcia@example.com",
+    "birthday": "1979-08-05",
+    "contact": "+5544332211",
+    "sex": "Male",
+    "address": {
+      "street": "567 Birch Street",
+      "brgy": "Munisipyo",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "ricardogarcia",
+    "password": "securepass567",
+    "type": "Head Admin",
+    "isApproved": "Registered"
+  }
+]

@@ -50,7 +50,7 @@ const AddBarangayOfficial = async (req, res) => {
       brgy,
       picture: file
         ? {
-            link: `https://drive.google.com/uc?export=view&id=${file_id}`,
+            link: `https://drive.google.com/thumbnail?id=${file_id}&sz=w1000`,
             id: file_id,
             name: file_name,
           }
@@ -117,7 +117,7 @@ const UpdateBarangayOfficial = async (req, res) => {
             ? {
                 id: file_id,
                 name: file_name,
-                link: `https://drive.google.com/uc?export=view&id=${file_id}`,
+                link: `https://drive.google.com/thumbnail?id=${file_id}&sz=w1000`,
               }
             : picture,
         },

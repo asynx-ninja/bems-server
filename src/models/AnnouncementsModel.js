@@ -105,4 +105,4 @@ const AnnouncementsSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Announcements", AnnouncementsSchema);
+module.exports = mongoose.model("events", AnnouncementsSchema);

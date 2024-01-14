@@ -70,7 +70,7 @@ const AddTouristSpotInfo = async (req, res) => {
       );
 
       images.push({
-        link: `https://drive.google.com/uc?export=view&id=${id}`,
+        link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
         id,
         name,
       });
@@ -102,63 +102,64 @@ const compareArrays = (array1, array2) => {
 };
 
 const UpdateTouristSpotInfo = async (req, res) => {
-  try {
-    const { id } = req.params;
-    let { body, files } = req;
-    let currentFiles = [];
-    body = JSON.parse(JSON.stringify(req.body));
-    let { saved, touristspot } = body;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "Invalid tourist spot ID" });
-    }
-
-    if (saved !== undefined) {
-      if (Array.isArray(saved)) {
-        currentFiles = saved.map((item) => JSON.parse(item));
-      } else {
-        currentFiles.push(JSON.parse(saved));
+    try {
+      const { id } = req.params;
+      let { body, files } = req;
+      let currentFiles = [];
+      body = JSON.parse(JSON.stringify(req.body));
+      let { saved, touristspot } = body;
+  
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: "Invalid tourist spot ID" });
       }
-    }
-
-    let fileArray = [...currentFiles];
-    touristspot = JSON.parse(body.touristspot);
-
-    const fullItem = touristspot.image;
-    const toBeDeletedItems = compareArrays(fullItem, currentFiles);
-
-    for (const item of toBeDeletedItems) {
-      await deletePicDrive(item.id, touristspot.brgy, "T");
-    }
-
-    if (files) {
-      for (let f = 0; f < files.length; f += 1) {
-        const { id, name } = await uploadPicDrive(files[f], touristspot.brgy, "T");
-
-        const file = {
-          link: `https://drive.google.com/uc?export=view&id=${id}`,
-          id,
-          name,
-        };
-        fileArray.push(file);
+  
+      if (saved !== undefined) {
+        if (Array.isArray(saved)) {
+          currentFiles = saved.map((item) => JSON.parse(item));
+        } else {
+          currentFiles.push(JSON.parse(saved));
+        }
       }
+  
+      let fileArray = [...currentFiles];
+      touristspot = JSON.parse(body.touristspot);
+  
+      const fullItem = touristspot.image;
+      const toBeDeletedItems = compareArrays(fullItem, currentFiles);
+  
+      for (const item of toBeDeletedItems) {
+        await deletePicDrive(item.id,  touristspot.section, "T");
+      }
+  
+      if (files) {
+        for (let f = 0; f < files.length; f += 1) {
+          const { id, name } = await uploadPicDrive(files[f], touristspot.section, "T");
+  
+          const file = {
+            link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+            id,
+            name,
+          };
+          fileArray.push(file);
+        }
+      }
+  
+      const result = await TouristSpot.findOneAndUpdate(
+        { _id: id },
+        {
+          name: touristspot.name,
+          details: touristspot.details,
+          section: touristspot.section,
+          brgy: touristspot.brgy,
+          image: fileArray,
+        },
+        { new: true }
+      );
+  
+      res.status(200).json(result);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
-
-    const result = await TouristSpot.findOneAndUpdate(
-      { _id: id },
-      {
-        name: touristspot.name,
-        details: touristspot.details,
-        brgy: touristspot.brgy,
-        image: fileArray,
-      },
-      { new: true }
-    );
-
-    res.status(200).json(result);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
 };
 
 

@@ -223,7 +223,7 @@ const UpdateUser = async (req, res) => {
           suffix: user.suffix,
           religion: user.religion,
           email: user.email,
-          username:user.username,
+          username: user.username,
           birthday: user.birthday,
           birthplace: user.birthplace,
           age: user.age,
@@ -237,7 +237,7 @@ const UpdateUser = async (req, res) => {
           isHead: user.isHead,
           profile: file
             ? {
-                link: `https://drive.google.com/uc?export=view&id=${id}`,
+                link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
                 id,
                 name,
               }
