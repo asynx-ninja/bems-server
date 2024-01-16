@@ -110,6 +110,11 @@ const InquiriesSchema = new Schema(
       required: true,
       index: true,
     },
+    user_id: {
+      type: String,
+      default: "",
+      required: true,
+    },
   },
   { timestamps: true }
 );
