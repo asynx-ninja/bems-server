@@ -110,8 +110,13 @@ const InquiriesSchema = new Schema(
       required: true,
       index: true,
     },
+    user_id: {
+      type: String,
+      default: "",
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Inquiries", InquiriesSchema);
+module.exports = mongoose.model("inquiries", InquiriesSchema);

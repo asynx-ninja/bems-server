@@ -141,4 +141,4 @@ const RequestSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Request", RequestSchema);
+module.exports = mongoose.model("service_requests", RequestSchema);

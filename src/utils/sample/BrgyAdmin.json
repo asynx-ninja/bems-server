@@ -1,0 +1,102 @@
+[
+  {
+    "firstName": "Jose",
+    "middleName": "A.",
+    "lastName": "Lopez",
+    "suffix": "",
+    "age": "36",
+    "email": "jose.lopez@example.com",
+    "birthday": "1986-08-14",
+    "contact": "+1234567890",
+    "sex": "Male",
+    "address": {
+      "street": "123 Main Street",
+      "brgy": "Balite",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "joselopez",
+    "password": "securepass123",
+    "type": "Brgy Admin",
+    "isApproved": "Registered"
+  },
+  {
+    "firstName": "Lourdes",
+    "middleName": "B.",
+    "lastName": "Gonzalez",
+    "suffix": "",
+    "age": "31",
+    "email": "lourdes.gonzalez@example.com",
+    "birthday": "1991-03-28",
+    "contact": "+9876543210",
+    "sex": "Female",
+    "address": {
+      "street": "456 Oak Avenue",
+      "brgy": "Burgos",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "lourdesgonzalez",
+    "password": "strongpassword456",
+    "type": "Brgy Admin",
+    "isApproved": "Registered"
+  },
+  {
+    "firstName": "Ramon",
+    "middleName": "C.",
+    "lastName": "Santos",
+    "suffix": "",
+    "age": "29",
+    "email": "ramon.santos@example.com",
+    "birthday": "1993-12-05",
+    "contact": "+1122334455",
+    "sex": "Male",
+    "address": {
+      "street": "789 Pine Street",
+      "brgy": "Geronimo",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "ramonsantos",
+    "password": "securepass789",
+    "type": "Brgy Admin",
+    "isApproved": "Registered"
+  },
+  {
+    "firstName": "Imelda",
+    "middleName": "D.",
+    "lastName": "Rivera",
+    "suffix": "",
+    "age": "34",
+    "email": "imelda.rivera@example.com",
+    "birthday": "1988-07-20",
+    "contact": "+9988776655",
+    "sex": "Female",
+    "address": {
+      "street": "234 Cedar Lane",
+      "brgy": "Macabud",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "imeldarivera",
+    "password": "strongpass234",
+    "type": "Brgy Admin",
+    "isApproved": "Registered"
+  },
+  {
+    "firstName": "Manuel",
+    "middleName": "E.",
+    "lastName": "Guzman",
+    "suffix": "",
+    "age": "37",
+    "email": "manuel.guzman@example.com",
+    "birthday": "1985-02-18",
+    "contact": "+5544332211",
+    "sex": "Male",
+    "address": {
+      "street": "567 Birch Street",
+      "brgy": "Manggahan",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "manuelguzman",
+    "password": "securepass567",
+    "type": "Brgy Admin",
+    "isApproved": "Registered"
+  }
+]

@@ -55,4 +55,4 @@ const BrgyInfoSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Brgy_Info", BrgyInfoSchema);
+module.exports = mongoose.model("brgy_info", BrgyInfoSchema);

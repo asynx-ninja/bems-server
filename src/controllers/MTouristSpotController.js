@@ -50,7 +50,7 @@ const AddTouristSpotInfo = async (req, res) => {
       );
 
       images.push({
-        link: `https://drive.google.com/uc?export=view&id=${id}`,
+        link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
         id,
         name,
       });
@@ -116,7 +116,7 @@ const UpdateTouristSpotInfo = async (req, res) => {
           const { id, name } = await uploadPicDrive(files[f], touristspot.section, "T");
   
           const file = {
-            link: `https://drive.google.com/uc?export=view&id=${id}`,     
+            link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
             id,
             name,
           };
