@@ -8,9 +8,10 @@ const {
   uploadFileDrive,
   deleteFileDrive,
 } = require("../utils/Drive");
+
 const GetAllEventsApplication = async (req, res) => {
   try {
-    const { brgy, archived, id, status, type, page } = req.query;
+    const { brgy, archived, id, status, page } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
@@ -25,36 +26,43 @@ const GetAllEventsApplication = async (req, res) => {
     if (status && status.toLowerCase() !== "all") {
       query.status = status;
     }
-    if (type && type.toLowerCase() !== "all") {
-      query.type = type;
-    }
 
-    const totalEventsApplications = await EventsApplication.countDocuments(query);
+    const totalEventsApplications = await EventsApplication.countDocuments(
+      query
+    );
 
     const result = await EventsApplication.find(query)
       .skip(skip)
       .limit(itemsPerPage);
 
     return !result
-      ? res.status(400).json({ error: `No such events application for Barangay ${brgy}` })
-      : res.status(200).json({ result, pageCount: Math.ceil(totalEventsApplications / itemsPerPage) });
+      ? res
+          .status(400)
+          .json({ error: `No such events application for Barangay ${brgy}` })
+      : res
+          .status(200)
+          .json({
+            result,
+            pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
+          });
   } catch (err) {
     res.status(400).json(err.message);
   }
 };
 
-
 const GetEventsApplicationByUser = async (req, res) => {
-  try{
+  try {
     const { user_id } = req.query;
 
-    const result = await EventsApplication.find({"form.user_id.value": user_id})
+    const result = await EventsApplication.find({
+      "form.user_id.value": user_id,
+    });
 
     return !result
       ? res.status(400).json({ error: `No such event application` })
       : res.status(200).json(result);
-  }catch(error){
-    console.log(error)
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -64,11 +72,11 @@ const CreateEventsApplication = async (req, res) => {
     const newBody = JSON.parse(body.form);
     // console.log(newBody, files);
 
-    const req_id = GenerateID(newBody.brgy, "R", newBody.name);
+    const app_id = GenerateID(newBody.brgy, "A", newBody.event_name);
     const folder_id = await createFolder(
       ReturnBrgyFormat(newBody.brgy),
-      "R",
-      req_id
+      "A",
+      app_id
     );
     let fileArray = [];
 
@@ -78,7 +86,7 @@ const CreateEventsApplication = async (req, res) => {
 
         fileArray.push({
           link: files[f].mimetype.includes("image")
-            ? `https://drive.google.com/uc?export=view&id=${id}`
+            ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000`
             : `https://drive.google.com/file/d/${id}/view`,
           id,
           name,
@@ -87,15 +95,12 @@ const CreateEventsApplication = async (req, res) => {
     }
 
     const result = await EventsApplication.create({
-      req_id,
-      service_id: newBody.service_id,
-      service_name: newBody.name,
-      type: newBody.service_type,
-      fee: newBody.fee,
+      application_id: app_id,
+      event_id: newBody.event_id,
+      event_name: newBody.event_name,
       form: newBody.form,
       file: fileArray.length > 0 ? fileArray : [],
       brgy: newBody.brgy,
-      payment: {},
       response: [],
       version: newBody.version,
       folder_id: folder_id,
@@ -109,16 +114,23 @@ const CreateEventsApplication = async (req, res) => {
 
 const RespondToEventsApplication = async (req, res) => {
   try {
-    const { req_id, user_type } = req.query;
+    const { app_id, user_type } = req.query;
     const { body, files } = req;
 
-    const { sender, message, status, date, isRepliable, folder_id, last_sender, last_array } = JSON.parse(
-      body.response
-    );
+    const {
+      sender,
+      message,
+      status,
+      date,
+      isRepliable,
+      folder_id,
+      last_sender,
+      last_array,
+    } = JSON.parse(body.response);
 
     let fileArray = [];
 
-    if (!mongoose.Types.ObjectId.isValid(req_id)) {
+    if (!mongoose.Types.ObjectId.isValid(app_id)) {
       return res.status(400).json({ error: "No such event application" });
     }
 
@@ -128,7 +140,7 @@ const RespondToEventsApplication = async (req, res) => {
 
         fileArray.push({
           link: files[f].mimetype.includes("image")
-            ? `https://drive.google.com/uc?export=view&id=${id}`
+            ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000`
             : `https://drive.google.com/file/d/${id}/view`,
           id,
           name,
@@ -136,25 +148,25 @@ const RespondToEventsApplication = async (req, res) => {
       }
     }
 
-    if(user_type){
+    if (user_type) {
       await EventsApplication.findByIdAndUpdate(
-        { _id: req_id},
+        { _id: app_id },
         {
           $set: {
             [`response.${last_array}`]: {
-                sender: last_sender.sender,
-                message: last_sender.message,
-                date: last_sender.date,
-                file: last_sender.file,
-                isRepliable: false,
-            }
-          }
+              sender: last_sender.sender,
+              message: last_sender.message,
+              date: last_sender.date,
+              file: last_sender.file,
+              isRepliable: false,
+            },
+          },
         }
-      )
+      );
     }
 
     const result = await EventsApplication.findByIdAndUpdate(
-      { _id: req_id },
+      { _id: app_id },
       {
         $push: {
           response: {
@@ -203,5 +215,5 @@ module.exports = {
   GetEventsApplicationByUser,
   CreateEventsApplication,
   RespondToEventsApplication,
-  ArchiveEventsApplication
+  ArchiveEventsApplication,
 };

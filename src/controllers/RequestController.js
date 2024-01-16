@@ -8,6 +8,7 @@ const {
   uploadFileDrive,
   deleteFileDrive,
 } = require("../utils/Drive");
+
 const GetAllRequest = async (req, res) => {
   try {
     const { brgy, archived, id, status, type, page } = req.query;
@@ -25,36 +26,36 @@ const GetAllRequest = async (req, res) => {
     if (status && status.toLowerCase() !== "all") {
       query.status = status;
     }
+
     if (type && type.toLowerCase() !== "all") {
       query.type = type;
     }
 
     const totalRequests = await Request.countDocuments(query);
 
-    const result = await Request.find(query)
-      .skip(skip)
-      .limit(itemsPerPage);
+    const result = await Request.find(query).skip(skip).limit(itemsPerPage);
 
     return !result
       ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
-      : res.status(200).json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage) });
+      : res
+          .status(200)
+          .json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage) });
   } catch (err) {
     res.status(400).json(err.message);
   }
 };
 
-
 const GetRequestByUser = async (req, res) => {
-  try{
+  try {
     const { user_id } = req.query;
 
-    const result = await Request.find({"form.user_id.value": user_id})
+    const result = await Request.find({ "form.user_id.value": user_id });
 
     return !result
       ? res.status(400).json({ error: `No such request` })
       : res.status(200).json(result);
-  }catch(error){
-    console.log(error)
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -112,9 +113,16 @@ const RespondToRequest = async (req, res) => {
     const { req_id, user_type } = req.query;
     const { body, files } = req;
 
-    const { sender, message, status, date, isRepliable, folder_id, last_sender, last_array } = JSON.parse(
-      body.response
-    );
+    const {
+      sender,
+      message,
+      status,
+      date,
+      isRepliable,
+      folder_id,
+      last_sender,
+      last_array,
+    } = JSON.parse(body.response);
 
     let fileArray = [];
 
@@ -136,21 +144,21 @@ const RespondToRequest = async (req, res) => {
       }
     }
 
-    if(user_type){
+    if (user_type) {
       await Request.findByIdAndUpdate(
-        { _id: req_id},
+        { _id: req_id },
         {
           $set: {
             [`response.${last_array}`]: {
-                sender: last_sender.sender,
-                message: last_sender.message,
-                date: last_sender.date,
-                file: last_sender.file,
-                isRepliable: false,
-            }
-          }
+              sender: last_sender.sender,
+              message: last_sender.message,
+              date: last_sender.date,
+              file: last_sender.file,
+              isRepliable: false,
+            },
+          },
         }
-      )
+      );
     }
 
     const result = await Request.findByIdAndUpdate(
@@ -203,5 +211,5 @@ module.exports = {
   GetRequestByUser,
   CreateRequest,
   RespondToRequest,
-  ArchiveRequest
+  ArchiveRequest,
 };

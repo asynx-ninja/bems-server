@@ -16,4 +16,5 @@ router.get("/", GetAllEventsApplication);
 router.post("/", upload.array("files", 10), CreateEventsApplication);
 router.patch("/", upload.array("files", 10), RespondToEventsApplication);
 router.patch("/archived/:id/:archived", ArchiveEventsApplication);
+
 module.exports = router;
