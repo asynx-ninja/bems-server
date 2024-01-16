@@ -7,12 +7,12 @@ const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 
 const GetUsers = async (req, res) => {
   try {
-    const { brgy, type, status, page } = req.query;
+    const { brgy, status, page } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
     let query = {
-      $and: [{ "address.brgy": brgy }, { type: type }, { isArchived: false }],
+      $and: [{ "address.brgy": brgy }, { isArchived: false }],
     };
 
     // If status is provided and not "all", add it to the query
