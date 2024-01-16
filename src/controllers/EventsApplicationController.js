@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Request = require("../models/RequestModel");
+const EventsApplication = require("../models/EventsApplicationModel");
 const GenerateID = require("../functions/GenerateID");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
@@ -8,7 +8,7 @@ const {
   uploadFileDrive,
   deleteFileDrive,
 } = require("../utils/Drive");
-const GetAllRequest = async (req, res) => {
+const GetAllEventsApplication = async (req, res) => {
   try {
     const { brgy, archived, id, status, type, page } = req.query;
     const itemsPerPage = 10; // Number of items per page
@@ -29,36 +29,36 @@ const GetAllRequest = async (req, res) => {
       query.type = type;
     }
 
-    const totalRequests = await Request.countDocuments(query);
+    const totalEventsApplications = await EventsApplication.countDocuments(query);
 
-    const result = await Request.find(query)
+    const result = await EventsApplication.find(query)
       .skip(skip)
       .limit(itemsPerPage);
 
     return !result
-      ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
-      : res.status(200).json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage) });
+      ? res.status(400).json({ error: `No such events application for Barangay ${brgy}` })
+      : res.status(200).json({ result, pageCount: Math.ceil(totalEventsApplications / itemsPerPage) });
   } catch (err) {
     res.status(400).json(err.message);
   }
 };
 
 
-const GetRequestByUser = async (req, res) => {
+const GetEventsApplicationByUser = async (req, res) => {
   try{
     const { user_id } = req.query;
 
-    const result = await Request.find({"form.user_id.value": user_id})
+    const result = await EventsApplication.find({"form.user_id.value": user_id})
 
     return !result
-      ? res.status(400).json({ error: `No such request` })
+      ? res.status(400).json({ error: `No such event application` })
       : res.status(200).json(result);
   }catch(error){
     console.log(error)
   }
 };
 
-const CreateRequest = async (req, res) => {
+const CreateEventsApplication = async (req, res) => {
   try {
     const { body, files } = req;
     const newBody = JSON.parse(body.form);
@@ -78,7 +78,7 @@ const CreateRequest = async (req, res) => {
 
         fileArray.push({
           link: files[f].mimetype.includes("image")
-            ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000`
+            ? `https://drive.google.com/uc?export=view&id=${id}`
             : `https://drive.google.com/file/d/${id}/view`,
           id,
           name,
@@ -86,7 +86,7 @@ const CreateRequest = async (req, res) => {
       }
     }
 
-    const result = await Request.create({
+    const result = await EventsApplication.create({
       req_id,
       service_id: newBody.service_id,
       service_name: newBody.name,
@@ -107,7 +107,7 @@ const CreateRequest = async (req, res) => {
   }
 };
 
-const RespondToRequest = async (req, res) => {
+const RespondToEventsApplication = async (req, res) => {
   try {
     const { req_id, user_type } = req.query;
     const { body, files } = req;
@@ -119,7 +119,7 @@ const RespondToRequest = async (req, res) => {
     let fileArray = [];
 
     if (!mongoose.Types.ObjectId.isValid(req_id)) {
-      return res.status(400).json({ error: "No such request" });
+      return res.status(400).json({ error: "No such event application" });
     }
 
     if (files) {
@@ -128,7 +128,7 @@ const RespondToRequest = async (req, res) => {
 
         fileArray.push({
           link: files[f].mimetype.includes("image")
-            ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000`
+            ? `https://drive.google.com/uc?export=view&id=${id}`
             : `https://drive.google.com/file/d/${id}/view`,
           id,
           name,
@@ -137,7 +137,7 @@ const RespondToRequest = async (req, res) => {
     }
 
     if(user_type){
-      await Request.findByIdAndUpdate(
+      await EventsApplication.findByIdAndUpdate(
         { _id: req_id},
         {
           $set: {
@@ -153,7 +153,7 @@ const RespondToRequest = async (req, res) => {
       )
     }
 
-    const result = await Request.findByIdAndUpdate(
+    const result = await EventsApplication.findByIdAndUpdate(
       { _id: req_id },
       {
         $push: {
@@ -178,7 +178,7 @@ const RespondToRequest = async (req, res) => {
   }
 };
 
-const ArchiveRequest = async (req, res) => {
+const ArchiveEventsApplication = async (req, res) => {
   try {
     const { id, archived } = req.params;
 
@@ -186,7 +186,7 @@ const ArchiveRequest = async (req, res) => {
       return res.status(400).json({ error: "No such official" });
     }
 
-    const result = await Request.findOneAndUpdate(
+    const result = await EventsApplication.findOneAndUpdate(
       { _id: id },
       { $set: { isArchived: archived } },
       { returnOriginal: false, upsert: true }
@@ -199,9 +199,9 @@ const ArchiveRequest = async (req, res) => {
 };
 
 module.exports = {
-  GetAllRequest,
-  GetRequestByUser,
-  CreateRequest,
-  RespondToRequest,
-  ArchiveRequest
+  GetAllEventsApplication,
+  GetEventsApplicationByUser,
+  CreateEventsApplication,
+  RespondToEventsApplication,
+  ArchiveEventsApplication
 };
