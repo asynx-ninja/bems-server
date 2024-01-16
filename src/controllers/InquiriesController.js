@@ -71,17 +71,15 @@ const GetAdminInquiries = async (req, res) => {
 
 const GetStaffInquiries = async (req, res) => {
   try {
-    const { to, brgy, archived, page } = req.query;
+    const { brgy, archived, status, page } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const query = {
-      $and: [
-        { brgy: brgy },
-        { 'compose.to': to }, // Convert to lowercase for case-insensitive comparison
-        { isArchived: archived },
-      ],
-    };
+    const query = { brgy, isArchived: archived };
+
+    if (status && status.toLowerCase() !== "all") {
+      query.isApproved = status;
+    }
 
     const totalInquiries = await Inquiries.countDocuments(query);
 
@@ -90,9 +88,7 @@ const GetStaffInquiries = async (req, res) => {
       .limit(itemsPerPage);
 
     return !result
-      ? res
-          .status(400)
-          .json({ error: `No such Announcement for ${brgy}` })
+      ? res.status(400).json({ error: `No such inquiries for Barangay ${brgy}` })
       : res.status(200).json({ result, pageCount: Math.ceil(totalInquiries / itemsPerPage) });
   } catch (err) {
     res.send(err.message);
