@@ -24,7 +24,8 @@ const GetBarangayAnnouncement = async (req, res) => {
       $and: [{ brgy: brgy }, { isArchived: archived }],
     })
       .skip(skip)
-      .limit(itemsPerPage);
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
 
     const pageCount = Math.ceil(totalAnnouncements / itemsPerPage);
 
@@ -40,22 +41,30 @@ const GetBarangayAnnouncement = async (req, res) => {
 
 const GetAllOpenBrgyAnnouncement = async (req, res) => {
   try {
-    const { brgy } = req.query;
+    const { brgy, page } = req.query;
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const result = await Announcement.aggregate([
-      {
-        $match: {
-          $and: [
-            { isArchived: false },
-            { $or: [{ brgy: brgy }, { isOpen: true }] },
-          ],
-        },
-      },
-    ]);
+    const query = {
+      $and: [
+        { isArchived: false },
+        { $or: [{ brgy: brgy }, { isOpen: true }] },
+      ],
+    };
+
+    const totalAnnouncements = await Announcement.countDocuments(query);
+
+    const result = await Announcement.find(query)
+      .skip(skip)
+      .limit(itemsPerPage);
+
+    const pageCount = Math.ceil(totalAnnouncements / itemsPerPage);
 
     return !result
-      ? res.status(400).json({ error: `No such Announcement` })
-      : res.status(200).json(result);
+      ? res
+          .status(400)
+          .json({ error: `No such Announcement for Barangay ${brgy}` })
+      : res.status(200).json({ result, pageCount });
   } catch (err) {
     res.send(err.message);
   }
