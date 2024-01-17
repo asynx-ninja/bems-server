@@ -18,6 +18,22 @@ const GetAllEventsForm = async (req, res) => {
   }
 };
 
+const GetActiveForm = async (req, res) => {
+  try {
+    const { brgy, event_id } = req.query;
+
+    const result = await AnnouncementForm.find({
+      $and: [{ brgy: brgy }, { event_id: event_id }, { isActive: true }],
+    });
+
+    return !result
+      ? res.status(400).json({ error: "No such Service Form" })
+      : res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 const CreateEventsForm = async (req, res) => {
   try {
     const { brgy, event_id, checked } = req.query;
@@ -68,4 +84,5 @@ module.exports = {
   GetAllEventsForm,
   CreateEventsForm,
   UpdateEventsForm,
+  GetActiveForm,
 };
