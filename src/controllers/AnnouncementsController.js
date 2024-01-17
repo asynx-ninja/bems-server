@@ -56,7 +56,8 @@ const GetAllOpenBrgyAnnouncement = async (req, res) => {
 
     const result = await Announcement.find(query)
       .skip(skip)
-      .limit(itemsPerPage);
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
 
     const pageCount = Math.ceil(totalAnnouncements / itemsPerPage);
 
