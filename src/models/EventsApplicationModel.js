@@ -26,68 +26,46 @@ const ResponseSchema = new Schema(
       type: String,
       default: "",
     },
-    type: {
-      type: String,
-      enum: ["Admin", "Staff", "Resident"],
-    },
     message: {
       type: String,
       default: "",
     },
     date: {
       type: Date,
+      default: new Date(),
     },
     file: {
       type: [FileSchema],
+    },
+    isRepliable: {
+      type: Boolean,
+      default: false,
     },
   },
   { _id: false }
 );
 
-const InquiriesSchema = new Schema(
+const EventsApplicationSchema = new Schema(
   {
-    inq_id: {
+    application_id: {
+      type: String,
+      required: true,
+    },
+    event_id: {
       type: String,
       required: true,
       index: true,
     },
-    name: {
+    event_name: {
       type: String,
       required: true,
       index: true,
     },
-    email: {
-      type: String,
-      required: true,
-      index: true,
+    form: {
+      type: Schema.Types.Mixed,
     },
-    compose: {
-      subject: {
-        type: String,
-        required: true,
-      },
-      type: {
-        type: String,
-        enum: ["Admin", "Staff", "Resident"],
-      },
-      message: {
-        type: String,
-        default: "",
-      },
-      date: {
-        type: Date,
-      },
-      file: {
-        type: [FileSchema],
-      },
-
-      to: {
-        type: String,
-        enum: ["Admin", "Staff", "Resident"],
-      },
-    },
-    response: {
-      type: [ResponseSchema],
+    file: {
+      type: [FileSchema],
     },
     brgy: {
       type: String,
@@ -95,28 +73,37 @@ const InquiriesSchema = new Schema(
       required: true,
       index: true,
     },
+    status: {
+      type: String,
+      required: true,
+      enum: [
+        "Pending",
+        "Processing",
+        "Cancelled",
+        "Transaction Completed",
+        "Rejected",
+      ],
+      default: "Pending",
+      index: true,
+    },
+    response: {
+      type: [ResponseSchema],
+    },
+    version: {
+      type: String,
+      required: true,
+    },
     isArchived: {
       type: Boolean,
       required: true,
+      default: false,
     },
     folder_id: {
       type: String,
-      required: true,
-    },
-    isApproved: {
-      type: String,
-      enum: ["Completed", "In Progress", "Pending"],
-      default: "Pending",
-      required: true,
-      index: true,
-    },
-    user_id: {
-      type: String,
-      default: "",
       required: true,
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("inquiries", InquiriesSchema);
+module.exports = mongoose.model("EventsApplication", EventsApplicationSchema);
