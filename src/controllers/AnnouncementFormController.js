@@ -28,7 +28,7 @@ const GetActiveForm = async (req, res) => {
 
     return !result
       ? res.status(400).json({ error: "No such Service Form" })
-      : res.status(200).json(result.length > 0 ? true : false);
+      : res.status(200).json(result);
   } catch (err) {
     res.send(err.message);
   }
