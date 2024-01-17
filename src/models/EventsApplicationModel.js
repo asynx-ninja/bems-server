@@ -106,4 +106,4 @@ const EventsApplicationSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("EventsApplication", EventsApplicationSchema);
+module.exports = mongoose.model("application", EventsApplicationSchema);
