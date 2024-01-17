@@ -118,5 +118,25 @@
     "password": "kiko",
     "type": "Resident",
     "isApproved": "Pending"
+  },
+  {
+    "firstName": "Carl Louie",
+    "middleName": "C.",
+    "lastName": "Dalupe",
+    "suffix": "",
+    "age": 30,
+    "email": "michael.g@example.com",
+    "birthday": "1992-09-25",
+    "contact": "+1 (555) 345-6789",
+    "sex": "Male",
+    "address": {
+      "street": "202 Cedar St",
+      "brgy": "Balite",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "bukol",
+    "password": "bukol",
+    "type": "Resident",
+    "isApproved": "Pending"
   }
 ]
