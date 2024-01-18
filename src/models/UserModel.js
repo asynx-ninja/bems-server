@@ -137,6 +137,7 @@ const UserSchema = new Schema(
     },
     occupation: {
       type: String,
+      default: "",
     },
     civil_status: {
       type: String,

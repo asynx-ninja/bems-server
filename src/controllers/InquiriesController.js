@@ -85,18 +85,19 @@ const GetStaffInquiries = async (req, res) => {
 
     const totalInquiries = await Inquiries.countDocuments(query);
 
-    const result = await Inquiries.find(query).skip(skip).limit(itemsPerPage);
+    const result = await Inquiries.find(query)
+      .skip(skip)
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
 
     return !result
       ? res
           .status(400)
           .json({ error: "No such inquiries for Barangay ${brgy}" })
-      : res
-          .status(200)
-          .json({
-            result,
-            pageCount: Math.ceil(totalInquiries / itemsPerPage),
-          });
+      : res.status(200).json({
+          result,
+          pageCount: Math.ceil(totalInquiries / itemsPerPage),
+        });
   } catch (err) {
     res.send(err.message);
   }
