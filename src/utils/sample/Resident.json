@@ -1,0 +1,142 @@
+[
+  {
+    "firstName": "John",
+    "middleName": "Doe",
+    "lastName": "Smith",
+    "suffix": "",
+    "age": 35,
+    "email": "john.doe@example.com",
+    "birthday": "1987-05-15",
+    "contact": "+1 (555) 123-4567",
+    "sex": "Male",
+    "address": {
+      "street": "123 Main St",
+      "brgy": "Balite",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "john_doe",
+    "password": "password123",
+    "type": "Resident",
+    "isApproved": "Pending"
+  },
+  {
+    "firstName": "Jane",
+    "middleName": "A.",
+    "lastName": "Johnson",
+    "suffix": "",
+    "age": 28,
+    "email": "jane.j@example.com",
+    "birthday": "1994-08-22",
+    "contact": "+1 (555) 987-6543",
+    "sex": "Female",
+    "address": {
+      "street": "456 Oak St",
+      "brgy": "Burgos",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "jane_a",
+    "password": "pass123",
+    "type": "Resident",
+    "isApproved": "Pending"
+  },
+  {
+    "firstName": "Alex",
+    "middleName": "M.",
+    "lastName": "Martinez",
+    "suffix": "",
+    "age": 40,
+    "email": "alex.m@example.com",
+    "birthday": "1982-11-10",
+    "contact": "+1 (555) 567-8901",
+    "sex": "Male",
+    "address": {
+      "street": "789 Pine St",
+      "brgy": "Geronimo",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "alex_m",
+    "password": "securepass",
+    "type": "Resident",
+    "isApproved": "Pending"
+  },
+  {
+    "firstName": "Emily",
+    "middleName": "R.",
+    "lastName": "Rodriguez",
+    "suffix": "",
+    "age": 25,
+    "email": "emily.r@example.com",
+    "birthday": "1997-02-18",
+    "contact": "+1 (555) 234-5678",
+    "sex": "Female",
+    "address": {
+      "street": "101 Maple St",
+      "brgy": "Macabud",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "emily_r",
+    "password": "em123",
+    "type": "Resident",
+    "isApproved": "Pending"
+  },
+  {
+    "firstName": "Michael",
+    "middleName": "G.",
+    "lastName": "Gomez",
+    "suffix": "",
+    "age": 30,
+    "email": "michael.g@example.com",
+    "birthday": "1992-09-25",
+    "contact": "+1 (555) 345-6789",
+    "sex": "Male",
+    "address": {
+      "street": "202 Cedar St",
+      "brgy": "Manggahan",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "michael_g",
+    "password": "mikepass",
+    "type": "Resident",
+    "isApproved": "Pending"
+  },
+  {
+    "firstName": "Kiko",
+    "middleName": "G.",
+    "lastName": "Panganiban",
+    "suffix": "",
+    "age": 30,
+    "email": "michael.g@example.com",
+    "birthday": "1992-09-25",
+    "contact": "+1 (555) 345-6789",
+    "sex": "Male",
+    "address": {
+      "street": "202 Cedar St",
+      "brgy": "Manggahan",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "kiko",
+    "password": "kiko",
+    "type": "Resident",
+    "isApproved": "Pending"
+  },
+  {
+    "firstName": "Carl Louie",
+    "middleName": "C.",
+    "lastName": "Dalupe",
+    "suffix": "",
+    "age": 30,
+    "email": "michael.g@example.com",
+    "birthday": "1992-09-25",
+    "contact": "+1 (555) 345-6789",
+    "sex": "Male",
+    "address": {
+      "street": "202 Cedar St",
+      "brgy": "Balite",
+      "city": "Rodriguez, Rizal"
+    },
+    "username": "bukol",
+    "password": "bukol",
+    "type": "Resident",
+    "isApproved": "Pending"
+  }
+]

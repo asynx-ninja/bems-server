@@ -10,32 +10,34 @@ const {
   deleteFileDrive,
 } = require("../utils/Drive");
 
+// RESIDENT ONLY
 const GetInquiries = async (req, res) => {
   try {
-    const { brgy, archived, status, page } = req.query;
+    const { id, brgy, archived, page } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const query = { brgy, isArchived: archived };
-
-    if (status && status.toLowerCase() !== "all") {
-      query.isApproved = status;
-    }
+    const query = { user_id: id, brgy, isArchived: archived };
 
     const totalInquiries = await Inquiries.countDocuments(query);
 
     const result = await Inquiries.find(query)
       .skip(skip)
-      .limit(itemsPerPage);
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
 
     return !result
-      ? res.status(400).json({ error: `No such inquiries for Barangay ${brgy}` })
-      : res.status(200).json({ result, pageCount: Math.ceil(totalInquiries / itemsPerPage) });
+      ? res
+          .status(400)
+          .json({ error: `No such inquiries for Barangay ${brgy}` })
+      : res.status(200).json({
+          result,
+          pageCount: Math.ceil(totalInquiries / itemsPerPage),
+        });
   } catch (err) {
     res.send(err.message);
   }
 };
-
 
 const GetAdminInquiries = async (req, res) => {
   try {
@@ -45,7 +47,7 @@ const GetAdminInquiries = async (req, res) => {
 
     const result = await Inquiries.find({
       $and: [
-        { 'compose.to': to }, // Convert to lowercase for case-insensitive comparison
+        { "compose.to": to }, // Convert to lowercase for case-insensitive comparison
         { isArchived: archived },
       ],
     })
@@ -54,7 +56,7 @@ const GetAdminInquiries = async (req, res) => {
 
     const totalInquiries = await Inquiries.countDocuments({
       $and: [
-        { 'compose.to': to }, // Convert to lowercase for case-insensitive comparison
+        { "compose.to": to }, // Convert to lowercase for case-insensitive comparison
         { isArchived: archived },
       ],
     });
@@ -85,10 +87,13 @@ const GetStaffInquiries = async (req, res) => {
 
     const result = await Inquiries.find(query)
       .skip(skip)
-      .limit(itemsPerPage);
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
 
     return !result
-      ? res.status(400).json({ error: `No such inquiries for Barangay ${brgy}` })
+      ? res
+          .status(400)
+          .json({ error: `No such Announcement for ${brgy}` })
       : res.status(200).json({ result, pageCount: Math.ceil(totalInquiries / itemsPerPage) });
   } catch (err) {
     res.send(err.message);
@@ -98,7 +103,7 @@ const GetStaffInquiries = async (req, res) => {
 const CreateInquiries = async (req, res) => {
   try {
     const { body, files } = req;
-    const { name, email, compose, brgy } = JSON.parse(body.inquiries);
+    const { name, email, compose, brgy, user_id } = JSON.parse(body.inquiries);
 
     let fileArray = [];
     const inq_id = GenerateID(brgy, "Q");
@@ -130,6 +135,7 @@ const CreateInquiries = async (req, res) => {
       folder_id,
       isApproved: "Pending",
       isArchived: false,
+      user_id,
     });
 
     res.status(200).json(result);
@@ -164,7 +170,7 @@ const RespondToInquiry = async (req, res) => {
     const { body, files } = req;
     console.log(body, files);
     const response = JSON.parse(body.response);
-    const { sender, type, message, date, folder_id } = response;
+    const { sender, type, message, date, folder_id, status } = response;
 
     let fileArray = [];
 
@@ -182,7 +188,6 @@ const RespondToInquiry = async (req, res) => {
       }
     }
 
-    console.log(response);
     const result = await Inquiries.findByIdAndUpdate(
       { _id: inq_id },
       {
@@ -196,7 +201,7 @@ const RespondToInquiry = async (req, res) => {
           },
         },
         $set: {
-          isApproved: "In Progress",
+          isApproved: status,
         },
       },
       { new: true }
@@ -211,14 +216,14 @@ const RespondToInquiry = async (req, res) => {
 const StatusInquiry = async (req, res) => {
   try {
     const { id } = req.params;
-   
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such inquiry" });
     }
 
     const result = await Inquiries.findOneAndUpdate(
       { _id: id },
-      { $set: { isApproved: "Completed"} },
+      { $set: { isApproved: "Completed" } },
       { new: true }
     );
 

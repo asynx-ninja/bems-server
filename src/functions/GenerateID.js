@@ -26,6 +26,7 @@ const GenerateID = (brgyName = "", code, type = "") => {
         : `BRGY-${brgy}-${code}-${type.toUpperCase()}-${dateStr}`;
     case "E":
     case "Q":
+    case "A":
       return brgy === "MUNISIPYO"
         ? `${brgy}-${code}-${dateStr}`
         : `BRGY-${brgy}-${code}-${dateStr}`;
