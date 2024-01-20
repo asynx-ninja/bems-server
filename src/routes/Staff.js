@@ -13,6 +13,7 @@ const {
 const upload = require("../config/Multer");
 
 router.get("/:brgy", GetBrgyStaffs);
+router.get("/brgy_admin", GetBrgyStaffs)
 router.get("/specific/:id", GetSpecificBrgyStaff);
 router.get("/showArchived/:brgy", GetArchivedStaffs);
 router.post("/", CreateBrgyStaff);
