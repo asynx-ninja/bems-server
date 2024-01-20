@@ -173,7 +173,7 @@ const RespondToInquiry = async (req, res) => {
     const { body, files } = req;
     console.log(body, files);
     const response = JSON.parse(body.response);
-    const { sender, type, message, date, folder_id } = response;
+    const { sender, type, message, date, folder_id, status } = response;
 
     let fileArray = [];
 
@@ -204,7 +204,7 @@ const RespondToInquiry = async (req, res) => {
           },
         },
         $set: {
-          isApproved: "In Progress",
+          isApproved: status,
         },
       },
       { new: true }
