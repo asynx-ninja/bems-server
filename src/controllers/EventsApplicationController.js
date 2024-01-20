@@ -33,18 +33,17 @@ const GetAllEventsApplication = async (req, res) => {
 
     const result = await EventsApplication.find(query)
       .skip(skip)
-      .limit(itemsPerPage);
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
 
     return !result
       ? res
           .status(400)
           .json({ error: `No such events application for Barangay ${brgy}` })
-      : res
-          .status(200)
-          .json({
-            result,
-            pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
-          });
+      : res.status(200).json({
+          result,
+          pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
+        });
   } catch (err) {
     res.status(400).json(err.message);
   }
@@ -52,15 +51,28 @@ const GetAllEventsApplication = async (req, res) => {
 
 const GetEventsApplicationByUser = async (req, res) => {
   try {
-    const { user_id } = req.query;
+    const { user_id, page } = req.query;
 
-    const result = await EventsApplication.find({
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
+
+    const totalEventsApplications = await EventsApplication.countDocuments({
       "form.user_id.value": user_id,
     });
 
+    const result = await EventsApplication.find({
+      "form.user_id.value": user_id,
+    })
+      .skip(skip)
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
+
     return !result
       ? res.status(400).json({ error: `No such event application` })
-      : res.status(200).json(result);
+      : res.status(200).json({
+          result,
+          pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
+        });
   } catch (error) {
     console.log(error);
   }
