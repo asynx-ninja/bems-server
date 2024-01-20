@@ -91,18 +91,8 @@ const GetStaffInquiries = async (req, res) => {
       .sort({ createdAt: -1 });
 
     return !result
-<<<<<<<<< Temporary merge branch 1
       ? res.status(400).json({ error: `No such inquiries for Barangay ${brgy}` })
       : res.status(200).json({ result, pageCount: Math.ceil(totalInquiries / itemsPerPage) });
-=========
-      ? res
-          .status(400)
-          .json({ error: "No such inquiries for Barangay ${brgy}" })
-      : res.status(200).json({
-          result,
-          pageCount: Math.ceil(totalInquiries / itemsPerPage),
-        });
->>>>>>>>> Temporary merge branch 2
   } catch (err) {
     res.send(err.message);
   }
