@@ -91,9 +91,7 @@ const GetStaffInquiries = async (req, res) => {
       .sort({ createdAt: -1 });
 
     return !result
-      ? res
-          .status(400)
-          .json({ error: `No such Announcement for ${brgy}` })
+      ? res.status(400).json({ error: `No such inquiries for Barangay ${brgy}` })
       : res.status(200).json({ result, pageCount: Math.ceil(totalInquiries / itemsPerPage) });
   } catch (err) {
     res.send(err.message);
