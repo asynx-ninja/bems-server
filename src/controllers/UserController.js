@@ -55,19 +55,30 @@ const GetAdminUsers = async (req, res) => {
 
 const GetArchivedAdminUsers = async (req, res) => {
   try {
-    const { brgy } = req.query;
+    const { brgy, page } = req.query;
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const result = await User.find({
+    const query = {
       $and: [{ "address.brgy": brgy },{ isArchived: true }],
-    });
+    };
+
+    const result = await User.find(query)
+      .skip(skip)
+      .limit(itemsPerPage);
+
+    const totalUsers = await User.countDocuments(query);
+
+    const pageCount = Math.ceil(totalUsers / itemsPerPage);
 
     return !result
       ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
-      : res.status(200).json(result);
+      : res.status(200).json({ result, pageCount });
   } catch (err) {
     res.send(err.message);
   }
 };
+
 
 const GetSpecificUser = async (req, res) => {
   try {

@@ -90,15 +90,26 @@ const GetAllBrgyService = async (req, res) => {
 
 const GetAllPenBrgyService = async (req, res) => {
   try {
-    const { archived, status } = req.query;
+    const { archived, status, page } = req.query;
+    const itemsPerPage = 5; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const result = await Service.find({ isArchived: archived, isApproved: status });
+    const query = {
+      isArchived: archived,
+      isApproved: status
+    };
+
+    const totalServices = await Service.countDocuments(query);
+
+    const result = await Service.find(query)
+      .skip(skip)
+      .limit(itemsPerPage);
 
     if (result.length === 0) {
       return res.status(400).json({ error: "No services found." });
     }
 
-    return res.status(200).json(result);
+    return res.status(200).json({ result, pageCount: Math.ceil(totalServices / itemsPerPage) });
   } catch (err) {
     res.send(err.message);
   }
@@ -269,7 +280,7 @@ const UpdateServices = async (req, res) => {
           logo: logo === null ? service.collections.logo : logo,
           file: fileArray,
         },
-        isApproved: "Pending",
+        isApproved: service.isApproved,
       },
       { new: true }
     );
