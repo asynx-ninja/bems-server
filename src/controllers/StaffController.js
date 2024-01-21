@@ -8,7 +8,7 @@ const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 const GetBrgyStaffs = async (req, res) => {
   try {
     const { brgy } = req.params;
-    const { page } = req.query
+    const { page, type } = req.query
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
@@ -24,6 +24,11 @@ const GetBrgyStaffs = async (req, res) => {
         },
       ],
     };
+
+    if (type && type.toLowerCase() !== "all") {
+      query.type = type;
+    }
+
     const totalStaffs = await User.countDocuments(query);
 
     const result = await User.find(query)
