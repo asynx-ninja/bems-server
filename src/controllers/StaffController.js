@@ -197,6 +197,7 @@ const UpdateBrgyStaff = async (req, res) => {
               link: user.socials.twitter.link,
             },
           },
+          username: user.username,
         },
       },
       { new: true }
