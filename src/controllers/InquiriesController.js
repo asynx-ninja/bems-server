@@ -91,13 +91,8 @@ const GetStaffInquiries = async (req, res) => {
       .sort({ createdAt: -1 });
 
     return !result
-      ? res
-          .status(400)
-          .json({ error: "No such inquiries for Barangay ${brgy}" })
-      : res.status(200).json({
-          result,
-          pageCount: Math.ceil(totalInquiries / itemsPerPage),
-        });
+      ? res.status(400).json({ error: `No such inquiries for Barangay ${brgy}` })
+      : res.status(200).json({ result, pageCount: Math.ceil(totalInquiries / itemsPerPage) });
   } catch (err) {
     res.send(err.message);
   }
@@ -173,7 +168,7 @@ const RespondToInquiry = async (req, res) => {
     const { body, files } = req;
     console.log(body, files);
     const response = JSON.parse(body.response);
-    const { sender, type, message, date, folder_id } = response;
+    const { sender, type, message, date, folder_id, status } = response;
 
     let fileArray = [];
 
@@ -204,7 +199,7 @@ const RespondToInquiry = async (req, res) => {
           },
         },
         $set: {
-          isApproved: "In Progress",
+          isApproved: status,
         },
       },
       { new: true }
