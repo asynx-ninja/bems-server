@@ -7,7 +7,7 @@ const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 
 const GetUsers = async (req, res) => {
   try {
-    const { brgy, status, page } = req.query;
+    const { brgy, status, page, type } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
@@ -18,6 +18,9 @@ const GetUsers = async (req, res) => {
     // If status is provided and not "all", add it to the query
     if (status && status.toLowerCase() !== "all") {
       query.$and.push({ isApproved: status });
+    }
+    if (type && type.toLowerCase() !== "all") {
+      query.$and.push({ type: type });
     }
 
     const result = await User.find(query)
@@ -120,13 +123,21 @@ const GetAdminUsers = async (req, res) => {
 
 const GetArchivedAdminUsers = async (req, res) => {
   try {
-    const { brgy, page } = req.query;
+    const { brgy, page, type } = req.query;
+    console.log("Received Admin Type:", type);
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
     const query = {
-      $and: [{ "address.brgy": brgy },{ isArchived: true }],
+      $and: [{ "address.brgy": brgy }, { isArchived: true }],
     };
+
+    // Conditionally add the type filter
+    if (type && type.toLowerCase() !== "all") {
+      query.$and.push({ type: type });
+    }
+
+    console.log("Query after Type Filter:", query);
 
     const result = await User.find(query)
       .skip(skip)

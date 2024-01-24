@@ -152,10 +152,12 @@ const UserSchema = new Schema(
     isVoter: {
       type: Boolean,
       index: true,
+      default: false,
     },
     isHead: {
       type: Boolean,
       index: true,
+      default: false,
     },
     profile: {
       type: FileSchema,
