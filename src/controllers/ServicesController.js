@@ -33,11 +33,14 @@ const GetBrgyService = async (req, res) => {
 
     const result = await Service.find(query)
       .skip(skip)
-      .limit(itemsPerPage);
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
 
     return !result
       ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
-      : res.status(200).json({ result, pageCount: Math.ceil(totalServices / itemsPerPage) });
+      : res
+          .status(200)
+          .json({ result, pageCount: Math.ceil(totalServices / itemsPerPage) });
   } catch (err) {
     res.send(err.message);
   }
@@ -76,7 +79,7 @@ const GetAllBrgyService = async (req, res) => {
   try {
     const { archived } = req.query;
 
-    const result = await Service.find({ isArchived: archived});
+    const result = await Service.find({ isArchived: archived });
 
     if (result.length === 0) {
       return res.status(400).json({ error: "No services found." });

@@ -33,7 +33,10 @@ const GetAllRequest = async (req, res) => {
 
     const totalRequests = await Request.countDocuments(query);
 
-    const result = await Request.find(query).skip(skip).limit(itemsPerPage);
+    const result = await Request.find(query)
+      .skip(skip)
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
 
     return !result
       ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
@@ -84,13 +87,28 @@ const GetStatusPercentage = async (req, res) => {
 
 const GetRequestByUser = async (req, res) => {
   try {
-    const { user_id } = req.query;
+    const { user_id, page } = req.query;
 
-    const result = await Request.find({ "form.user_id.value": user_id });
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
+
+    const totalEventsApplications = await Request.countDocuments({
+      "form.user_id.value": user_id,
+    });
+
+    const result = await Request.find({
+      "form.user_id.value": user_id,
+    })
+      .skip(skip)
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
 
     return !result
-      ? res.status(400).json({ error: `No such request` })
-      : res.status(200).json(result);
+      ? res.status(400).json({ error: `No such event application` })
+      : res.status(200).json({
+          result,
+          pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
+        });
   } catch (error) {
     console.log(error);
   }
@@ -100,7 +118,7 @@ const CreateRequest = async (req, res) => {
   try {
     const { body, files } = req;
     const newBody = JSON.parse(body.form);
-    // console.log(newBody, files);
+    //console.log(newBody, files);
 
     const req_id = GenerateID(newBody.brgy, "R", newBody.name);
     const folder_id = await createFolder(
