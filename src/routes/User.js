@@ -3,6 +3,8 @@ const router = express.Router();
 
 const {
   GetUsers,
+  GetAllRegistered,
+  GetPerBrgyRegistered,
   GetAdminUsers,
   GetArchivedAdminUsers,
   GetSpecificUser,
@@ -16,6 +18,8 @@ const {
 const upload = require("../config/Multer");
 
 router.get("/", GetUsers);
+router.get("/allregistered", GetAllRegistered);
+router.get("/brgy_registered", GetPerBrgyRegistered);
 router.get("/admin", GetAdminUsers);
 router.get("/showArchivedAdmin", GetArchivedAdminUsers);
 router.get("/specific/:id", GetSpecificUser);

@@ -48,6 +48,164 @@ const GetAllRequest = async (req, res) => {
   }
 };
 
+const GetStatusPercentage = async (req, res) => {
+  try {
+    const statusCountsByBarangay = await Request.aggregate([
+      {
+        $group: {
+          _id: { brgy: "$brgy", status: "$status" },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $group: {
+          _id: "$_id.brgy",
+          statuses: {
+            $push: {
+              status: "$_id.status",
+              count: "$count",
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          brgy: "$_id",
+          statuses: 1,
+        },
+      },
+    ]);
+
+    res.json(statusCountsByBarangay);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+const GetRevenue = async (req, res) => {
+  try {
+    let matchCondition = { status: "Transaction Completed" };
+
+    // Extract query parameters
+    const { timeRange, date, week, month, year } = req.query;
+
+    // Adjust match condition based on the timeRange
+    if (timeRange) {
+      const today = new Date();
+      switch (timeRange) {
+        case "today":
+          matchCondition.createdAt = {
+            $gte: new Date(today.setHours(0, 0, 0, 0)),
+            $lt: new Date(today.setHours(23, 59, 59, 999)),
+          };
+          break;
+        case "weekly":
+          // Logic to adjust match condition for weekly
+          break;
+        case "monthly":
+          // Logic to adjust match condition for monthly
+          break;
+        case "annual":
+          if (year) {
+            const startYear = new Date(year, 0, 1); // January 1st
+            const endYear = new Date(year, 11, 31); // December 31st
+            matchCondition.createdAt = {
+              $gte: startYear,
+              $lt: endYear,
+            };
+          }
+          break;
+        case "specific":
+          // Logic for specific date, week, or month
+          break;
+        default:
+        // Handle default case or throw an error
+      }
+    }
+
+    const feeSummary = await Request.aggregate([
+      { $match: matchCondition },
+      { $group: { _id: "$brgy", totalFee: { $sum: "$fee" } } },
+    ]);
+
+    res.json(feeSummary);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+const GetEstRevenue = async (req, res) => {
+  try {
+    let matchCondition = {
+      status: { $in: ["Processing", "Paid", "Transaction Completed"] },
+      brgy: {
+        $in: [
+          "BALITE",
+          "BURGOS",
+          "GERONIMO",
+          "MACABUD",
+          "MANGGAHAN",
+          "MASCAP",
+          "PURAY",
+          "ROSARIO",
+          "SAN ISIDRO",
+          "SAN JOSE",
+          "SAN RAFAEL",
+        ],
+      },
+    };
+
+    // Extract query parameters
+    const { timeRange, date, week, month, year } = req.query;
+
+    // Adjust match condition based on the timeRange
+    if (timeRange) {
+      const today = new Date();
+      switch (timeRange) {
+        case "today":
+          matchCondition.createdAt = {
+            $gte: new Date(today.setHours(0, 0, 0, 0)),
+            $lt: new Date(today.setHours(23, 59, 59, 999)),
+          };
+          break;
+        case "weekly":
+          // Logic to adjust match condition for weekly
+          break;
+        case "monthly":
+          // Logic to adjust match condition for monthly
+          break;
+        case "annual":
+          if (year) {
+            const startYear = new Date(year, 0, 1); // January 1st
+            const endYear = new Date(year, 11, 31); // December 31st
+            matchCondition.createdAt = {
+              $gte: startYear,
+              $lt: endYear,
+            };
+          }
+          break;
+        case "specific":
+          // Logic for specific date, week, or month
+          break;
+        default:
+        // Handle default case or throw an error
+      }
+    }
+
+    const summary = await Request.aggregate([
+      { $match: matchCondition },
+      { $group: { _id: "$brgy", totalFee: { $sum: "$fee" } } },
+      { $sort: { _id: 1 } },
+    ]);
+
+    res.json(summary);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+
 const GetRequestByUser = async (req, res) => {
   try {
     const { user_id, page } = req.query;
@@ -226,6 +384,9 @@ const ArchiveRequest = async (req, res) => {
 
 module.exports = {
   GetAllRequest,
+  GetStatusPercentage,
+  GetRevenue,
+  GetEstRevenue,
   GetRequestByUser,
   CreateRequest,
   RespondToRequest,

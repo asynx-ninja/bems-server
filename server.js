@@ -36,7 +36,13 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "*", 
+    
+    credentials: true,
+  })
+);
 
 // Routes
 app.use("/api/services", ServicesRoutes);

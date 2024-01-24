@@ -19,8 +19,8 @@ const ReturnBarangay = (brgyName, type) => {
         return BrgyKeys[brgyName].info;
       case "Q":
         return BrgyKeys[brgyName].inquiries;
-      case "H":
-        return BrgyKeys[brgyName].homepage;
+      case "A":
+        return BrgyKeys[brgyName].aboutus;
       case "SI":
         return BrgyKeys[brgyName].services;
       case "T":

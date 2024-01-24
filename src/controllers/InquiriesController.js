@@ -38,17 +38,64 @@ const GetInquiries = async (req, res) => {
     res.send(err.message);
   }
 };
+// Backend API endpoint to get the number of inquiries in each status for every barangay
+const GetInquiriesStatus = async (req, res) => {
+  try {
+    const barangays = [
+      "BALITE", "BURGOS", "GERONIMO", "MACABUD", "MANGGAHAN", 
+      "MASCAP", "PURAY", "ROSARIO", "SAN ISIDRO", "SAN JOSE", "SAN RAFAEL"
+    ];
+
+    const inquiriesByStatusAndBarangay = await Inquiries.aggregate([
+      {
+        $match: {
+          brgy: { $in: barangays }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            status: "$isApproved",
+            barangay: "$brgy",
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          status: "$_id.status",
+          barangay: "$_id.barangay",
+          count: 1,
+        },
+      },
+    ]);
+
+    res.json(inquiriesByStatusAndBarangay);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 
 const GetAdminInquiries = async (req, res) => {
   try {
-    const { to, archived, page } = req.query;
+    const { to, archived, page, status } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
+    // Initialize the query as an empty object
+    const query = {};
+
+    if (status && status.toLowerCase() !== "all") {
+      query.isApproved = status;
+    }
+
     const result = await Inquiries.find({
       $and: [
-        { "compose.to": to }, // Convert to lowercase for case-insensitive comparison
+        { "compose.to": to },
         { isArchived: archived },
+        query, // Include the query object here
       ],
     })
       .skip(skip)
@@ -56,8 +103,9 @@ const GetAdminInquiries = async (req, res) => {
 
     const totalInquiries = await Inquiries.countDocuments({
       $and: [
-        { "compose.to": to }, // Convert to lowercase for case-insensitive comparison
+        { "compose.to": to },
         { isArchived: archived },
+        query, // Include the query object here as well
       ],
     });
 
@@ -70,6 +118,7 @@ const GetAdminInquiries = async (req, res) => {
     res.send(err.message);
   }
 };
+
 
 const GetStaffInquiries = async (req, res) => {
   try {
@@ -233,6 +282,7 @@ const StatusInquiry = async (req, res) => {
 
 module.exports = {
   GetInquiries,
+  GetInquiriesStatus,
   GetAdminInquiries,
   GetStaffInquiries,
   ArchiveInquiry,

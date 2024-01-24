@@ -5,6 +5,7 @@ const upload = require("../config/Multer");
 
 const {
   GetInquiries,
+  GetInquiriesStatus,
   GetAdminInquiries,
   GetStaffInquiries,
   CreateInquiries,
@@ -14,6 +15,7 @@ const {
 } = require("../controllers/InquiriesController");
 
 router.get("/", GetInquiries);
+router.get("/inquiries_percent", GetInquiriesStatus);
 router.get("/admininquiries", GetAdminInquiries);
 router.get("/staffinquiries", GetStaffInquiries);
 router.post("/", upload.array("files", 10), CreateInquiries);
