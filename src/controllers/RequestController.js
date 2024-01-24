@@ -102,15 +102,52 @@ const GetRevenue = async (req, res) => {
           };
           break;
         case "weekly":
-          // Logic to adjust match condition for weekly
+          if (req.query.week) {
+            const weekDate = new Date(req.query.week);
+            // Set to the start of the week (e.g., Monday)
+            const weekStart = new Date(weekDate);
+            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1); // Adjust depending on how your week is defined (Sunday or Monday as start)
+            weekStart.setUTCHours(0, 0, 0, 0);
+
+            // Set to the end of the week
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6); // 6 days later
+            weekEnd.setUTCHours(23, 59, 59, 999);
+
+            matchCondition.createdAt = {
+              $gte: weekStart,
+              $lt: weekEnd,
+            };
+          }
           break;
         case "monthly":
-          // Logic to adjust match condition for monthly
+          if (year && month) {
+            const startOfMonth = new Date(year, month - 1, 1); // Month is 0-indexed
+            const endOfMonth = new Date(year, month, 0); // Get the last day of the month
+
+            matchCondition.createdAt = {
+              $gte: startOfMonth,
+              $lt: endOfMonth,
+            };
+          }
           break;
+
         case "annual":
           if (year) {
-            const startYear = new Date(year, 0, 1); // January 1st
-            const endYear = new Date(year, 11, 31); // December 31st
+            const startYear = new Date(year, 0, 1); // January 1st of the specified year
+            const endYear = new Date(year, 11, 31); // December 31st of the specified year
+
+            matchCondition.createdAt = {
+              $gte: startYear,
+              $lt: endYear,
+            };
+          }
+          break;
+
+        case "annual":
+          if (req.query.year) {
+            const startYear = new Date(req.query.year, 0, 1); // January 1st
+            const endYear = new Date(req.query.year, 11, 31); // December 31st
             matchCondition.createdAt = {
               $gte: startYear,
               $lt: endYear,
@@ -118,8 +155,18 @@ const GetRevenue = async (req, res) => {
           }
           break;
         case "specific":
-          // Logic for specific date, week, or month
-          break;
+          if (req.query.specificDate) {
+            const specificDate = new Date(req.query.specificDate);
+            // Ensure the date is set to the beginning of the day in UTC
+            specificDate.setUTCHours(0, 0, 0, 0);
+            const nextDay = new Date(specificDate);
+            nextDay.setUTCDate(specificDate.getUTCDate() + 1);
+
+            matchCondition.createdAt = {
+              $gte: specificDate,
+              $lt: nextDay,
+            };
+          }
         default:
         // Handle default case or throw an error
       }
@@ -170,23 +217,59 @@ const GetEstRevenue = async (req, res) => {
           };
           break;
         case "weekly":
-          // Logic to adjust match condition for weekly
+          if (req.query.week) {
+            const weekDate = new Date(req.query.week);
+            // Set to the start of the week (e.g., Monday)
+            const weekStart = new Date(weekDate);
+            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1); // Adjust depending on how your week is defined (Sunday or Monday as start)
+            weekStart.setUTCHours(0, 0, 0, 0);
+
+            // Set to the end of the week
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6); // 6 days later
+            weekEnd.setUTCHours(23, 59, 59, 999);
+
+            matchCondition.createdAt = {
+              $gte: weekStart,
+              $lt: weekEnd,
+            };
+          }
           break;
         case "monthly":
-          // Logic to adjust match condition for monthly
+          if (year && month) {
+            const startOfMonth = new Date(year, month - 1, 1); // Month is 0-indexed
+            const endOfMonth = new Date(year, month, 0); // Get the last day of the month
+
+            matchCondition.createdAt = {
+              $gte: startOfMonth,
+              $lt: endOfMonth,
+            };
+          }
           break;
         case "annual":
-          if (year) {
-            const startYear = new Date(year, 0, 1); // January 1st
-            const endYear = new Date(year, 11, 31); // December 31st
+          if (req.query.year) {
+            const startYear = new Date(req.query.year, 0, 1); // January 1st
+            const endYear = new Date(req.query.year, 11, 31); // December 31st
             matchCondition.createdAt = {
               $gte: startYear,
               $lt: endYear,
             };
           }
           break;
+
         case "specific":
-          // Logic for specific date, week, or month
+          if (req.query.specificDate) {
+            const specificDate = new Date(req.query.specificDate);
+            // Ensure the date is set to the beginning of the day in UTC
+            specificDate.setUTCHours(0, 0, 0, 0);
+            const nextDay = new Date(specificDate);
+            nextDay.setUTCDate(specificDate.getUTCDate() + 1);
+
+            matchCondition.createdAt = {
+              $gte: specificDate,
+              $lt: nextDay,
+            };
+          }
           break;
         default:
         // Handle default case or throw an error
@@ -204,7 +287,6 @@ const GetEstRevenue = async (req, res) => {
     res.status(500).send(error);
   }
 };
-
 
 const GetRequestByUser = async (req, res) => {
   try {
