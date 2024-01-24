@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { hash } = require("../config/BCrypt");
 const User = require("../models/UserModel");
 const GenerateID = require("../functions/GenerateID");
-const moment = require('moment');
+
 const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 
 const GetUsers = async (req, res) => {
