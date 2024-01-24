@@ -21,10 +21,12 @@ const GetAboutusInformation = async (req, res) => {
       .limit(itemsPerPage);
 
     const pageCount = Math.ceil(totalInformation / itemsPerPage);
-    console.log(result)
+    console.log(result);
     return result
       ? res.status(200).json({ result, pageCount })
-      : res.status(400).json({ error: `No officials found for Municipality ${brgy}` });
+      : res
+          .status(400)
+          .json({ error: `No officials found for Municipality ${brgy}` });
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -39,7 +41,11 @@ const AddAboutusInfo = async (req, res) => {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const { id, name } = await uploadPicDrive(file, ReturnBrgyFormat(brgy), "H");
+    const { id, name } = await uploadPicDrive(
+      file,
+      ReturnBrgyFormat(brgy),
+      "H"
+    );
 
     const banner = {
       link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
@@ -59,7 +65,6 @@ const AddAboutusInfo = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 
 const UpdateAboutusInfo = async (req, res) => {
   try {
