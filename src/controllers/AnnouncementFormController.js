@@ -21,10 +21,17 @@ const GetAllEventsForm = async (req, res) => {
 const GetActiveForm = async (req, res) => {
   try {
     const { brgy, event_id } = req.query;
+    let result;
 
-    const result = await AnnouncementForm.find({
-      $and: [{ brgy: brgy }, { event_id: event_id }, { isActive: true }],
-    });
+    if (brgy === undefined) {
+      result = await AnnouncementForm.find({
+        $and: [{ event_id: event_id }, { isActive: true }],
+      });
+    } else {
+      result = await AnnouncementForm.find({
+        $and: [{ brgy: brgy }, { event_id: event_id }, { isActive: true }],
+      });
+    }
 
     return !result
       ? res.status(400).json({ error: "No such Service Form" })
