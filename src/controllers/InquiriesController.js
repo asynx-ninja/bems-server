@@ -80,14 +80,22 @@ const GetInquiriesStatus = async (req, res) => {
 
 const GetAdminInquiries = async (req, res) => {
   try {
-    const { to, archived, page } = req.query;
+    const { to, archived, page, status } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
+    // Initialize the query as an empty object
+    const query = {};
+
+    if (status && status.toLowerCase() !== "all") {
+      query.isApproved = status;
+    }
+
     const result = await Inquiries.find({
       $and: [
-        { "compose.to": to }, // Convert to lowercase for case-insensitive comparison
+        { "compose.to": to },
         { isArchived: archived },
+        query, // Include the query object here
       ],
     })
       .skip(skip)
@@ -95,8 +103,9 @@ const GetAdminInquiries = async (req, res) => {
 
     const totalInquiries = await Inquiries.countDocuments({
       $and: [
-        { "compose.to": to }, // Convert to lowercase for case-insensitive comparison
+        { "compose.to": to },
         { isArchived: archived },
+        query, // Include the query object here as well
       ],
     });
 
@@ -109,6 +118,7 @@ const GetAdminInquiries = async (req, res) => {
     res.send(err.message);
   }
 };
+
 
 const GetStaffInquiries = async (req, res) => {
   try {

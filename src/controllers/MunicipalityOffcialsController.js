@@ -7,18 +7,25 @@ const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const GetMunicipalityOfficial = async (req, res) => {
   try {
-    const { brgy, archived, page } = req.query;
+    const { brgy, archived, page, position } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
+    // Initialize the query as an empty object
+    const query = {};
+
+    if (position && position.toLowerCase() !== "all") {
+      query.position = position;
+    }
+
     const result = await MunicipalityOfficial.find({
-      $and: [{ brgy: brgy }, { isArchived: archived }],
+      $and: [{ brgy: brgy }, { isArchived: archived }, query],
     })
       .skip(skip)
       .limit(itemsPerPage);
 
     const totalOfficials = await MunicipalityOfficial.countDocuments({
-      $and: [{ brgy: brgy }, { isArchived: archived }],
+      $and: [{ brgy: brgy }, { isArchived: archived }, query],
     });
 
     const pageCount = Math.ceil(totalOfficials / itemsPerPage);
