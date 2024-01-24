@@ -23,9 +23,7 @@ const GetUsers = async (req, res) => {
       query.$and.push({ type: type });
     }
 
-    const result = await User.find(query)
-      .skip(skip)
-      .limit(itemsPerPage);
+    const result = await User.find(query).skip(skip).limit(itemsPerPage);
 
     const totalUsers = await User.countDocuments(query);
 
@@ -39,64 +37,119 @@ const GetUsers = async (req, res) => {
   }
 };
 
-  const GetAllRegistered = async (req, res) => {
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-  
-    try {
-      const userCount = await User.aggregate([
-        {
-          $match: {
-            createdAt: { $gte: sixMonthsAgo },
-            type: 'Resident' // Filter by user type
-          }
-        },
-        {
-          $group: {
-            _id: { $month: "$createdAt" }, // Group by month
-            totalUsers: { $sum: 1 }
-          }
-        },
-        {
-          $sort: { _id: 1 } // Sort by month
-        }
-      ]);
-      res.json(userCount);
-    } catch (err) {
-      res.status(500).send('Server Error');
-    }
-  };
-  
+const GetAllRegistered = async (req, res) => {
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-  const GetPerBrgyRegistered = async (req, res) => {
-    try {
-      const registeredResidents = await User.aggregate([
-        {
-          $match: {
-            'address.brgy': {
-              $in: [
-                "BALITE", "BURGOS", "GERONIMO", "MACABUD", "MANGGAHAN", 
-                "MASCAP", "PURAY", "ROSARIO", "SAN ISIDRO", "SAN JOSE", "SAN RAFAEL"
-              ]
+  try {
+    const userCount = await User.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: sixMonthsAgo },
+          type: "Resident", // Filter by user type
+        },
+      },
+      {
+        $group: {
+          _id: { $month: "$createdAt" }, // Group by month
+          totalUsers: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 }, // Sort by month
+      },
+    ]);
+    res.json(userCount);
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+};
+
+const GetPerBrgyRegistered = async (req, res) => {
+  try {
+    const registeredResidents = await User.aggregate([
+      {
+        $match: {
+          "address.brgy": {
+            $in: [
+              "BALITE",
+              "BURGOS",
+              "GERONIMO",
+              "MACABUD",
+              "MANGGAHAN",
+              "MASCAP",
+              "PURAY",
+              "ROSARIO",
+              "SAN ISIDRO",
+              "SAN JOSE",
+              "SAN RAFAEL",
+            ],
+          },
+          type: "Resident",
+          isApproved: "Registered",
+        },
+      },
+      {
+        $group: {
+          _id: "$address.brgy",
+          totalUsers: { $sum: 1 },
+        },
+      },
+    ]);
+
+    res.json(registeredResidents);
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+};
+
+const GetAllBrgyResident = async (req, res) => {
+  try {
+    const { brgy } = req.query;
+
+    if (!brgy) {
+      return res.status(400).json({ error: "Barangay parameter is missing" });
+    }
+
+    const residentsInBrgy = await User.aggregate([
+      {
+        $match: {
+          "address.brgy": brgy,
+          type: "Resident",
+        },
+      },
+      {
+        $group: {
+          _id: "$address.brgy",
+          totalUsers: { $sum: 1 },
+          residents: {
+            $push: {
+              _id: "$_id",
+              name: "$name",
+              status: {
+                $cond: {
+                  if: { $eq: ["$isApproved", "Registered"] },
+                  then: "Registered",
+                  else: {
+                    $cond: {
+                      if: { $eq: ["$isApproved", "Pending"] },
+                      then: "Pending",
+                      else: "Denied",
+                    },
+                  },
+                },
+              },
             },
-            type: 'Resident',
-            isApproved: 'Registered'
-          }
+          },
         },
-        {
-          $group: {
-            _id: '$address.brgy',
-            totalUsers: { $sum: 1 }
-          }
-        }
-      ]);
-  
-      res.json(registeredResidents);
-    } catch (err) {
-      res.status(500).send('Server Error');
-    }
-  };
+      },
+    ]);
 
+    res.json(residentsInBrgy);
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+};
 
 const GetAdminUsers = async (req, res) => {
   const sixMonthsAgo = new Date();
@@ -104,20 +157,22 @@ const GetAdminUsers = async (req, res) => {
   sixMonthsAgo.setDate(1); // Start from the first day of the 6th month ago
 
   try {
-      const monthlyRegistrations = await User.aggregate([
-          { $match: { createdAt: { $gte: sixMonthsAgo } } },
-          { $group: {
-              _id: { 
-                  year: { $year: "$createdAt" },
-                  month: { $month: "$createdAt" }
-              },
-              count: { $sum: 1 }
-          }},
-          { $sort: { "_id.year": 1, "_id.month": 1 } }
-      ]);
-      res.json(monthlyRegistrations);
+    const monthlyRegistrations = await User.aggregate([
+      { $match: { createdAt: { $gte: sixMonthsAgo } } },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } },
+    ]);
+    res.json(monthlyRegistrations);
   } catch (err) {
-      res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 };
 
@@ -139,9 +194,7 @@ const GetArchivedAdminUsers = async (req, res) => {
 
     console.log("Query after Type Filter:", query);
 
-    const result = await User.find(query)
-      .skip(skip)
-      .limit(itemsPerPage);
+    const result = await User.find(query).skip(skip).limit(itemsPerPage);
 
     const totalUsers = await User.countDocuments(query);
 
@@ -154,7 +207,6 @@ const GetArchivedAdminUsers = async (req, res) => {
     res.send(err.message);
   }
 };
-
 
 const GetSpecificUser = async (req, res) => {
   try {
@@ -191,9 +243,7 @@ const GetArchivedUsers = async (req, res) => {
       query.$and.push({ isApproved: status });
     }
 
-    const result = await User.find(query)
-      .skip(skip)
-      .limit(itemsPerPage);
+    const result = await User.find(query).skip(skip).limit(itemsPerPage);
 
     const totalUsers = await User.countDocuments(query);
 
@@ -206,7 +256,6 @@ const GetArchivedUsers = async (req, res) => {
     res.send(err.message);
   }
 };
-
 
 const CreateUser = async (req, res) => {
   try {
@@ -280,7 +329,7 @@ const UpdateUser = async (req, res) => {
     const { doc_id } = req.query;
     const { body, file } = req;
     const user = JSON.parse(body.users);
-    console.log(user)
+    console.log(user);
 
     if (!mongoose.Types.ObjectId.isValid(doc_id)) {
       return res.status(400).json({ error: "No such user" });
@@ -400,6 +449,7 @@ module.exports = {
   GetUsers,
   GetAllRegistered,
   GetPerBrgyRegistered,
+  GetAllBrgyResident,
   GetAdminUsers,
   GetArchivedAdminUsers,
   GetSpecificUser,

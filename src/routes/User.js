@@ -5,6 +5,7 @@ const {
   GetUsers,
   GetAllRegistered,
   GetPerBrgyRegistered,
+  GetAllBrgyResident,
   GetAdminUsers,
   GetArchivedAdminUsers,
   GetSpecificUser,
@@ -19,6 +20,7 @@ const upload = require("../config/Multer");
 
 router.get("/", GetUsers);
 router.get("/allregistered", GetAllRegistered);
+router.get("/all_brgy_resident", GetAllBrgyResident);
 router.get("/brgy_registered", GetPerBrgyRegistered);
 router.get("/admin", GetAdminUsers);
 router.get("/showArchivedAdmin", GetArchivedAdminUsers);
