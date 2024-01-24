@@ -56,7 +56,8 @@ const GetAllOpenBrgyAnnouncement = async (req, res) => {
 
     const result = await Announcement.find(query)
       .skip(skip)
-      .limit(itemsPerPage);
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
 
     const pageCount = Math.ceil(totalAnnouncements / itemsPerPage);
 
@@ -134,7 +135,6 @@ const UpdateAnnouncement = async (req, res) => {
   try {
     const { id } = req.params;
     let { body, files } = req;
-
     let currentFiles = [];
     body = JSON.parse(JSON.stringify(req.body));
     let { saved, announcement } = body;
@@ -180,10 +180,7 @@ const UpdateAnnouncement = async (req, res) => {
             name,
           };
 
-          await deleteFileDrive(
-            announcement.collections.banner[0].id,
-            folder_id
-          );
+          await deleteFileDrive(announcement.collections.banner.id, folder_id);
         } else if (files[f].originalname === "logo") {
           logo = {
             link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
@@ -191,7 +188,7 @@ const UpdateAnnouncement = async (req, res) => {
             name,
           };
 
-          await deleteFileDrive(announcement.collections.logo[0].id, folder_id);
+          await deleteFileDrive(announcement.collections.logo.id, folder_id);
         } else {
           fileArray.push({
             link: `https://drive.google.com/file/d/${id}/view`,

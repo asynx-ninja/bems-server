@@ -45,6 +45,43 @@ const GetAllRequest = async (req, res) => {
   }
 };
 
+const GetStatusPercentage = async (req, res) => {
+  try {
+    const statusCountsByBarangay = await Request.aggregate([
+      {
+        $group: {
+          _id: { brgy: "$brgy", status: "$status" },
+          count: { $sum: 1 }
+        },
+      },
+      {
+        $group: {
+          _id: "$_id.brgy",
+          statuses: {
+            $push: {
+              status: "$_id.status",
+              count: "$count"
+            }
+          }
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          brgy: "$_id",
+          statuses: 1
+        },
+      },
+    ]);
+
+    res.json(statusCountsByBarangay);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+
 const GetRequestByUser = async (req, res) => {
   try {
     const { user_id } = req.query;
@@ -208,6 +245,7 @@ const ArchiveRequest = async (req, res) => {
 
 module.exports = {
   GetAllRequest,
+  GetStatusPercentage,
   GetRequestByUser,
   CreateRequest,
   RespondToRequest,

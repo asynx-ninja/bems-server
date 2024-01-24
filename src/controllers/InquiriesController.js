@@ -38,6 +38,45 @@ const GetInquiries = async (req, res) => {
     res.send(err.message);
   }
 };
+// Backend API endpoint to get the number of inquiries in each status for every barangay
+const GetInquiriesStatus = async (req, res) => {
+  try {
+    const barangays = [
+      "BALITE", "BURGOS", "GERONIMO", "MACABUD", "MANGGAHAN", 
+      "MASCAP", "PURAY", "ROSARIO", "SAN ISIDRO", "SAN JOSE", "SAN RAFAEL"
+    ];
+
+    const inquiriesByStatusAndBarangay = await Inquiries.aggregate([
+      {
+        $match: {
+          brgy: { $in: barangays }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            status: "$isApproved",
+            barangay: "$brgy",
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          status: "$_id.status",
+          barangay: "$_id.barangay",
+          count: 1,
+        },
+      },
+    ]);
+
+    res.json(inquiriesByStatusAndBarangay);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 
 const GetAdminInquiries = async (req, res) => {
   try {
@@ -85,18 +124,14 @@ const GetStaffInquiries = async (req, res) => {
 
     const totalInquiries = await Inquiries.countDocuments(query);
 
-    const result = await Inquiries.find(query).skip(skip).limit(itemsPerPage);
+    const result = await Inquiries.find(query)
+      .skip(skip)
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
 
     return !result
-      ? res
-          .status(400)
-          .json({ error: "No such inquiries for Barangay ${brgy}" })
-      : res
-          .status(200)
-          .json({
-            result,
-            pageCount: Math.ceil(totalInquiries / itemsPerPage),
-          });
+      ? res.status(400).json({ error: `No such inquiries for Barangay ${brgy}` })
+      : res.status(200).json({ result, pageCount: Math.ceil(totalInquiries / itemsPerPage) });
   } catch (err) {
     res.send(err.message);
   }
@@ -172,7 +207,7 @@ const RespondToInquiry = async (req, res) => {
     const { body, files } = req;
     console.log(body, files);
     const response = JSON.parse(body.response);
-    const { sender, type, message, date, folder_id } = response;
+    const { sender, type, message, date, folder_id, status } = response;
 
     let fileArray = [];
 
@@ -203,7 +238,7 @@ const RespondToInquiry = async (req, res) => {
           },
         },
         $set: {
-          isApproved: "In Progress",
+          isApproved: status,
         },
       },
       { new: true }
@@ -237,6 +272,7 @@ const StatusInquiry = async (req, res) => {
 
 module.exports = {
   GetInquiries,
+  GetInquiriesStatus,
   GetAdminInquiries,
   GetStaffInquiries,
   ArchiveInquiry,

@@ -7,17 +7,19 @@ const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const GetBarangayOfficial = async (req, res) => {
   try {
-    const { brgy, archived, page } = req.query;
+    const { brgy, archived, page, position } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const totalOfficials = await BrgyOfficial.countDocuments({
-      $and: [{ brgy: brgy }, { isArchived: archived }],
-    });
+    const query = { $and: [{ brgy: brgy }, { isArchived: archived }] };
 
-    const result = await BrgyOfficial.find({
-      $and: [{ brgy: brgy }, { isArchived: archived }],
-    })
+    if (position && position.toLowerCase() !== "all") {
+      query.$and.push({ position: position }); // Add position filter to the query
+    }
+
+    const totalOfficials = await BrgyOfficial.countDocuments(query);
+
+    const result = await BrgyOfficial.find(query)
       .skip(skip)
       .limit(itemsPerPage);
 

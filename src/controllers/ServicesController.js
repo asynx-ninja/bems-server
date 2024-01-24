@@ -280,7 +280,6 @@ const UpdateServices = async (req, res) => {
           logo: logo === null ? service.collections.logo : logo,
           file: fileArray,
         },
-        isApproved: service.isApproved,
       },
       { new: true }
     );
