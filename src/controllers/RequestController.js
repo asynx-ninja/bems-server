@@ -378,13 +378,13 @@ const GetRevenueBrgy = async (req, res) => {
       { $group: { _id: "$brgy", totalFee: { $sum: "$fee" } } },
     ]);
 
+    console.log("ha Summary:", feeSummary);
+
     res.json(feeSummary);
   } catch (error) {
     res.status(500).send(error);
   }
 };
-
-
 
 const GetEstRevenueBrgy = async (req, res) => {
   try {
@@ -484,7 +484,11 @@ const GetEstRevenueBrgy = async (req, res) => {
 
 const getTotalAvailedServices = async (req, res) => {
   try {
-    let matchCondition = { status: { $in: ["Transaction Completed", "Processing", "Pending", "Paid"] } };
+    let matchCondition = {
+      status: {
+        $in: ["Transaction Completed", "Processing", "Pending", "Paid"],
+      },
+    };
 
     // Extract query parameters
     const { timeRange, date, week, month, year, brgy } = req.query;
@@ -531,7 +535,12 @@ const getTotalAvailedServices = async (req, res) => {
           totalFee: {
             $sum: {
               $cond: [
-                { $in: ["$status", ["Transaction Completed", "Processing", "Paid"]] },
+                {
+                  $in: [
+                    "$status",
+                    ["Transaction Completed", "Processing", "Paid"],
+                  ],
+                },
                 "$fee",
                 0,
               ],
@@ -549,19 +558,30 @@ const getTotalAvailedServices = async (req, res) => {
 
 const getTotalStatusRequests = async (req, res) => {
   try {
-    let matchCondition = { status: { $in: ["Pending", "Paid", "Processing", "Cancelled", "Transaction Completed", "Rejected"] } };
+    let matchCondition = {
+      status: {
+        $in: [
+          "Pending",
+          "Paid",
+          "Processing",
+          "Cancelled",
+          "Transaction Completed",
+          "Rejected",
+        ],
+      },
+    };
 
     // Extract query parameters
     const { brgy } = req.query;
 
-    console.log("brgy:", brgy);
+    // console.log("brgy:", brgy);
 
     // Add a condition for a specific barangay
     if (brgy) {
       matchCondition.brgy = brgy;
     }
 
-    console.log("matchCondition:", matchCondition);
+    // console.log("matchCondition:", matchCondition);
 
     const serviceSummary = await Request.aggregate([
       {
@@ -575,7 +595,7 @@ const getTotalStatusRequests = async (req, res) => {
       },
     ]);
 
-    console.log("serviceSummary:", serviceSummary);
+    // console.log("serviceSummary:", serviceSummary);
 
     res.json(serviceSummary);
   } catch (error) {
@@ -669,7 +689,13 @@ const getTotalCompletedRequests = async (req, res) => {
 
     const completedRequestsSummary = await Request.aggregate([
       { $match: matchCondition },
-      { $group: { _id: "$status", totalRequests: { $sum: 1 }, totalFee: { $sum: "$fee" } } },
+      {
+        $group: {
+          _id: "$status",
+          totalRequests: { $sum: 1 },
+          totalFee: { $sum: "$fee" },
+        },
+      },
     ]);
 
     res.json(completedRequestsSummary);
@@ -872,21 +898,19 @@ const GetMonthlyRevenueBrgy = async (req, res) => {
       switch (timeRange) {
         case "today":
           matchCondition.updatedAt = {
-            $gte: new Date(today.setHours(0, 0, 0, 0)),
-            $lt: new Date(today.setHours(23, 59, 59, 999)),
+            $gte: new Date(today.setUTCHours(0, 0, 0, 0)),
+            $lt: new Date(today.setUTCHours(23, 59, 59, 999)),
           };
           break;
         case "weekly":
           if (week) {
             const weekDate = new Date(week);
-            // Set to the start of the week (e.g., Monday)
             const weekStart = new Date(weekDate);
-            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1); // Adjust depending on how your week is defined (Sunday or Monday as start)
+            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1);
             weekStart.setUTCHours(0, 0, 0, 0);
 
-            // Set to the end of the week
             const weekEnd = new Date(weekStart);
-            weekEnd.setDate(weekStart.getDate() + 6); // 6 days later
+            weekEnd.setDate(weekStart.getDate() + 6);
             weekEnd.setUTCHours(23, 59, 59, 999);
 
             matchCondition.updatedAt = {
@@ -895,10 +919,11 @@ const GetMonthlyRevenueBrgy = async (req, res) => {
             };
           }
           break;
+
         case "monthly":
           if (year && month) {
-            const startOfMonth = new Date(year, month - 1, 1); // Month is 0-indexed
-            const endOfMonth = new Date(year, month, 0); // Get the last day of the month
+            const startOfMonth = new Date(year, month - 1, 1);
+            const endOfMonth = new Date(year, month, 0);
 
             matchCondition.updatedAt = {
               $gte: startOfMonth,
@@ -909,8 +934,8 @@ const GetMonthlyRevenueBrgy = async (req, res) => {
 
         case "annual":
           if (year) {
-            const startYear = new Date(year, 0, 1); // January 1st of the specified year
-            const endYear = new Date(year, 11, 31); // December 31st of the specified year
+            const startYear = new Date(year, 0, 1);
+            const endYear = new Date(year, 11, 31);
 
             matchCondition.updatedAt = {
               $gte: startYear,
@@ -922,7 +947,6 @@ const GetMonthlyRevenueBrgy = async (req, res) => {
         case "specific":
           if (date) {
             const specificDate = new Date(date);
-            // Ensure the date is set to the beginning of the day in UTC
             specificDate.setUTCHours(0, 0, 0, 0);
             const nextDay = new Date(specificDate);
             nextDay.setUTCDate(specificDate.getUTCDate() + 1);
@@ -940,13 +964,23 @@ const GetMonthlyRevenueBrgy = async (req, res) => {
 
     const feeSummary = await Request.aggregate([
       { $match: matchCondition },
-      { $group: { _id: "$brgy", totalFee: { $sum: "$fee" } } },
+      {
+        $group: {
+          _id: {
+            brgy: "$brgy",
+            month: { $month: "$updatedAt" },
+            year: { $year: "$updatedAt" },
+          },
+          totalFee: { $sum: "$fee" },
+        },
+      },
     ]);
 
     console.log("Fee Summary:", feeSummary);
 
     res.json(feeSummary);
   } catch (error) {
+    console.error("Error in GetMonthlyRevenueBrgy:", error);
     res.status(500).send(error);
   }
 };
