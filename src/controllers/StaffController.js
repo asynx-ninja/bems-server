@@ -218,8 +218,21 @@ const GetArchivedStaffs = async (req, res) => {
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
+    // const query = {
+    //   $and: [{ "address.brgy": brgy }, { type: "Staff" }, { isArchived: true }],
+    // };
+    
     const query = {
-      $and: [{ "address.brgy": brgy }, { type: "Staff" }, { isArchived: true }],
+      $and: [
+        { "address.brgy": brgy },
+        { isArchived: true },
+        {
+          $or: [
+            { type: "Brgy Admin"},
+            { type: "Staff"},
+          ],
+        },
+      ],
     };
 
     if (type && type.toLowerCase() !== "all") {
