@@ -207,6 +207,7 @@ const GetAllBrgyResident = async (req, res) => {
                   },
                 },
               },
+              isArchived: "$isArchived", // Include the isArchived field
             },
           },
         },
@@ -512,6 +513,42 @@ const ArchiveUser = async (req, res) => {
   }
 };
 
+const getAllResidentIsArchived = async (req, res) => {
+  try {
+    const { brgy, isArchived } = req.query;
+
+    if (!brgy) {
+      return res.status(400).json({ error: "Barangay parameter is missing" });
+    }
+
+    const residentsIsArchived = await User.aggregate([
+      {
+        $match: {
+          "address.brgy": brgy,
+          type: "Resident",
+          isArchived: isArchived ? isArchived === "true" : { $in: [false, null] },
+        },
+      },
+      {
+        $group: {
+          _id: "$address.brgy",
+          totalUsers: { $sum: 1 },
+          residents: {
+            $push: {
+              _id: "$_id",
+              name: "$name",
+              isArchived: "$isArchived",
+            },
+          },
+        },
+      },
+    ]);
+    res.json(residentsIsArchived);
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+};
+
 module.exports = {
   GetUsers,
   GetAllRegistered,
@@ -525,4 +562,5 @@ module.exports = {
   UpdateUser,
   StatusUser,
   ArchiveUser,
+  getAllResidentIsArchived,
 };
