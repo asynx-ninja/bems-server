@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   GetBrgyService,
   GetAllBrgyService,
+  GetAllApprovedBrgyService,
   GetAllPenBrgyService,
   GetBrgyServiceBanner,
   CreateServices,
@@ -17,6 +18,7 @@ const upload = require("../config/Multer");
 
 router.get("/", GetBrgyService);
 router.get("/allservices", GetAllBrgyService);
+router.get("/approved_services", GetAllApprovedBrgyService);
 router.get("/pendingservices", GetAllPenBrgyService);
 router.get("/specific_service", GetServiceAndForm);
 router.get("/banner/:brgy", GetBrgyServiceBanner);

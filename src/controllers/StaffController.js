@@ -214,13 +214,17 @@ const UpdateBrgyStaff = async (req, res) => {
 const GetArchivedStaffs = async (req, res) => {
   try {
     const { brgy } = req.params;
-    const { page } = req.query;
+    const { page, type } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
     const query = {
       $and: [{ "address.brgy": brgy }, { type: "Staff" }, { isArchived: true }],
     };
+
+    if (type && type.toLowerCase() !== "all") {
+      query.type = type;
+    }
 
     const totalStaffs = await User.countDocuments(query);
 
