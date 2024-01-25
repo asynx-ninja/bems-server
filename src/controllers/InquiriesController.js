@@ -84,36 +84,23 @@ const GetAdminInquiries = async (req, res) => {
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    // Initialize the query as an empty object
-    const query = {};
+    const query = {
+      "compose.to": to, 
+      isArchived: archived,
+    };
 
     if (status && status.toLowerCase() !== "all") {
       query.isApproved = status;
     }
-
-    const result = await Inquiries.find({
-      $and: [
-        { "compose.to": to },
-        { isArchived: archived },
-        query, // Include the query object here
-      ],
-    })
-      .skip(skip)
-      .limit(itemsPerPage);
-
-    const totalInquiries = await Inquiries.countDocuments({
-      $and: [
-        { "compose.to": to },
-        { isArchived: archived },
-        query, // Include the query object here as well
-      ],
-    });
-
-    const pageCount = Math.ceil(totalInquiries / itemsPerPage);
-
+    const totalInquiries = await Inquiries.countDocuments(query);
+    const result = await Inquiries.find(query)
+    .skip(skip)
+    .limit(itemsPerPage)
+    .sort({ createdAt: -1 });
+   
     return !result
       ? res.status(400).json({ error: `No such Announcement for ${to}` })
-      : res.status(200).json({ result, pageCount });
+      : res.status(200).json({ result, pageCount: Math.ceil(totalInquiries / itemsPerPage) });
   } catch (err) {
     res.send(err.message);
   }

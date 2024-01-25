@@ -102,15 +102,52 @@ const GetRevenue = async (req, res) => {
           };
           break;
         case "weekly":
-          // Logic to adjust match condition for weekly
+          if (req.query.week) {
+            const weekDate = new Date(req.query.week);
+            // Set to the start of the week (e.g., Monday)
+            const weekStart = new Date(weekDate);
+            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1); // Adjust depending on how your week is defined (Sunday or Monday as start)
+            weekStart.setUTCHours(0, 0, 0, 0);
+
+            // Set to the end of the week
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6); // 6 days later
+            weekEnd.setUTCHours(23, 59, 59, 999);
+
+            matchCondition.createdAt = {
+              $gte: weekStart,
+              $lt: weekEnd,
+            };
+          }
           break;
         case "monthly":
-          // Logic to adjust match condition for monthly
+          if (year && month) {
+            const startOfMonth = new Date(year, month - 1, 1); // Month is 0-indexed
+            const endOfMonth = new Date(year, month, 0); // Get the last day of the month
+
+            matchCondition.createdAt = {
+              $gte: startOfMonth,
+              $lt: endOfMonth,
+            };
+          }
           break;
+
         case "annual":
           if (year) {
-            const startYear = new Date(year, 0, 1); // January 1st
-            const endYear = new Date(year, 11, 31); // December 31st
+            const startYear = new Date(year, 0, 1); // January 1st of the specified year
+            const endYear = new Date(year, 11, 31); // December 31st of the specified year
+
+            matchCondition.createdAt = {
+              $gte: startYear,
+              $lt: endYear,
+            };
+          }
+          break;
+
+        case "annual":
+          if (req.query.year) {
+            const startYear = new Date(req.query.year, 0, 1); // January 1st
+            const endYear = new Date(req.query.year, 11, 31); // December 31st
             matchCondition.createdAt = {
               $gte: startYear,
               $lt: endYear,
@@ -118,8 +155,18 @@ const GetRevenue = async (req, res) => {
           }
           break;
         case "specific":
-          // Logic for specific date, week, or month
-          break;
+          if (req.query.specificDate) {
+            const specificDate = new Date(req.query.specificDate);
+            // Ensure the date is set to the beginning of the day in UTC
+            specificDate.setUTCHours(0, 0, 0, 0);
+            const nextDay = new Date(specificDate);
+            nextDay.setUTCDate(specificDate.getUTCDate() + 1);
+
+            matchCondition.createdAt = {
+              $gte: specificDate,
+              $lt: nextDay,
+            };
+          }
         default:
         // Handle default case or throw an error
       }
@@ -135,6 +182,7 @@ const GetRevenue = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
 const GetEstRevenue = async (req, res) => {
   try {
     let matchCondition = {
@@ -170,23 +218,59 @@ const GetEstRevenue = async (req, res) => {
           };
           break;
         case "weekly":
-          // Logic to adjust match condition for weekly
+          if (req.query.week) {
+            const weekDate = new Date(req.query.week);
+            // Set to the start of the week (e.g., Monday)
+            const weekStart = new Date(weekDate);
+            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1); // Adjust depending on how your week is defined (Sunday or Monday as start)
+            weekStart.setUTCHours(0, 0, 0, 0);
+
+            // Set to the end of the week
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6); // 6 days later
+            weekEnd.setUTCHours(23, 59, 59, 999);
+
+            matchCondition.createdAt = {
+              $gte: weekStart,
+              $lt: weekEnd,
+            };
+          }
           break;
         case "monthly":
-          // Logic to adjust match condition for monthly
+          if (year && month) {
+            const startOfMonth = new Date(year, month - 1, 1); // Month is 0-indexed
+            const endOfMonth = new Date(year, month, 0); // Get the last day of the month
+
+            matchCondition.createdAt = {
+              $gte: startOfMonth,
+              $lt: endOfMonth,
+            };
+          }
           break;
         case "annual":
-          if (year) {
-            const startYear = new Date(year, 0, 1); // January 1st
-            const endYear = new Date(year, 11, 31); // December 31st
+          if (req.query.year) {
+            const startYear = new Date(req.query.year, 0, 1); // January 1st
+            const endYear = new Date(req.query.year, 11, 31); // December 31st
             matchCondition.createdAt = {
               $gte: startYear,
               $lt: endYear,
             };
           }
           break;
+
         case "specific":
-          // Logic for specific date, week, or month
+          if (req.query.specificDate) {
+            const specificDate = new Date(req.query.specificDate);
+            // Ensure the date is set to the beginning of the day in UTC
+            specificDate.setUTCHours(0, 0, 0, 0);
+            const nextDay = new Date(specificDate);
+            nextDay.setUTCDate(specificDate.getUTCDate() + 1);
+
+            matchCondition.createdAt = {
+              $gte: specificDate,
+              $lt: nextDay,
+            };
+          }
           break;
         default:
         // Handle default case or throw an error
@@ -205,6 +289,393 @@ const GetEstRevenue = async (req, res) => {
   }
 };
 
+const GetRevenueBrgy = async (req, res) => {
+  try {
+    let matchCondition = { status: "Transaction Completed" };
+
+    // Extract query parameters
+    const { timeRange, date, week, month, year, brgy } = req.query;
+
+    // Add a condition for a specific barangay
+    if (brgy) {
+      matchCondition.brgy = brgy;
+    }
+
+    // Adjust match condition based on the timeRange
+    if (timeRange) {
+      const today = new Date();
+      switch (timeRange) {
+        case "today":
+          matchCondition.createdAt = {
+            $gte: new Date(today.setHours(0, 0, 0, 0)),
+            $lt: new Date(today.setHours(23, 59, 59, 999)),
+          };
+          break;
+        case "weekly":
+          if (req.query.week) {
+            const weekDate = new Date(req.query.week);
+            // Set to the start of the week (e.g., Monday)
+            const weekStart = new Date(weekDate);
+            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1); // Adjust depending on how your week is defined (Sunday or Monday as start)
+            weekStart.setUTCHours(0, 0, 0, 0);
+
+            // Set to the end of the week
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6); // 6 days later
+            weekEnd.setUTCHours(23, 59, 59, 999);
+
+            matchCondition.createdAt = {
+              $gte: weekStart,
+              $lt: weekEnd,
+            };
+          }
+          break;
+        case "monthly":
+          if (year && month) {
+            const startOfMonth = new Date(year, month - 1, 1); // Month is 0-indexed
+            const endOfMonth = new Date(year, month, 0); // Get the last day of the month
+
+            matchCondition.createdAt = {
+              $gte: startOfMonth,
+              $lt: endOfMonth,
+            };
+          }
+          break;
+
+        case "annual":
+          if (year) {
+            const startYear = new Date(year, 0, 1); // January 1st of the specified year
+            const endYear = new Date(year, 11, 31); // December 31st of the specified year
+
+            matchCondition.createdAt = {
+              $gte: startYear,
+              $lt: endYear,
+            };
+          }
+          break;
+
+        case "annual":
+          if (req.query.year) {
+            const startYear = new Date(req.query.year, 0, 1); // January 1st
+            const endYear = new Date(req.query.year, 11, 31); // December 31st
+            matchCondition.createdAt = {
+              $gte: startYear,
+              $lt: endYear,
+            };
+          }
+          break;
+        case "specific":
+          if (req.query.specificDate) {
+            const specificDate = new Date(req.query.specificDate);
+            // Ensure the date is set to the beginning of the day in UTC
+            specificDate.setUTCHours(0, 0, 0, 0);
+            const nextDay = new Date(specificDate);
+            nextDay.setUTCDate(specificDate.getUTCDate() + 1);
+
+            matchCondition.createdAt = {
+              $gte: specificDate,
+              $lt: nextDay,
+            };
+          }
+        default:
+        // Handle default case or throw an error
+      }
+    }
+
+    const feeSummary = await Request.aggregate([
+      { $match: matchCondition },
+      { $group: { _id: "$brgy", totalFee: { $sum: "$fee" } } },
+    ]);
+
+    res.json(feeSummary);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+const GetEstRevenueBrgy = async (req, res) => {
+  try {
+    let matchCondition = {
+      status: { $in: ["Processing", "Paid", "Transaction Completed"] },
+    };
+
+    // Extract query parameters
+    const { timeRange, date, week, month, year, brgy } = req.query;
+
+    // Add a condition for a specific barangay
+    if (brgy) {
+      matchCondition.brgy = brgy;
+    }
+
+    // Adjust match condition based on the timeRange
+    if (timeRange) {
+      const today = new Date();
+      switch (timeRange) {
+        case "today":
+          matchCondition.createdAt = {
+            $gte: new Date(today.setHours(0, 0, 0, 0)),
+            $lt: new Date(today.setHours(23, 59, 59, 999)),
+          };
+          break;
+        case "weekly":
+          if (req.query.week) {
+            const weekDate = new Date(req.query.week);
+            // Set to the start of the week (e.g., Monday)
+            const weekStart = new Date(weekDate);
+            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1); // Adjust depending on how your week is defined (Sunday or Monday as start)
+            weekStart.setUTCHours(0, 0, 0, 0);
+
+            // Set to the end of the week
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6); // 6 days later
+            weekEnd.setUTCHours(23, 59, 59, 999);
+
+            matchCondition.createdAt = {
+              $gte: weekStart,
+              $lt: weekEnd,
+            };
+          }
+          break;
+        case "monthly":
+          if (year && month) {
+            const startOfMonth = new Date(year, month - 1, 1); // Month is 0-indexed
+            const endOfMonth = new Date(year, month, 0); // Get the last day of the month
+
+            matchCondition.createdAt = {
+              $gte: startOfMonth,
+              $lt: endOfMonth,
+            };
+          }
+          break;
+        case "annual":
+          if (req.query.year) {
+            const startYear = new Date(req.query.year, 0, 1); // January 1st
+            const endYear = new Date(req.query.year, 11, 31); // December 31st
+            matchCondition.createdAt = {
+              $gte: startYear,
+              $lt: endYear,
+            };
+          }
+          break;
+
+        case "specific":
+          if (req.query.specificDate) {
+            const specificDate = new Date(req.query.specificDate);
+            // Ensure the date is set to the beginning of the day in UTC
+            specificDate.setUTCHours(0, 0, 0, 0);
+            const nextDay = new Date(specificDate);
+            nextDay.setUTCDate(specificDate.getUTCDate() + 1);
+
+            matchCondition.createdAt = {
+              $gte: specificDate,
+              $lt: nextDay,
+            };
+          }
+          break;
+        default:
+        // Handle default case or throw an error
+      }
+    }
+
+    const summary = await Request.aggregate([
+      { $match: matchCondition },
+      { $group: { _id: "$brgy", totalFee: { $sum: "$fee" } } },
+      { $sort: { _id: 1 } },
+    ]);
+
+    res.json(summary);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+const getTotalAvailedServices = async (req, res) => {
+  try {
+    let matchCondition = { status: { $in: ["Transaction Completed", "Processing", "Paid"] } };
+
+    // Extract query parameters
+    const { timeRange, date, week, month, year, brgy } = req.query;
+
+    // Add a condition for a specific barangay
+    if (brgy) {
+      matchCondition.brgy = brgy;
+    }
+
+    // Adjust match condition based on the timeRange
+    if (timeRange) {
+      const today = new Date();
+      switch (timeRange) {
+        case "today":
+          matchCondition.createdAt = {
+            $gte: new Date(today.setHours(0, 0, 0, 0)),
+            $lt: new Date(today.setHours(23, 59, 59, 999)),
+          };
+          break;
+        case "weekly":
+          if (req.query.week) {
+            const weekDate = new Date(req.query.week);
+            // Set to the start of the week (e.g., Monday)
+            const weekStart = new Date(weekDate);
+            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1); // Adjust depending on how your week is defined (Sunday or Monday as start)
+            weekStart.setUTCHours(0, 0, 0, 0);
+
+            // Set to the end of the week
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6); // 6 days later
+            weekEnd.setUTCHours(23, 59, 59, 999);
+
+            matchCondition.createdAt = {
+              $gte: weekStart,
+              $lt: weekEnd,
+            };
+          }
+          break;
+        case "monthly":
+          if (year && month) {
+            const startOfMonth = new Date(year, month - 1, 1); // Month is 0-indexed
+            const endOfMonth = new Date(year, month, 0); // Get the last day of the month
+
+            matchCondition.createdAt = {
+              $gte: startOfMonth,
+              $lt: endOfMonth,
+            };
+          }
+          break;
+
+        case "annual":
+          if (year) {
+            const startYear = new Date(year, 0, 1); // January 1st of the specified year
+            const endYear = new Date(year, 11, 31); // December 31st of the specified year
+
+            matchCondition.createdAt = {
+              $gte: startYear,
+              $lt: endYear,
+            };
+          }
+          break;
+
+        case "specific":
+          if (req.query.specificDate) {
+            const specificDate = new Date(req.query.specificDate);
+            // Ensure the date is set to the beginning of the day in UTC
+            specificDate.setUTCHours(0, 0, 0, 0);
+            const nextDay = new Date(specificDate);
+            nextDay.setUTCDate(specificDate.getUTCDate() + 1);
+
+            matchCondition.createdAt = {
+              $gte: specificDate,
+              $lt: nextDay,
+            };
+          }
+        default:
+        // Handle default case or throw an error
+      }
+    }
+
+    const serviceSummary = await Request.aggregate([
+      { $match: matchCondition },
+      { $group: { _id: "$status", totalRequests: { $sum: 1 }, totalFee: { $sum: "$fee" } } },
+    ]);
+
+    res.json(serviceSummary);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+const getTotalCompletedRequests = async (req, res) => {
+  try {
+    let matchCondition = { status: "Transaction Completed" };
+
+    // Extract query parameters
+    const { timeRange, date, week, month, year, brgy } = req.query;
+
+    // Add a condition for a specific barangay
+    if (brgy) {
+      matchCondition.brgy = brgy;
+    }
+
+    // Adjust match condition based on the timeRange
+    if (timeRange) {
+      const today = new Date();
+      switch (timeRange) {
+        case "today":
+          matchCondition.createdAt = {
+            $gte: new Date(today.setHours(0, 0, 0, 0)),
+            $lt: new Date(today.setHours(23, 59, 59, 999)),
+          };
+          break;
+        case "weekly":
+          if (req.query.week) {
+            const weekDate = new Date(req.query.week);
+            // Set to the start of the week (e.g., Monday)
+            const weekStart = new Date(weekDate);
+            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1); // Adjust depending on how your week is defined (Sunday or Monday as start)
+            weekStart.setUTCHours(0, 0, 0, 0);
+
+            // Set to the end of the week
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6); // 6 days later
+            weekEnd.setUTCHours(23, 59, 59, 999);
+
+            matchCondition.createdAt = {
+              $gte: weekStart,
+              $lt: weekEnd,
+            };
+          }
+          break;
+        case "monthly":
+          if (year && month) {
+            const startOfMonth = new Date(year, month - 1, 1); // Month is 0-indexed
+            const endOfMonth = new Date(year, month, 0); // Get the last day of the month
+
+            matchCondition.createdAt = {
+              $gte: startOfMonth,
+              $lt: endOfMonth,
+            };
+          }
+          break;
+
+        case "annual":
+          if (year) {
+            const startYear = new Date(year, 0, 1); // January 1st of the specified year
+            const endYear = new Date(year, 11, 31); // December 31st of the specified year
+
+            matchCondition.createdAt = {
+              $gte: startYear,
+              $lt: endYear,
+            };
+          }
+          break;
+
+        case "specific":
+          if (req.query.specificDate) {
+            const specificDate = new Date(req.query.specificDate);
+            // Ensure the date is set to the beginning of the day in UTC
+            specificDate.setUTCHours(0, 0, 0, 0);
+            const nextDay = new Date(specificDate);
+            nextDay.setUTCDate(specificDate.getUTCDate() + 1);
+
+            matchCondition.createdAt = {
+              $gte: specificDate,
+              $lt: nextDay,
+            };
+          }
+        default:
+        // Handle default case or throw an error
+      }
+    }
+
+    const completedRequestsSummary = await Request.aggregate([
+      { $match: matchCondition },
+      { $group: { _id: "$status", totalRequests: { $sum: 1 }, totalFee: { $sum: "$fee" } } },
+    ]);
+
+    res.json(completedRequestsSummary);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
 
 const GetRequestByUser = async (req, res) => {
   try {
@@ -387,6 +858,10 @@ module.exports = {
   GetStatusPercentage,
   GetRevenue,
   GetEstRevenue,
+  GetRevenueBrgy,
+  GetEstRevenueBrgy,
+  getTotalAvailedServices,
+  getTotalCompletedRequests,
   GetRequestByUser,
   CreateRequest,
   RespondToRequest,
