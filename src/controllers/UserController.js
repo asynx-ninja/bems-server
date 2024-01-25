@@ -64,91 +64,104 @@ const GetAllRegistered = async (req, res) => {
   }
 };
 
-const GetPerBrgyRegistered = async (req, res) => {
-  try {
-    const registeredResidents = await User.aggregate([
-      {
-        $match: {
-          "address.brgy": {
-            $in: [
-              "BALITE",
-              "BURGOS",
-              "GERONIMO",
-              "MACABUD",
-              "MANGGAHAN",
-              "MASCAP",
-              "PURAY",
-              "ROSARIO",
-              "SAN ISIDRO",
-              "SAN JOSE",
-              "SAN RAFAEL",
-            ],
-          },
-          type: "Resident",
-          isApproved: "Registered",
+  const GetPerBrgyRegistered = async (req, res) => {
+    try {
+      const { timeRange, date, week, month, year } = req.query;
+      const query = {
+        'address.brgy': {
+          $in: [
+            "BALITE", "BURGOS", "GERONIMO", "MACABUD", "MANGGAHAN", 
+            "MASCAP", "PURAY", "ROSARIO", "SAN ISIDRO", "SAN JOSE", "SAN RAFAEL"
+          ]
         },
-      },
-      {
-        $group: {
-          _id: "$address.brgy",
-          totalUsers: { $sum: 1 },
-        },
-      },
-    ]);
-
-    res.json(registeredResidents);
-  } catch (err) {
-    res.status(500).send("Server Error");
-  }
-};
-
-const GetAllBrgyResident = async (req, res) => {
-  try {
-    const { brgy } = req.query;
-
-    if (!brgy) {
-      return res.status(400).json({ error: "Barangay parameter is missing" });
+        type: 'Resident',
+        isApproved: 'Registered'
+      };
+  
+      // Adjust the query based on the timeRange
+      if (timeRange) {
+        const today = new Date();
+        switch (timeRange) {
+          case "today":
+            query.createdAt = {
+              $gte: new Date(today.setHours(0, 0, 0, 0)),
+              $lt: new Date(today.setHours(23, 59, 59, 999)),
+            };
+            break;
+          case "weekly":
+            if (week) {
+              const weekDate = new Date(week);
+              const weekStart = new Date(weekDate);
+              weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1);
+              weekStart.setUTCHours(0, 0, 0, 0);
+  
+              const weekEnd = new Date(weekStart);
+              weekEnd.setDate(weekStart.getDate() + 6);
+              weekEnd.setUTCHours(23, 59, 59, 999);
+  
+              query.createdAt = {
+                $gte: weekStart,
+                $lt: weekEnd,
+              };
+            }
+            break;
+          case "monthly":
+            if (year && month) {
+              const startOfMonth = new Date(year, month - 1, 1);
+              const endOfMonth = new Date(year, month, 0);
+  
+              query.createdAt = {
+                $gte: startOfMonth,
+                $lt: endOfMonth,
+              };
+            }
+            break;
+          case "annual":
+            if (year) {
+              const startYear = new Date(year, 0, 1);
+              const endYear = new Date(year, 11, 31);
+  
+              query.createdAt = {
+                $gte: startYear,
+                $lt: endYear,
+              };
+            }
+            break;
+          case "specific":
+            if (date) {
+              const specificDate = new Date(date);
+              specificDate.setUTCHours(0, 0, 0, 0);
+              const nextDay = new Date(specificDate);
+              nextDay.setUTCDate(specificDate.getUTCDate() + 1);
+  
+              query.createdAt = {
+                $gte: specificDate,
+                $lt: nextDay,
+              };
+            }
+            break;
+          default:
+            // Handle default case or throw an error
+            throw new Error("Invalid timeRange");
+        }
+      }
+  
+      const registeredResidents = await User.aggregate([
+        { $match: query },
+        {
+          $group: {
+            _id: '$address.brgy',
+            totalUsers: { $sum: 1 }
+          }
+        }
+      ]);
+  
+      res.json(registeredResidents);
+    } catch (err) {
+      res.status(500).send('Server Error');
     }
+  };
 
-    const residentsInBrgy = await User.aggregate([
-      {
-        $match: {
-          "address.brgy": brgy,
-          type: "Resident",
-        },
-      },
-      {
-        $group: {
-          _id: "$address.brgy",
-          totalUsers: { $sum: 1 },
-          residents: {
-            $push: {
-              _id: "$_id",
-              name: "$name",
-              status: {
-                $cond: {
-                  if: { $eq: ["$isApproved", "Registered"] },
-                  then: "Registered",
-                  else: {
-                    $cond: {
-                      if: { $eq: ["$isApproved", "Pending"] },
-                      then: "Pending",
-                      else: "Denied",
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    ]);
-
-    res.json(residentsInBrgy);
-  } catch (err) {
-    res.status(500).send("Server Error");
-  }
-};
 
 const GetAdminUsers = async (req, res) => {
   const sixMonthsAgo = new Date();

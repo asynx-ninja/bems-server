@@ -89,7 +89,7 @@ const GetRevenue = async (req, res) => {
     let matchCondition = { status: "Transaction Completed" };
 
     // Extract query parameters
-    const { timeRange, date, week, month, year } = req.query;
+    const { timeRange, month, year } = req.query;
 
     // Adjust match condition based on the timeRange
     if (timeRange) {
@@ -128,18 +128,6 @@ const GetRevenue = async (req, res) => {
             matchCondition.createdAt = {
               $gte: startOfMonth,
               $lt: endOfMonth,
-            };
-          }
-          break;
-
-        case "annual":
-          if (year) {
-            const startYear = new Date(year, 0, 1); // January 1st of the specified year
-            const endYear = new Date(year, 11, 31); // December 31st of the specified year
-
-            matchCondition.createdAt = {
-              $gte: startYear,
-              $lt: endYear,
             };
           }
           break;
