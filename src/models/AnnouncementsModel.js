@@ -82,9 +82,6 @@ const AnnouncementsSchema = new Schema(
         type: [FileSchema],
       },
     },
-    attendees: {
-      type: [AttendeesSchema],
-    },
     brgy: {
       type: String,
       uppercase: true,

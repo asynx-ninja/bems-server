@@ -80,7 +80,7 @@ const EventsApplicationSchema = new Schema(
         "Pending",
         "Processing",
         "Cancelled",
-        "Transaction Completed",
+        "Application Completed",
         "Rejected",
       ],
       default: "Pending",
