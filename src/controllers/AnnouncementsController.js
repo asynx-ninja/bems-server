@@ -39,6 +39,7 @@ const GetBarangayAnnouncement = async (req, res) => {
   }
 };
 
+
 const GetAllOpenBrgyAnnouncement = async (req, res) => {
   try {
     const { brgy, page } = req.query;
