@@ -267,6 +267,44 @@ const StatusInquiry = async (req, res) => {
   }
 };
 
+const getTotalStatusInquiries = async (req, res) => {
+  try {
+    // Update the matchCondition for "In Progress", "Pending", and "Completed"
+    let matchCondition = { isApproved: { $in: ["In Progress", "Pending", "Completed"] } };
+
+    // Extract query parameters
+    const { brgy } = req.query;
+
+    console.log("brgy:", brgy);
+
+    // Add a condition for a specific barangay
+    if (brgy) {
+      matchCondition.brgy = brgy;
+    }
+
+    console.log("matchCondition:", matchCondition);
+
+    const serviceSummary = await Inquiries.aggregate([
+      {
+        $match: matchCondition,
+      },
+      {
+        $group: {
+          _id: "$isApproved", // Assuming isApproved is the field for the inquiry status
+          totalRequests: { $sum: 1 },
+        },
+      },
+    ]);
+
+    console.log("serviceSummary:", serviceSummary);
+
+    res.json(serviceSummary);
+  } catch (error) {
+    console.error("Error in getTotalStatusRequests:", error);
+    res.status(500).send(error);
+  }
+};
+
 module.exports = {
   GetInquiries,
   GetInquiriesStatus,
@@ -276,4 +314,5 @@ module.exports = {
   CreateInquiries,
   RespondToInquiry,
   StatusInquiry,
+  getTotalStatusInquiries,
 };
