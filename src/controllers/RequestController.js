@@ -279,7 +279,7 @@ const GetEstRevenue = async (req, res) => {
 
 const GetRevenueBrgy = async (req, res) => {
   try {
-    let matchCondition = { status: "Transaction Completed" };
+    let matchCondition = { status: { $in: ["Transaction Completed", "Paid"] } };
 
     // Extract query parameters
     const { timeRange, date, week, month, year, brgy } = req.query;
@@ -352,6 +352,7 @@ const GetRevenueBrgy = async (req, res) => {
             };
           }
           break;
+
         case "specific":
           if (req.query.specificDate) {
             const specificDate = new Date(req.query.specificDate);
@@ -365,13 +366,15 @@ const GetRevenueBrgy = async (req, res) => {
               $lt: nextDay,
             };
           }
+          break;
+
         default:
         // Handle default case or throw an error
       }
     }
 
     const feeSummary = await Request.aggregate([
-      { $match: matchCondition },
+      { $match: matchCondition }, // Include status condition
       { $group: { _id: "$brgy", totalFee: { $sum: "$fee" } } },
     ]);
 
@@ -851,6 +854,103 @@ const ArchiveRequest = async (req, res) => {
   }
 };
 
+const GetMonthlyRevenueBrgy = async (req, res) => {
+  try {
+    let matchCondition = { status: { $in: ["Transaction Completed", "Paid"] } };
+
+    // Extract query parameters
+    const { timeRange, date, week, month, year, brgy } = req.query;
+
+    // Add a condition for a specific barangay
+    if (brgy) {
+      matchCondition.brgy = brgy;
+    }
+
+    // Adjust match condition based on the timeRange
+    if (timeRange) {
+      const today = new Date();
+      switch (timeRange) {
+        case "today":
+          matchCondition.updatedAt = {
+            $gte: new Date(today.setHours(0, 0, 0, 0)),
+            $lt: new Date(today.setHours(23, 59, 59, 999)),
+          };
+          break;
+        case "weekly":
+          if (week) {
+            const weekDate = new Date(week);
+            // Set to the start of the week (e.g., Monday)
+            const weekStart = new Date(weekDate);
+            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1); // Adjust depending on how your week is defined (Sunday or Monday as start)
+            weekStart.setUTCHours(0, 0, 0, 0);
+
+            // Set to the end of the week
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6); // 6 days later
+            weekEnd.setUTCHours(23, 59, 59, 999);
+
+            matchCondition.updatedAt = {
+              $gte: weekStart,
+              $lt: weekEnd,
+            };
+          }
+          break;
+        case "monthly":
+          if (year && month) {
+            const startOfMonth = new Date(year, month - 1, 1); // Month is 0-indexed
+            const endOfMonth = new Date(year, month, 0); // Get the last day of the month
+
+            matchCondition.updatedAt = {
+              $gte: startOfMonth,
+              $lt: endOfMonth,
+            };
+          }
+          break;
+
+        case "annual":
+          if (year) {
+            const startYear = new Date(year, 0, 1); // January 1st of the specified year
+            const endYear = new Date(year, 11, 31); // December 31st of the specified year
+
+            matchCondition.updatedAt = {
+              $gte: startYear,
+              $lt: endYear,
+            };
+          }
+          break;
+
+        case "specific":
+          if (date) {
+            const specificDate = new Date(date);
+            // Ensure the date is set to the beginning of the day in UTC
+            specificDate.setUTCHours(0, 0, 0, 0);
+            const nextDay = new Date(specificDate);
+            nextDay.setUTCDate(specificDate.getUTCDate() + 1);
+
+            matchCondition.updatedAt = {
+              $gte: specificDate,
+              $lt: nextDay,
+            };
+          }
+          break;
+        default:
+        // Handle default case or throw an error
+      }
+    }
+
+    const feeSummary = await Request.aggregate([
+      { $match: matchCondition },
+      { $group: { _id: "$brgy", totalFee: { $sum: "$fee" } } },
+    ]);
+
+    console.log("Fee Summary:", feeSummary);
+
+    res.json(feeSummary);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
 module.exports = {
   GetAllRequest,
   GetStatusPercentage,
@@ -865,4 +965,5 @@ module.exports = {
   CreateRequest,
   RespondToRequest,
   ArchiveRequest,
+  GetMonthlyRevenueBrgy,
 };
