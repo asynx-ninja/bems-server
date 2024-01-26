@@ -21,10 +21,12 @@ const GetAboutusInformation = async (req, res) => {
       .limit(itemsPerPage);
 
     const pageCount = Math.ceil(totalInformation / itemsPerPage);
-    console.log(result)
+    console.log(result);
     return result
       ? res.status(200).json({ result, pageCount })
-      : res.status(400).json({ error: `No officials found for Municipality ${brgy}` });
+      : res
+          .status(400)
+          .json({ error: `No officials found for Municipality ${brgy}` });
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -39,7 +41,7 @@ const AddAboutusInfo = async (req, res) => {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const { id, name } = await uploadPicDrive(file, ReturnBrgyFormat(brgy), "H");
+    const { id, name } = await uploadPicDrive(file, ReturnBrgyFormat(brgy), "A");
 
     const banner = {
       link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
@@ -60,7 +62,6 @@ const AddAboutusInfo = async (req, res) => {
   }
 };
 
-
 const UpdateAboutusInfo = async (req, res) => {
   try {
     const { doc_id } = req.query;
@@ -76,12 +77,12 @@ const UpdateAboutusInfo = async (req, res) => {
       name = null;
 
     if (file !== undefined) {
-      const obj = await uploadPicDrive(file, aboutusInfos.brgy, "H");
+      const obj = await uploadPicDrive(file, aboutusInfos.brgy, "A");
       id = obj.id;
       name = obj.name;
 
       if (aboutusInfos.banner.id !== "")
-        await deletePicDrive(aboutusInfos.banner.id, aboutusInfos.brgy, "H");
+        await deletePicDrive(aboutusInfos.banner.id, aboutusInfos.brgy, "A");
     }
     const result = await HomepageInformation.findOneAndUpdate(
       { _id: doc_id },

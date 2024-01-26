@@ -91,20 +91,114 @@ const GetAllBrgyService = async (req, res) => {
   }
 };
 
+const GetAllApprovedBrgyService = async (req, res) => {
+  try {
+    const { timeRange, date, week, month, year } = req.query;
+    const query = {
+      isApproved: "Approved",
+    };
+
+    // Adjust the query based on the timeRange
+    if (timeRange) {
+      const today = new Date();
+      switch (timeRange) {
+        case "today":
+          query.createdAt = {
+            $gte: new Date(today.setHours(0, 0, 0, 0)),
+            $lt: new Date(today.setHours(23, 59, 59, 999)),
+          };
+          break;
+        case "weekly":
+          if (req.query.week) {
+            const weekDate = new Date(req.query.week);
+            // Set to the start of the week (e.g., Monday)
+            const weekStart = new Date(weekDate);
+            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1); // Adjust depending on how your week is defined (Sunday or Monday as start)
+            weekStart.setUTCHours(0, 0, 0, 0);
+
+            // Set to the end of the week
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6); // 6 days later
+            weekEnd.setUTCHours(23, 59, 59, 999);
+
+            query.createdAt = {
+              $gte: weekStart,
+              $lt: weekEnd,
+            };
+          }
+          break;
+        case "monthly":
+          if (year && month) {
+            const startOfMonth = new Date(year, month - 1, 1); // Month is 0-indexed
+            const endOfMonth = new Date(year, month, 0); // Get the last day of the month
+
+            query.createdAt = {
+              $gte: startOfMonth,
+              $lt: endOfMonth,
+            };
+          }
+          break;
+        case "annual":
+          if (req.query.year) {
+            const startYear = new Date(req.query.year, 0, 1); // January 1st
+            const endYear = new Date(req.query.year, 11, 31); // December 31st
+            query.createdAt = {
+              $gte: startYear,
+              $lt: endYear,
+            };
+          }
+          break;
+
+        case "specific":
+          if (req.query.specificDate) {
+            const specificDate = new Date(req.query.specificDate);
+            // Ensure the date is set to the beginning of the day in UTC
+            specificDate.setUTCHours(0, 0, 0, 0);
+            const nextDay = new Date(specificDate);
+            nextDay.setUTCDate(specificDate.getUTCDate() + 1);
+
+            query.createdAt = {
+              $gte: specificDate,
+              $lt: nextDay,
+            };
+          }
+          break;
+        default:
+        // Handle default case or throw an error
+      }
+    }
+    const result = await Service.find(query);
+
+   
+
+    res.json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 const GetAllPenBrgyService = async (req, res) => {
   try {
-    const { archived, status } = req.query;
+    const { archived, status, page } = req.query;
+    const itemsPerPage = 5; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const result = await Service.find({
+    const query = {
       isArchived: archived,
       isApproved: status,
-    });
+    };
+
+    const totalServices = await Service.countDocuments(query);
+
+    const result = await Service.find(query).skip(skip).limit(itemsPerPage);
 
     if (result.length === 0) {
       return res.status(400).json({ error: "No services found." });
     }
 
-    return res.status(200).json(result);
+    return res
+      .status(200)
+      .json({ result, pageCount: Math.ceil(totalServices / itemsPerPage) });
   } catch (err) {
     res.send(err.message);
   }
@@ -329,6 +423,7 @@ const ArchiveService = async (req, res) => {
 module.exports = {
   GetBrgyService,
   GetAllBrgyService,
+  GetAllApprovedBrgyService,
   GetAllPenBrgyService,
   GetBrgyServiceBanner,
   CreateServices,

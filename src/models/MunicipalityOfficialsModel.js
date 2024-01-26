@@ -23,10 +23,12 @@ const FileSchema = new Schema(
 const MunicipalityOfficialsSchema = new Schema({
     picture: {
       type: FileSchema,
+      required: true,
     },
     firstName: {
       type: String,
       default: "",
+      required: true,
     },
     middleName: {
       type: String,
@@ -35,6 +37,7 @@ const MunicipalityOfficialsSchema = new Schema({
     lastName: {
       type: String,
       default: "",
+      required: true,
     },
     suffix: {
       type: String,
@@ -42,15 +45,19 @@ const MunicipalityOfficialsSchema = new Schema({
     },
     details:{
       type: String,
+      required: true,
     },
     position: {
       type: String,
+      required: true,
     },
     fromYear: {
       type: Date,
+      required: true,
     },
     toYear: {
       type: Date,
+      required: true,
     },
     isArchived: {
       type: Boolean,

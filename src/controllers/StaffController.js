@@ -8,17 +8,26 @@ const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 const GetBrgyStaffs = async (req, res) => {
   try {
     const { brgy } = req.params;
-    const {page}=req.query
+    const { page, type } = req.query
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
     const query = {
       $and: [
         { "address.brgy": brgy },
-        { type: "Staff" },
         { isArchived: false },
+        {
+          $or: [
+            { type: "Brgy Admin"},
+            { type: "Staff"},
+          ],
+        },
       ],
     };
+
+    if (type && type.toLowerCase() !== "all") {
+      query.type = type;
+    }
 
     const totalStaffs = await User.countDocuments(query);
 
@@ -169,10 +178,10 @@ const UpdateBrgyStaff = async (req, res) => {
           isHead: user.isHead,
           profile: file
             ? {
-                link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
-                id,
-                name,
-              }
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            }
             : user.profile,
           socials: {
             facebook: {
@@ -188,6 +197,7 @@ const UpdateBrgyStaff = async (req, res) => {
               link: user.socials.twitter.link,
             },
           },
+          username: user.username,
         },
       },
       { new: true }
@@ -204,13 +214,30 @@ const UpdateBrgyStaff = async (req, res) => {
 const GetArchivedStaffs = async (req, res) => {
   try {
     const { brgy } = req.params;
-    const { page } = req.query;
+    const { page, type } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
+    // const query = {
+    //   $and: [{ "address.brgy": brgy }, { type: "Staff" }, { isArchived: true }],
+    // };
+    
     const query = {
-      $and: [{ "address.brgy": brgy }, { type: "Staff" }, { isArchived: true }],
+      $and: [
+        { "address.brgy": brgy },
+        { isArchived: true },
+        {
+          $or: [
+            { type: "Brgy Admin"},
+            { type: "Staff"},
+          ],
+        },
+      ],
     };
+
+    if (type && type.toLowerCase() !== "all") {
+      query.type = type;
+    }
 
     const totalStaffs = await User.countDocuments(query);
 

@@ -3,6 +3,9 @@ const router = express.Router();
 
 const {
   GetUsers,
+  GetAllRegistered,
+  GetPerBrgyRegistered,
+  GetAllBrgyResident,
   GetAdminUsers,
   GetArchivedAdminUsers,
   GetSpecificUser,
@@ -11,11 +14,16 @@ const {
   UpdateUser,
   StatusUser,
   ArchiveUser,
+  getAllResidentIsArchived,
 } = require("../controllers/UserController");
 
 const upload = require("../config/Multer");
 
 router.get("/", GetUsers);
+router.get("/allregistered", GetAllRegistered);
+router.get("/all_brgy_resident", GetAllBrgyResident);
+router.get("/brgy_registered", GetPerBrgyRegistered);
+router.get("/brgy_resident_isArchived",  getAllResidentIsArchived);
 router.get("/admin", GetAdminUsers);
 router.get("/showArchivedAdmin", GetArchivedAdminUsers);
 router.get("/specific/:id", GetSpecificUser);

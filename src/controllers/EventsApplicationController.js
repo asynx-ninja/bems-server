@@ -78,6 +78,21 @@ const GetEventsApplicationByUser = async (req, res) => {
   }
 };
 
+const CountCompleted = async (req, res) => {
+  try {
+    const { brgy, event_id } = req.query;
+    
+    const completedCount = await EventsApplication.countDocuments({
+      $and: [{ brgy: brgy, event_id: event_id, status: "Application Completed" }],
+    });
+
+    res.status(200).json({ completedCount });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
 const CreateEventsApplication = async (req, res) => {
   try {
     const { body, files } = req;
@@ -228,4 +243,5 @@ module.exports = {
   CreateEventsApplication,
   RespondToEventsApplication,
   ArchiveEventsApplication,
+  CountCompleted
 };

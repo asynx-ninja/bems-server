@@ -38,38 +38,74 @@ const GetInquiries = async (req, res) => {
     res.send(err.message);
   }
 };
+// Backend API endpoint to get the number of inquiries in each status for every barangay
+const GetInquiriesStatus = async (req, res) => {
+  try {
+    const barangays = [
+      "BALITE", "BURGOS", "GERONIMO", "MACABUD", "MANGGAHAN", 
+      "MASCAP", "PURAY", "ROSARIO", "SAN ISIDRO", "SAN JOSE", "SAN RAFAEL"
+    ];
+
+    const inquiriesByStatusAndBarangay = await Inquiries.aggregate([
+      {
+        $match: {
+          brgy: { $in: barangays }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            status: "$isApproved",
+            barangay: "$brgy",
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          status: "$_id.status",
+          barangay: "$_id.barangay",
+          count: 1,
+        },
+      },
+    ]);
+
+    res.json(inquiriesByStatusAndBarangay);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 
 const GetAdminInquiries = async (req, res) => {
   try {
-    const { to, archived, page } = req.query;
+    const { to, archived, page, status } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const result = await Inquiries.find({
-      $and: [
-        { "compose.to": to }, // Convert to lowercase for case-insensitive comparison
-        { isArchived: archived },
-      ],
-    })
-      .skip(skip)
-      .limit(itemsPerPage);
+    const query = {
+      "compose.to": to, 
+      isArchived: archived,
+    };
 
-    const totalInquiries = await Inquiries.countDocuments({
-      $and: [
-        { "compose.to": to }, // Convert to lowercase for case-insensitive comparison
-        { isArchived: archived },
-      ],
-    });
-
-    const pageCount = Math.ceil(totalInquiries / itemsPerPage);
-
+    if (status && status.toLowerCase() !== "all") {
+      query.isApproved = status;
+    }
+    const totalInquiries = await Inquiries.countDocuments(query);
+    const result = await Inquiries.find(query)
+    .skip(skip)
+    .limit(itemsPerPage)
+    .sort({ createdAt: -1 });
+   
     return !result
       ? res.status(400).json({ error: `No such Announcement for ${to}` })
-      : res.status(200).json({ result, pageCount });
+      : res.status(200).json({ result, pageCount: Math.ceil(totalInquiries / itemsPerPage) });
   } catch (err) {
     res.send(err.message);
   }
 };
+
 
 const GetStaffInquiries = async (req, res) => {
   try {
@@ -231,12 +267,52 @@ const StatusInquiry = async (req, res) => {
   }
 };
 
+const getTotalStatusInquiries = async (req, res) => {
+  try {
+    // Update the matchCondition for "In Progress", "Pending", and "Completed"
+    let matchCondition = { isApproved: { $in: ["In Progress", "Pending", "Completed"] } };
+
+    // Extract query parameters
+    const { brgy } = req.query;
+
+    console.log("brgy:", brgy);
+
+    // Add a condition for a specific barangay
+    if (brgy) {
+      matchCondition.brgy = brgy;
+    }
+
+    console.log("matchCondition:", matchCondition);
+
+    const serviceSummary = await Inquiries.aggregate([
+      {
+        $match: matchCondition,
+      },
+      {
+        $group: {
+          _id: "$isApproved", // Assuming isApproved is the field for the inquiry status
+          totalRequests: { $sum: 1 },
+        },
+      },
+    ]);
+
+    console.log("serviceSummary:", serviceSummary);
+
+    res.json(serviceSummary);
+  } catch (error) {
+    console.error("Error in getTotalStatusRequests:", error);
+    res.status(500).send(error);
+  }
+};
+
 module.exports = {
   GetInquiries,
+  GetInquiriesStatus,
   GetAdminInquiries,
   GetStaffInquiries,
   ArchiveInquiry,
   CreateInquiries,
   RespondToInquiry,
   StatusInquiry,
+  getTotalStatusInquiries,
 };
