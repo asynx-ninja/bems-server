@@ -502,7 +502,65 @@ const getTotalAvailedServices = async (req, res) => {
     if (timeRange) {
       const today = new Date();
       switch (timeRange) {
-        // ... (existing code remains unchanged)
+        case "today":
+          matchCondition.createdAt = {
+            $gte: new Date(today.setHours(0, 0, 0, 0)),
+            $lt: new Date(today.setHours(23, 59, 59, 999)),
+          };
+          break;
+        case "weekly":
+          if (req.query.week) {
+            const weekDate = new Date(req.query.week);
+            // Set to the start of the week (e.g., Monday)
+            const weekStart = new Date(weekDate);
+            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1); // Adjust depending on how your week is defined (Sunday or Monday as start)
+            weekStart.setUTCHours(0, 0, 0, 0);
+
+            // Set to the end of the week
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6); // 6 days later
+            weekEnd.setUTCHours(23, 59, 59, 999);
+
+            matchCondition.createdAt = {
+              $gte: weekStart,
+              $lt: weekEnd,
+            };
+          }
+          break;
+        case "monthly":
+          if (year && month) {
+            const startOfMonth = new Date(year, month - 1, 1); // Month is 0-indexed
+            const endOfMonth = new Date(year, month, 0); // Get the last day of the month
+
+            matchCondition.createdAt = {
+              $gte: startOfMonth,
+              $lt: endOfMonth,
+            };
+          }
+          break;
+
+        case "annual":
+          if (year) {
+            const startYear = new Date(year, 0, 1); // January 1st of the specified year
+            const endYear = new Date(year, 11, 31); // December 31st of the specified year
+
+            matchCondition.createdAt = {
+              $gte: startYear,
+              $lt: endYear,
+            };
+          }
+          break;
+
+        case "annual":
+          if (req.query.year) {
+            const startYear = new Date(req.query.year, 0, 1); // January 1st
+            const endYear = new Date(req.query.year, 11, 31); // December 31st
+            matchCondition.createdAt = {
+              $gte: startYear,
+              $lt: endYear,
+            };
+          }
+          break;
 
         case "specific":
           if (req.query.specificDate) {
@@ -549,6 +607,12 @@ const getTotalAvailedServices = async (req, res) => {
         },
       },
     ]);
+
+    // Check if serviceSummary is empty
+    if (serviceSummary.length === 0) {
+      // If there are no services, return zero and the specified message
+      return res.json({ totalRequests: 0, totalFee: 0, message: "No Availed Service for that time period" });
+    }
 
     res.json(serviceSummary);
   } catch (error) {
@@ -880,9 +944,11 @@ const ArchiveRequest = async (req, res) => {
   }
 };
 
-const GetMonthlyRevenueBrgy = async (req, res) => {
+const GetRevenueBrgyPerServices = async (req, res) => {
   try {
-    let matchCondition = { status: { $in: ["Transaction Completed", "Paid"] } };
+    let matchCondition = {
+      status: { $in: ["Transaction Completed", "Paid"] },
+    };
 
     // Extract query parameters
     const { timeRange, date, week, month, year, brgy } = req.query;
@@ -897,35 +963,36 @@ const GetMonthlyRevenueBrgy = async (req, res) => {
       const today = new Date();
       switch (timeRange) {
         case "today":
-          matchCondition.updatedAt = {
-            $gte: new Date(today.setUTCHours(0, 0, 0, 0)),
-            $lt: new Date(today.setUTCHours(23, 59, 59, 999)),
+          matchCondition.createdAt = {
+            $gte: new Date(today.setHours(0, 0, 0, 0)),
+            $lt: new Date(today.setHours(23, 59, 59, 999)),
           };
           break;
         case "weekly":
-          if (week) {
-            const weekDate = new Date(week);
+          if (req.query.week) {
+            const weekDate = new Date(req.query.week);
+            // Set to the start of the week (e.g., Monday)
             const weekStart = new Date(weekDate);
-            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1);
+            weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1); // Adjust depending on how your week is defined (Sunday or Monday as start)
             weekStart.setUTCHours(0, 0, 0, 0);
 
+            // Set to the end of the week
             const weekEnd = new Date(weekStart);
-            weekEnd.setDate(weekStart.getDate() + 6);
+            weekEnd.setDate(weekStart.getDate() + 6); // 6 days later
             weekEnd.setUTCHours(23, 59, 59, 999);
 
-            matchCondition.updatedAt = {
+            matchCondition.createdAt = {
               $gte: weekStart,
               $lt: weekEnd,
             };
           }
           break;
-
         case "monthly":
           if (year && month) {
-            const startOfMonth = new Date(year, month - 1, 1);
-            const endOfMonth = new Date(year, month, 0);
+            const startOfMonth = new Date(year, month - 1, 1); // Month is 0-indexed
+            const endOfMonth = new Date(year, month, 0); // Get the last day of the month
 
-            matchCondition.updatedAt = {
+            matchCondition.createdAt = {
               $gte: startOfMonth,
               $lt: endOfMonth,
             };
@@ -934,10 +1001,21 @@ const GetMonthlyRevenueBrgy = async (req, res) => {
 
         case "annual":
           if (year) {
-            const startYear = new Date(year, 0, 1);
-            const endYear = new Date(year, 11, 31);
+            const startYear = new Date(year, 0, 1); // January 1st of the specified year
+            const endYear = new Date(year, 11, 31); // December 31st of the specified year
 
-            matchCondition.updatedAt = {
+            matchCondition.createdAt = {
+              $gte: startYear,
+              $lt: endYear,
+            };
+          }
+          break;
+
+        case "annual":
+          if (req.query.year) {
+            const startYear = new Date(req.query.year, 0, 1); // January 1st
+            const endYear = new Date(req.query.year, 11, 31); // December 31st
+            matchCondition.createdAt = {
               $gte: startYear,
               $lt: endYear,
             };
@@ -945,42 +1023,67 @@ const GetMonthlyRevenueBrgy = async (req, res) => {
           break;
 
         case "specific":
-          if (date) {
-            const specificDate = new Date(date);
+          if (req.query.specificDate) {
+            const specificDate = new Date(req.query.specificDate);
+            // Ensure the date is set to the beginning of the day in UTC
             specificDate.setUTCHours(0, 0, 0, 0);
             const nextDay = new Date(specificDate);
             nextDay.setUTCDate(specificDate.getUTCDate() + 1);
 
-            matchCondition.updatedAt = {
+            matchCondition.createdAt = {
               $gte: specificDate,
               $lt: nextDay,
             };
           }
           break;
+
         default:
         // Handle default case or throw an error
       }
     }
 
     const feeSummary = await Request.aggregate([
-      { $match: matchCondition },
+      { $match: matchCondition }, // Include status condition
       {
         $group: {
           _id: {
             brgy: "$brgy",
-            month: { $month: "$updatedAt" },
-            year: { $year: "$updatedAt" },
+            service_name: "$service_name",
+            status: "$status",
           },
           totalFee: { $sum: "$fee" },
         },
       },
+      {
+        $group: {
+          _id: { brgy: "$_id.brgy", service_name: "$_id.service_name" },
+          TransactionCompleted: {
+            $sum: {
+              $cond: [
+                { $eq: ["$_id.status", "Transaction Completed"] },
+                "$totalFee",
+                0,
+              ],
+            },
+          },
+          Paid: {
+            $sum: { $cond: [{ $eq: ["$_id.status", "Paid"] }, "$totalFee", 0] },
+          },
+        },
+      },
     ]);
 
-    console.log("Fee Summary:", feeSummary);
+    console.log("Service Revenue Summary:", feeSummary);
 
+     // Check if feeSummary is empty (no services and revenue)
+     if (feeSummary.length === 0) {
+      // Return zero revenue with a custom message
+      return res.json({ brgy: "No Availed Service for that time period", service_name: "Zero", TransactionCompleted: 0, Paid: 0 });
+    }
+
+    // Return the actual feeSummary
     res.json(feeSummary);
   } catch (error) {
-    console.error("Error in GetMonthlyRevenueBrgy:", error);
     res.status(500).send(error);
   }
 };
@@ -999,5 +1102,5 @@ module.exports = {
   CreateRequest,
   RespondToRequest,
   ArchiveRequest,
-  GetMonthlyRevenueBrgy,
+  GetRevenueBrgyPerServices,
 };
