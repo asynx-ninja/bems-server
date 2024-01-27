@@ -134,6 +134,8 @@ const GetStaffInquiries = async (req, res) => {
   }
 };
 
+
+
 const CreateInquiries = async (req, res) => {
   try {
     const { body, files } = req;

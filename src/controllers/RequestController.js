@@ -84,6 +84,33 @@ const GetStatusPercentage = async (req, res) => {
   }
 };
 
+const GetAllPenReq= async (req, res) => {
+  try {
+    const { isArchived, page } = req.query;
+    const itemsPerPage = 5; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
+
+    const query = {
+      isArchived: isArchived,
+      status: "Pending",
+    };
+
+    const totalRequest = await Request.countDocuments(query);
+
+    const result = await Request.find(query).skip(skip).limit(itemsPerPage);
+
+    if (result.length === 0) {
+      return res.status(400).json({ error: "No services found." });
+    }
+
+    return res
+      .status(200)
+      .json({ result, pageCount: Math.ceil(totalRequest / itemsPerPage) });
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 const GetRevenue = async (req, res) => {
   try {
     let matchCondition = { status: "Transaction Completed" };
@@ -1103,4 +1130,5 @@ module.exports = {
   RespondToRequest,
   ArchiveRequest,
   GetRevenueBrgyPerServices,
+  GetAllPenReq
 };
