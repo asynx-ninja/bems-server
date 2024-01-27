@@ -179,12 +179,12 @@ const GetAllApprovedBrgyService = async (req, res) => {
 
 const GetAllPenBrgyService = async (req, res) => {
   try {
-    const { archived, status, page } = req.query;
+    const { isArchived, status, page } = req.query;
     const itemsPerPage = 5; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
     const query = {
-      isArchived: archived,
+      isArchived: isArchived,
       isApproved: status,
     };
 
