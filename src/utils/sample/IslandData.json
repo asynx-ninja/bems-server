@@ -1,0 +1,42 @@
+[
+  {
+    "dungeonName": "Tropical Island",
+    "difficulty": "beginner",
+    "maxLvl": 30,
+    "items": [
+      {
+        "lvl": 1,
+        "maxWords": 5,
+        "words": ["Aim", "Ace", "Alligator", "Omsim", "Ninja"]
+      },
+      {
+        "lvl": 2,
+        "maxWords": 5,
+        "words": ["Because", "Bob", "Bullseye", "Bulldog", "Boy"]
+      },
+      {
+        "lvl": 3,
+        "maxWords": 5,
+        "words": ["Because", "Bob", "Bullseye", "Bulldog", "Boy"]
+      }
+    ]
+  },
+  {
+    "category": "All",
+    "compose": {
+      "subject": "GEGE",
+      "message": "",
+      "go_to": "Events"
+    },
+    "banner": {
+      "link": "https://drive.google.com/thumbnail?id=1X8y9cBwkGAPckyhRrmMR8sD9j6ZYJawp&sz=w1000",
+      "id": "1X8y9cBwkGAPckyhRrmMR8sD9j6ZYJawp",
+      "name": "Binyagan.png"
+    },
+    "logo": {
+      "link": "https://drive.google.com/thumbnail?id=1VsaYf4Dw3QTfZmkpwGastIERhX4ADOil&sz=w1000",
+      "id": "1VsaYf4Dw3QTfZmkpwGastIERhX4ADOil",
+      "name": "Binyagan - Logo.png"
+    }
+  }
+]

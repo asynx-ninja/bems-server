@@ -1,6 +1,6 @@
-// create events - resident all
+// create events - resident all if open for all / resident many if not open for all
+// application create - staff many (including brgy admin)
 // application update - resident one
-// 		   - staff many
 
 // update service to registered - resident all
 // service request - resident one
@@ -101,10 +101,6 @@ const MessageSchema = new Schema(
       type: String,
       default: "",
     },
-    receiver: {
-      type: Schema.Types.Mixed,
-      default: null,
-    },
     message: {
       type: String,
       default: "",
@@ -118,37 +114,55 @@ const MessageSchema = new Schema(
   { _id: false }
 );
 
+const ReadBySchema = new Schema(
+  {
+    readerId: {
+      default: "",
+      type: String,
+      required: true,
+    },
+    read_at: {
+      type: Date,
+      default: Date.now,
+      required: true,
+    },
+  },
+  { _id: false }
+);
+
+const TargetSchema = new Schema(
+  {
+    user_id: {
+      type: String,
+      default: null,
+    },
+    area: {
+      type: String,
+      default: null,
+    },
+  },
+  { _id: false }
+);
+
 const NotificationSchema = new Schema(
   {
     category: {
       type: String,
       enum: ["All", "One", "Many"],
+      required: true,
     },
     compose: {
       type: MessageSchema,
+      required: true,
     },
-    read_by: [
-      {
-        readerId: {
-          default: "",
-          type: mongoose.Types.ObjectId,
-        },
-        read_at: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
+    target: { type: TargetSchema, required: true },
+    read_by: { type: [ReadBySchema], required: true },
     banner: {
       type: FileSchema,
       required: true,
     },
     logo: {
       type: FileSchema,
-      required: true,
-    },
-    brgy: {
-      type: String,
       required: true,
     },
   },
