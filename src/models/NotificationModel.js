@@ -155,6 +155,11 @@ const NotificationSchema = new Schema(
       type: MessageSchema,
       required: true,
     },
+    type: {
+      type: String,
+      enum: ["Municipality", "Barangay", "Resident"],
+      default: "",
+    },
     target: { type: TargetSchema, required: true },
     read_by: { type: [ReadBySchema], required: true },
     banner: {
