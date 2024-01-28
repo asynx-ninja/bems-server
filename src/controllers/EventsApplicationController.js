@@ -120,6 +120,27 @@ const GetAllPenApp = async (req, res) => {
   }
 };
 
+const GetCountPenApp = async (req, res) => {
+  try {
+    const { isArchived, brgy} = req.query;
+    const query = {
+      brgy,
+      isArchived: isArchived,
+      status: "Pending",
+    };
+    const result = await EventsApplication.find(query);
+
+    if (result.length === 0) {
+      return res.status(400).json({ error: "No services found." });
+    }
+    return res
+      .status(200)
+      .json({result});
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 const CreateEventsApplication = async (req, res) => {
   try {
     const { body, files } = req;
@@ -271,5 +292,6 @@ module.exports = {
   RespondToEventsApplication,
   ArchiveEventsApplication,
   CountCompleted,
-  GetAllPenApp
+  GetAllPenApp,
+  GetCountPenApp
 };
