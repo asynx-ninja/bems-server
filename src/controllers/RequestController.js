@@ -23,14 +23,12 @@ const GetAllRequest = async (req, res) => {
       query.$and.push({ _id: id });
     }
 
+    if (type !== undefined && type !== "all") {
+      query.$and.push({ service_name: type }); // Assuming the field is named 'service_name'
+    }
     if (status && status.toLowerCase() !== "all") {
       query.status = status;
     }
-
-    if (type && type.toLowerCase() !== "all") {
-      query.type = type;
-    }
-
     const totalRequests = await Request.countDocuments(query);
 
     const result = await Request.find(query)
