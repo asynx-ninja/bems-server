@@ -25,13 +25,14 @@ const GetAllNotifications = async (req, res) => {
 
 const CreateNotificationByUser = async (req, res) => {
   try {
-    const { category, compose, target, banner, logo } = req.body;
+    const { category, compose, target, banner, logo, type } = req.body;
 
     const result = await Notification.create({
       category,
       compose,
       target,
       banner,
+      type,
       logo,
     });
 
