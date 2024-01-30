@@ -110,10 +110,12 @@ const GetAdminInquiries = async (req, res) => {
 const GetStaffInquiries = async (req, res) => {
   try {
     const { brgy, archived, status, page } = req.query;
-    const itemsPerPage = 10; // Number of items per page
+    const itemsPerPage = 10;
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const query = { brgy, isArchived: archived };
+    const query = { 
+      brgy, 
+      isArchived: archived };
 
     if (status && status.toLowerCase() !== "all") {
       query.isApproved = status;
