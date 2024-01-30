@@ -1,11 +1,21 @@
 const mongoose = require("mongoose");
 const Notification = require("../models/NotificationModel");
 
-const GetAllNotificationsByUser = async (req, res) => {
+const GetAllNotifications = async (req, res) => {
   try {
-    const { user_type, brgy } = req.query;
+    const { user_id, area, type } = req.query;
 
-    const result = await Notification.find({ "compose.receiver": user_type });
+    const result = await Notification.find({
+      $or: [
+        { category: "All" },
+        {
+          $and: [{ category: "Many" }, { "target.area": area }, { type: type }],
+        },
+        {
+          $or: [{ "target.user_id": user_id }, { category: "One" }],
+        },
+      ],
+    }).sort({ createdAt: -1 });
 
     res.status(200).json(result);
   } catch (err) {
@@ -15,22 +25,14 @@ const GetAllNotificationsByUser = async (req, res) => {
 
 const CreateNotificationByUser = async (req, res) => {
   try {
-    const { category, compose, banner, logo } = req.body;
-
-    if (
-      !(
-        mongoose.Types.ObjectId.isValid(compose.receiver) ||
-        compose.receiver === "Admin" ||
-        compose.receiver === "Staff"
-      )
-    ) {
-      return res.status(400).json({ error: "compose.receiver is required" });
-    }
+    const { category, compose, target, banner, logo, type } = req.body;
 
     const result = await Notification.create({
       category,
       compose,
+      target,
       banner,
+      type,
       logo,
     });
 
@@ -40,7 +42,53 @@ const CreateNotificationByUser = async (req, res) => {
   }
 };
 
+const UpdateReadBy = async (req, res) => {
+  try {
+    const { notification_id } = req.query;
+    const { readerId } = req.body;
+
+    const result = await Notification.findOneAndUpdate(
+      { _id: notification_id },
+      {
+        $push: {
+          read_by: {
+            readerId: readerId,
+          },
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
+const CheckReadBy = async (req, res) => {
+  try {
+    const { user_id, notification_id } = req.query;
+
+    const result = await Notification.findById(
+      { _id: notification_id },
+      {
+        read_by: {
+          $elemMatch: {
+            readerId: user_id,
+          },
+        },
+      }
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 module.exports = {
-  GetAllNotificationsByUser,
+  GetAllNotifications,
   CreateNotificationByUser,
+  UpdateReadBy,
+  CheckReadBy,
 };

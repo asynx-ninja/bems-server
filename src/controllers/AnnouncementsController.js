@@ -132,6 +132,7 @@ const compareArrays = (array1, array2) => {
   return difference;
 };
 
+
 const UpdateAnnouncement = async (req, res) => {
   try {
     const { id } = req.params;

@@ -92,6 +92,33 @@ const CountCompleted = async (req, res) => {
   }
 };
 
+const GetAllPenApp = async (req, res) => {
+  try {
+    const { isArchived, page, brgy } = req.query;
+    const itemsPerPage = 5; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
+
+    const query = {
+      brgy,
+      isArchived: isArchived,
+      status: "Pending",
+    };
+
+    const totalEventsApplication = await EventsApplication.countDocuments(query);
+
+    const result = await EventsApplication.find(query).skip(skip).limit(itemsPerPage);
+
+    if (result.length === 0) {
+      return res.status(400).json({ error: "No services found." });
+    }
+
+    return res
+      .status(200)
+      .json({ result, pageCount: Math.ceil(totalEventsApplication / itemsPerPage) });
+  } catch (err) {
+    res.send(err.message);
+  }
+};
 
 const CreateEventsApplication = async (req, res) => {
   try {
@@ -243,5 +270,6 @@ module.exports = {
   CreateEventsApplication,
   RespondToEventsApplication,
   ArchiveEventsApplication,
-  CountCompleted
+  CountCompleted,
+  GetAllPenApp
 };

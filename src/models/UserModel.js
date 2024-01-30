@@ -108,6 +108,7 @@ const UserSchema = new Schema(
     },
     religion: {
       type: String,
+      default: "",
     },
     email: {
       type: String,
@@ -142,6 +143,7 @@ const UserSchema = new Schema(
     civil_status: {
       type: String,
       enum: ["Single", "Married", "Widowed", "Legally Separated"],
+      default: "Single",
     },
     type: {
       type: String,

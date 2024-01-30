@@ -13,6 +13,7 @@ const {
   RespondToInquiry,
   StatusInquiry,
   getTotalStatusInquiries,
+  GetAllPenStaffInq,
 } = require("../controllers/InquiriesController");
 
 router.get("/", GetInquiries);
