@@ -67,6 +67,8 @@ const SentPIN = async (req, res) => {
       code
     );
 
+    console.log(result);
+
     if (!result.response) return res.status(400).json({ error: "Error email" });
 
     const update = await User.findOneAndUpdate(
