@@ -22,6 +22,8 @@ const GetBrgyAdmin = async (req, res) => {
   }
 };
 
+
+
 const GetSpecificBrgyAdmin = async (req, res) => {
   try {
     const { id } = req.params;

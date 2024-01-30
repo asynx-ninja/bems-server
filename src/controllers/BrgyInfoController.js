@@ -56,17 +56,24 @@ const GetAllBarangay = async (req, res) => {
   }
 };
 
+
+
 const AddBarangayInfo = async (req, res) => {
   try {
     const { body, files } = req;
     const { story, mission, vision, brgy } = JSON.parse(body.brgyinfo);
     let fileArray = [];
 
+    // Create the parent folder (brgy) and the child folder (INFO)
+    const parentFolderId  = await createFolderDrive(brgy);
+    const childFolder = await createFolder(
+      parentFolderId,
+    );
+
     for (let f = 0; f < files.length; f += 1) {
       const { id, name } = await uploadPicDrive(
         files[f],
-        ReturnBrgyFormat(brgy),
-        "I"
+        childFolder, // Use the childFolderId as the parent folder for files
       );
 
       fileArray.push({

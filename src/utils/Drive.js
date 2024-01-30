@@ -3,6 +3,7 @@ const fs = require("fs");
 const authorize = require("../config/GDrive");
 const ReturnBarangay = require("../functions/ReturnBarangay");
 
+
 const createFolder = async (brgy, type, service_id) => {
   const { data } = await google
     .drive({ version: "v3", auth: authorize })
@@ -78,8 +79,10 @@ const deletePicDrive = async (fileID, brgy, type) => {
 
 module.exports = {
   createFolder,
+  createParentFolderDrive,
+  createChildFolderDrive,
   uploadPicDrive,
   uploadFileDrive,
   deleteFileDrive,
-  deletePicDrive
+  deletePicDrive,
 };
