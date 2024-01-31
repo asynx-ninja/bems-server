@@ -5,9 +5,9 @@ const GenerateID = require("../functions/GenerateID");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const {
-  uploadFileDrive,
-  createFolder,
-  deleteFileDrive,
+  createRequiredFolders,
+  uploadFolderFiles,
+  deleteFolderFiles,
 } = require("../utils/Drive");
 
 // RESIDENT ONLY
@@ -140,15 +140,16 @@ const GetStaffInquiries = async (req, res) => {
 
 const CreateInquiries = async (req, res) => {
   try {
+    const { inq_folder_id } = req;
     const { body, files } = req;
     const { name, email, compose, brgy, user_id } = JSON.parse(body.inquiries);
 
     let fileArray = [];
-    const inq_id = GenerateID(brgy, "Q");
-    const folder_id = await createFolder(ReturnBrgyFormat(brgy), "Q", inq_id);
+    const inq_id = GenerateID("", brgy, "Q");
+    const folder_id = await createRequiredFolders(inq_id, inq_folder_id);
 
     for (let f = 0; f < files.length; f += 1) {
-      const { id, name } = await uploadFileDrive(files[f], folder_id);
+      const { id, name } = await  uploadFolderFiles(files[f], folder_id);
 
       fileArray.push({
         link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
@@ -214,7 +215,7 @@ const RespondToInquiry = async (req, res) => {
 
     if (files) {
       for (let f = 0; f < files.length; f++) {
-        const { id, name } = await uploadFileDrive(files[f], folder_id);
+        const { id, name } = await  uploadFolderFiles(files[f], folder_id);
 
         fileArray.push({
           link: files[f].mimetype.includes("image")
@@ -294,7 +295,7 @@ const getTotalStatusInquiries = async (req, res) => {
       },
       {
         $group: {
-          _id: "$isApproved", // Assuming isApproved is the field for the inquiry status
+          _id: "$isApproved", 
           totalRequests: { $sum: 1 },
         },
       },
