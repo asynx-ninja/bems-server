@@ -5,9 +5,10 @@ const GenerateID = require("../functions/GenerateID");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const {
-  uploadFileDrive,
-  createFolder,
-  deleteFileDrive,
+  createBarangayFolder,
+  createRequiredFolders,
+  uploadFolderFiles,
+  deleteFolderFiles,
 } = require("../utils/Drive");
 
 const GetBarangayAnnouncement = async (req, res) => {
@@ -38,7 +39,6 @@ const GetBarangayAnnouncement = async (req, res) => {
     res.send(err.message);
   }
 };
-
 
 const GetAllOpenBrgyAnnouncement = async (req, res) => {
   try {
@@ -74,13 +74,14 @@ const GetAllOpenBrgyAnnouncement = async (req, res) => {
 
 const CreateAnnouncement = async (req, res) => {
   try {
+    const { event_folder_id } = req.query;
     const { body, files } = req;
     const { title, details, date, brgy, isOpen } = JSON.parse(
       body.announcement
     );
     let fileArray = [];
-    const event_id = GenerateID(brgy, "E");
-    const folder_id = await createFolder(ReturnBrgyFormat(brgy), "E", event_id);
+    const event_id = GenerateID(title, brgy, "E");
+    const folder_id = await createRequiredFolders(event_id, event_folder_id);
 
     for (let f = 0; f < files.length; f += 1) {
       const { id, name } = await uploadFileDrive(files[f], folder_id);
@@ -131,7 +132,6 @@ const compareArrays = (array1, array2) => {
   });
   return difference;
 };
-
 
 const UpdateAnnouncement = async (req, res) => {
   try {

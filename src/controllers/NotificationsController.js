@@ -14,6 +14,7 @@ const GetAllNotifications = async (req, res) => {
         {
           $and: [{ "target.user_id": user_id }, { category: "One" }],
         },
+       
       ],
     }).sort({ createdAt: -1 });
 

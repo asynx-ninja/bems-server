@@ -182,7 +182,8 @@ const GetAllPenBrgyService = async (req, res) => {
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
     const query = {
-      $and: [{ isArchived: archived }, { isApproved: status }],
+      isArchived: archived,
+      isApproved: status,
     };
 
     const totalServices = await Service.countDocuments(query);

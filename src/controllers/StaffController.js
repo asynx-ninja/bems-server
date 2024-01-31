@@ -42,6 +42,70 @@ const GetBrgyStaffs = async (req, res) => {
     res.send(err.message);
   }
 };
+const GetBrgyAdmin = async (req, res) => {
+  try {
+
+    const { page, type } = req.query
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
+
+    const query = {
+      $and: [
+        { isArchived: false },
+        { type: "Brgy Admin"},
+      ],
+    };
+
+    if (type && type.toLowerCase() !== "all") {
+      query.type = type;
+    }
+
+    const totalStaffs = await User.countDocuments(query);
+
+    const result = await User.find(query)
+      .skip(skip)
+      .limit(itemsPerPage);
+
+    return !result
+      ? res.status(400).json({ error: `No such user` })
+      : res.status(200).json({ result, pageCount: Math.ceil(totalStaffs / itemsPerPage) });
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
+const GetArchiveBrgyAdmin = async (req, res) => {
+  try {
+
+    const { page, type } = req.query
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
+
+    const query = {
+      $and: [
+        { isArchived: true },
+        { type: "Brgy Admin"},
+      ],
+    };
+
+    if (type && type.toLowerCase() !== "all") {
+      query.type = type;
+    }
+
+    const totalStaffs = await User.countDocuments(query);
+
+    const result = await User.find(query)
+      .skip(skip)
+      .limit(itemsPerPage);
+
+    return !result
+      ? res.status(400).json({ error: `No such user` })
+      : res.status(200).json({ result, pageCount: Math.ceil(totalStaffs / itemsPerPage) });
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 
 const GetSpecificBrgyStaff = async (req, res) => {
   try {
@@ -275,6 +339,8 @@ const ArchiveStaff = async (req, res) => {
 
 module.exports = {
   GetBrgyStaffs,
+  GetBrgyAdmin,
+  GetArchiveBrgyAdmin,
   GetSpecificBrgyStaff,
   GetArchivedStaffs,
   CreateBrgyStaff,
