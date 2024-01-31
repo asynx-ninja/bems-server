@@ -225,14 +225,12 @@ const CreateServices = async (req, res) => {
     const { service_folder_id } = req.query;
     const { body, files } = req;
     const { name, type, details, fee, brgy } = JSON.parse(body.service);
-
     let fileArray = [];
-
-    const service_id = GenerateID(brgy, "S", type.toUpperCase());
+    const service_id = GenerateID(name, brgy, "S");
     const folder_id = await createRequiredFolders(service_id, service_folder_id);
 
     for (let f = 0; f < files.length; f += 1) {
-      const { id, name } = await uploadFileDrive(files[f], folder_id);
+      const { id, name } = await uploadFolderFiles(files[f], folder_id);
 
       fileArray.push({
         link:
