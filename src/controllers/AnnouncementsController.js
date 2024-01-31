@@ -76,9 +76,7 @@ const CreateAnnouncement = async (req, res) => {
   try {
     const { event_folder_id } = req.query;
     const { body, files } = req;
-    const { title, details, date, brgy, isOpen } = JSON.parse(
-      body.announcement
-    );
+    const { title, details, date, brgy, isOpen } = JSON.parse(body.announcement);
     let fileArray = [];
     const event_id = GenerateID(title, brgy, "E");
     const folder_id = await createRequiredFolders(event_id, event_folder_id);
