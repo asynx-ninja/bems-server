@@ -2,7 +2,13 @@ const mongoose = require("mongoose");
 const { hash } = require("../config/BCrypt");
 const User = require("../models/UserModel");
 const GenerateID = require("../functions/GenerateID");
-const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
+
+const {
+  createBarangayFolder,
+  createRequiredFolders,
+  uploadFolderFiles,
+  deleteFolderFiles,
+} = require("../utils/Drive");
 
 const GetUsers = async (req, res) => {
   try {
@@ -394,6 +400,7 @@ const CreateUser = async (req, res) => {
 
 const UpdateUser = async (req, res) => {
   try {
+    const { folder_id } = req.query;
     const { doc_id } = req.query;
     const { body, file } = req;
     const user = JSON.parse(body.users);
@@ -407,13 +414,12 @@ const UpdateUser = async (req, res) => {
       name = null;
 
     if (file) {
-      const brgy = user.address.brgy.replace(/ /g, "_");
-      const obj = await uploadPicDrive(file, brgy, "U");
+      const obj = await uploadFolderFiles(file, folder_id);
       id = obj.id;
       name = obj.name;
 
       if (user.profile.id !== "")
-        await deletePicDrive(user.profile.id, brgy, "U");
+        await deleteFolderFiles(user.profile.id, folder_id);
     }
 
     const result = await User.findOneAndUpdate(
@@ -526,7 +532,9 @@ const getAllResidentIsArchived = async (req, res) => {
         $match: {
           "address.brgy": brgy,
           type: "Resident",
-          isArchived: isArchived ? isArchived === "true" : { $in: [false, null] },
+          isArchived: isArchived
+            ? isArchived === "true"
+            : { $in: [false, null] },
         },
       },
       {
