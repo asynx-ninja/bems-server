@@ -108,7 +108,7 @@ const MessageSchema = new Schema(
     go_to: {
       type: String,
       default: "",
-      enum: ["Events", "Application", "Services", "Requests", "Inquiries"],
+      enum: ["Events", "Application", "Services", "Requests", "Inquiries", null],
     },
   },
   { _id: false }

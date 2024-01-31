@@ -1,7 +1,13 @@
 const mongoose = require("mongoose");
 const BrgyInformation = require("../models/BrgyInfoModel");
 
-const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
+const {
+  createBarangayFolder,
+  createRequiredFolders,
+  uploadPicDrive,
+  uploadFolderFiles,
+  deletePicDrive,
+} = require("../utils/Drive");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const GetBarangayInformation = async (req, res) => {
@@ -60,21 +66,13 @@ const GetAllBarangay = async (req, res) => {
 
 const AddBarangayInfo = async (req, res) => {
   try {
+    const { folder_id } = req.query;
     const { body, files } = req;
     const { story, mission, vision, brgy } = JSON.parse(body.brgyinfo);
     let fileArray = [];
 
-    // Create the parent folder (brgy) and the child folder (INFO)
-    const parentFolderId  = await createFolderDrive(brgy);
-    const childFolder = await createFolder(
-      parentFolderId,
-    );
-
     for (let f = 0; f < files.length; f += 1) {
-      const { id, name } = await uploadPicDrive(
-        files[f],
-        childFolder, // Use the childFolderId as the parent folder for files
-      );
+      const { id, name } = await uploadFolderFiles(files[f], folder_id);
 
       fileArray.push({
         link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,

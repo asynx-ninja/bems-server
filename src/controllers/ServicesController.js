@@ -169,8 +169,6 @@ const GetAllApprovedBrgyService = async (req, res) => {
     }
     const result = await Service.find(query);
 
-   
-
     res.json(result);
   } catch (err) {
     res.send(err.message);
@@ -190,7 +188,7 @@ const GetAllPenBrgyService = async (req, res) => {
 
     const totalServices = await Service.countDocuments(query);
 
-    const result = await Service.find(query).skip(skip).limit(itemsPerPage);
+    const result = await Service.find(query);
 
     if (result.length === 0) {
       return res.status(400).json({ error: "No services found." });
