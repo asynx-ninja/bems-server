@@ -79,8 +79,6 @@ const deletePicDrive = async (fileID, brgy, type) => {
 
 module.exports = {
   createFolder,
-  createParentFolderDrive,
-  createChildFolderDrive,
   uploadPicDrive,
   uploadFileDrive,
   deleteFileDrive,
