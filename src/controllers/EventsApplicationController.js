@@ -4,9 +4,9 @@ const GenerateID = require("../functions/GenerateID");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const {
-  createFolder,
-  uploadFileDrive,
-  deleteFileDrive,
+  createRequiredFolders,
+  uploadFolderFiles,
+  deleteFolderFiles,
 } = require("../utils/Drive");
 
 const GetAllEventsApplication = async (req, res) => {
@@ -143,21 +143,18 @@ const GetCountPenApp = async (req, res) => {
 
 const CreateEventsApplication = async (req, res) => {
   try {
+    const { app_folder_id} = req;
     const { body, files } = req;
     const newBody = JSON.parse(body.form);
     // console.log(newBody, files);
 
-    const app_id = GenerateID(newBody.brgy, "A", newBody.event_name);
-    const folder_id = await createFolder(
-      ReturnBrgyFormat(newBody.brgy),
-      "A",
-      app_id
-    );
+    const app_id = GenerateID( newBody.event_name, newBody.brgy, "A");
+    const folder_id = await createRequiredFolders(app_id, app_folder_id);
     let fileArray = [];
 
     if (files) {
       for (let f = 0; f < files.length; f += 1) {
-        const { id, name } = await uploadFileDrive(files[f], folder_id);
+        const { id, name } = await uploadFolderFiles(files[f], folder_id);
 
         fileArray.push({
           link: files[f].mimetype.includes("image")
@@ -211,7 +208,7 @@ const RespondToEventsApplication = async (req, res) => {
 
     if (files) {
       for (let f = 0; f < files.length; f++) {
-        const { id, name } = await uploadFileDrive(files[f], folder_id);
+        const { id, name } = await uploadFolderFiles(files[f], folder_id);
 
         fileArray.push({
           link: files[f].mimetype.includes("image")

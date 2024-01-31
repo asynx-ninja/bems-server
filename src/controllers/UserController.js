@@ -350,7 +350,7 @@ const CreateUser = async (req, res) => {
       password,
     } = req.body;
 
-    const user_id = GenerateID(address.brgy, "U", type.toUpperCase());
+    const user_id = GenerateID("", address.brgy, "U");
 
     // Hash the password before saving
     const hashedPassword = await hash(password);
