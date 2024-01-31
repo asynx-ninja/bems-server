@@ -81,9 +81,11 @@ const GetEventsApplicationByUser = async (req, res) => {
 const CountCompleted = async (req, res) => {
   try {
     const { brgy, event_id } = req.query;
-    
+
     const completedCount = await EventsApplication.countDocuments({
-      $and: [{ brgy: brgy, event_id: event_id, status: "Application Completed" }],
+      $and: [
+        { brgy: brgy, event_id: event_id, status: "Application Completed" },
+      ],
     });
 
     res.status(200).json({ completedCount });
@@ -104,9 +106,13 @@ const GetAllPenApp = async (req, res) => {
       status: "Pending",
     };
 
-    const totalEventsApplication = await EventsApplication.countDocuments(query);
+    const totalEventsApplication = await EventsApplication.countDocuments(
+      query
+    );
 
-    const result = await EventsApplication.find(query).skip(skip).limit(itemsPerPage);
+    const result = await EventsApplication.find(query)
+      .skip(skip)
+      .limit(itemsPerPage);
 
     if (result.length === 0) {
       return res.status(400).json({ error: "No services found." });
@@ -114,7 +120,10 @@ const GetAllPenApp = async (req, res) => {
 
     return res
       .status(200)
-      .json({ result, pageCount: Math.ceil(totalEventsApplication / itemsPerPage) });
+      .json({
+        result,
+        pageCount: Math.ceil(totalEventsApplication / itemsPerPage),
+      });
   } catch (err) {
     res.send(err.message);
   }
@@ -122,7 +131,7 @@ const GetAllPenApp = async (req, res) => {
 
 const GetCountPenApp = async (req, res) => {
   try {
-    const { isArchived, brgy} = req.query;
+    const { isArchived, brgy } = req.query;
     const query = {
       brgy,
       isArchived: isArchived,
@@ -133,9 +142,7 @@ const GetCountPenApp = async (req, res) => {
     if (result.length === 0) {
       return res.status(400).json({ error: "No services found." });
     }
-    return res
-      .status(200)
-      .json({result});
+    return res.status(200).json({ result });
   } catch (err) {
     res.send(err.message);
   }
@@ -143,12 +150,12 @@ const GetCountPenApp = async (req, res) => {
 
 const CreateEventsApplication = async (req, res) => {
   try {
-    const { app_folder_id} = req;
+    const { app_folder_id } = req.query;
     const { body, files } = req;
     const newBody = JSON.parse(body.form);
     // console.log(newBody, files);
 
-    const app_id = GenerateID( newBody.event_name, newBody.brgy, "A");
+    const app_id = GenerateID(newBody.event_name, newBody.brgy, "A");
     const folder_id = await createRequiredFolders(app_id, app_folder_id);
     let fileArray = [];
 
@@ -290,5 +297,5 @@ module.exports = {
   ArchiveEventsApplication,
   CountCompleted,
   GetAllPenApp,
-  GetCountPenApp
+  GetCountPenApp,
 };
