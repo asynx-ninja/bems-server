@@ -4,9 +4,10 @@ const GenerateID = require("../functions/GenerateID");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const {
-  createFolder,
-  uploadFileDrive,
-  deleteFileDrive,
+  createBarangayFolder,
+  createRequiredFolders,
+  uploadFolderFiles,
+  deleteFolderFiles,
 } = require("../utils/Drive");
 
 const GetAllRequest = async (req, res) => {
@@ -845,21 +846,18 @@ const GetRequestByUser = async (req, res) => {
 
 const CreateRequest = async (req, res) => {
   try {
+    const { request_folder_id } = req.query;
     const { body, files } = req;
     const newBody = JSON.parse(body.form);
     //console.log(newBody, files);
 
     const req_id = GenerateID(newBody.brgy, "R", newBody.name);
-    const folder_id = await createFolder(
-      ReturnBrgyFormat(newBody.brgy),
-      "R",
-      req_id
-    );
+    const folder_id = await createRequiredFolders(req_id, request_folder_id);
     let fileArray = [];
 
     if (files) {
       for (let f = 0; f < files.length; f += 1) {
-        const { id, name } = await uploadFileDrive(files[f], folder_id);
+        const { id, name } = await uploadFolderFiles(files[f], folder_id);
 
         fileArray.push({
           link: files[f].mimetype.includes("image")
@@ -916,7 +914,7 @@ const RespondToRequest = async (req, res) => {
 
     if (files) {
       for (let f = 0; f < files.length; f++) {
-        const { id, name } = await uploadFileDrive(files[f], folder_id);
+        const { id, name } = await uploadFolderFiles(files[f], folder_id);
 
         fileArray.push({
           link: files[f].mimetype.includes("image")
