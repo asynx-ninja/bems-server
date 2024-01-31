@@ -851,7 +851,7 @@ const CreateRequest = async (req, res) => {
     const newBody = JSON.parse(body.form);
     //console.log(newBody, files);
 
-    const req_id = GenerateID(newBody.brgy, "R", newBody.name);
+    const req_id = GenerateID(newBody.name, newBody.brgy, "R");
     const folder_id = await createRequiredFolders(req_id, request_folder_id);
     let fileArray = [];
 
