@@ -4,11 +4,9 @@ const BrgyInformation = require("../models/BrgyInfoModel");
 const {
   createBarangayFolder,
   createRequiredFolders,
-  uploadPicDrive,
   uploadFolderFiles,
-  deletePicDrive,
+  deleteFolderFiles,
 } = require("../utils/Drive");
-const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const GetBarangayInformation = async (req, res) => {
   try {
@@ -28,6 +26,7 @@ const GetBarangayInformation = async (req, res) => {
     res.send(err.message);
   }
 };
+
 const GetAllBarangay = async (req, res) => {
   try {
     // Retrieve logo, barangay name, and banner link
@@ -62,8 +61,7 @@ const GetAllBarangay = async (req, res) => {
   }
 };
 
-
-
+// CHECK
 const AddBarangayInfo = async (req, res) => {
   try {
     const { folder_id } = req.query;
@@ -101,10 +99,11 @@ const AddBarangayInfo = async (req, res) => {
   }
 };
 
+// CHECK
 const UpdateBarangayInfo = async (req, res) => {
+  const { folder_id } = req.query;
   const { brgy } = req.params;
   const { body, files } = req;
-  console.log(body, files);
 
   const brgyData = JSON.parse(body.brgyinfo);
   const { story, mission, vision, banner, logo } = brgyData;
@@ -114,28 +113,24 @@ const UpdateBarangayInfo = async (req, res) => {
 
   if (files) {
     for (let i = 0; i < files.length; i++) {
-      const { id, name } = await uploadPicDrive(
-        files[i],
-        ReturnBrgyFormat(brgy),
-        "I"
-      );
+      const { id, name } = await uploadFolderFiles(files[i], folder_id);
 
-      if (files[i].originalname === "banner") {
+      if (files[i].originalname.includes("banner")) {
         bannerNew = {
           link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
           id,
           name,
         };
-        if (banner.id !== "")
-          await deletePicDrive(banner.id, ReturnBrgyFormat(brgy), "I");
-      } else if (files[i].originalname === "logo") {
+
+        if (banner.id !== "") await deleteFolderFiles(banner.id, folder_id);
+      } else if (files[i].originalname.includes("logo")) {
         logoNew = {
           link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
           id,
           name,
         };
-        if (logo.id !== "")
-          await deletePicDrive(logo.id, ReturnBrgyFormat(brgy), "I");
+
+        if (logo.id !== "") await deleteFolderFiles(logo.id, folder_id);
       }
     }
   }
