@@ -2,8 +2,15 @@ const mongoose = require("mongoose");
 
 const BrgyOfficial = require("../models/BrgyOfficialModel");
 
-const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
+// const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
+
+const {
+  createBarangayFolder,
+  createRequiredFolders,
+  uploadFolderFiles,
+  deleteFolderFiles,
+} = require("../utils/Drive");
 
 const GetBarangayOfficial = async (req, res) => {
   try {
@@ -35,6 +42,7 @@ const GetBarangayOfficial = async (req, res) => {
 
 const AddBarangayOfficial = async (req, res) => {
   try {
+    const { folder_id } = req.query;
     const { brgy } = req.query;
     const { body, file } = req;
     const { firstName, lastName, middleName, suffix, position, fromYear, toYear } = JSON.parse(body.official);
@@ -43,7 +51,7 @@ const AddBarangayOfficial = async (req, res) => {
       file_name = null;
 
     if (file) {
-      const obj = await uploadPicDrive(file, ReturnBrgyFormat(brgy), "O");
+      const obj = await uploadFolderFiles(file, folder_id);
       file_id = obj.id;
       file_name = obj.name;
     }
@@ -78,6 +86,7 @@ const AddBarangayOfficial = async (req, res) => {
 
 const UpdateBarangayOfficial = async (req, res) => {
   try {
+    const { folder_id } = req.query;
     const { brgy, doc_id } = req.query;
     const { body, file } = req;
 
@@ -93,12 +102,12 @@ const UpdateBarangayOfficial = async (req, res) => {
     }
 
     if (file) {
-      const obj = await uploadPicDrive(file, ReturnBrgyFormat(brgy), "O");
+      const obj = await uploadFolderFiles(file, folder_id);
       file_id = obj.id;
       file_name = obj.name;
 
       if (picture.id !== "") {
-        await deletePicDrive(picture.id, ReturnBrgyFormat(brgy), "O");
+        await deleteFolderFiles(picture.id, folder_id);
       }
     }
 

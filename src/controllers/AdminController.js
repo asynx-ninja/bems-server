@@ -3,7 +3,14 @@ const { hash } = require("../config/BCrypt");
 const User = require("../models/UserModel");
 const GenerateID = require("../functions/GenerateID");
 
-const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
+// const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
+
+const {
+  createBarangayFolder,
+  createRequiredFolders,
+  uploadFolderFiles,
+  deleteFolderFiles,
+} = require("../utils/Drive");
 
 const GetBrgyAdmin = async (req, res) => {
   try {
@@ -69,7 +76,7 @@ const CreateBrgyAdmin = async (req, res) => {
       password,
     } = req.body;
 
-    const user_id = GenerateID(address.brgy, "U", type.toUpperCase());
+    const user_id = GenerateID("", address.brgy, "U");
 
     // Hash the password before saving
     const hashedPassword = await hash(password);
@@ -113,6 +120,7 @@ const CreateBrgyAdmin = async (req, res) => {
 
 const UpdateBrgyAdmin = async (req, res) => {
   try {
+    const { folder_id } = req.query;
     const { doc_id } = req.params;
     const { body, file } = req;
     const user = JSON.parse(body.users);
@@ -128,12 +136,12 @@ const UpdateBrgyAdmin = async (req, res) => {
 
     if (file) {
       const brgy = user.address.brgy.replace(/ /g, "_");
-      const obj = await uploadPicDrive(file, brgy, "U");
+      const obj = await uploadFolderFiles(file, folder_id);
       id = obj.id;
       name = obj.name;
 
       if (user.profile.id !== "")
-        await deletePicDrive(user.profile.id, brgy, "U");
+        await deleteFolderFiles(user.profile.id, folder_id);
     }
 
     const result = await User.findOneAndUpdate(

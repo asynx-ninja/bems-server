@@ -227,11 +227,7 @@ const CreateServices = async (req, res) => {
     let fileArray = [];
 
     const service_id = GenerateID(brgy, "S", type.toUpperCase());
-    const folder_id = await createFolder(
-      ReturnBrgyFormat(brgy),
-      "S",
-      service_id
-    );
+    const folder_id = await createFolder(ReturnBrgyFormat(brgy), "S", service_id);
 
     for (let f = 0; f < files.length; f += 1) {
       const { id, name } = await uploadFileDrive(files[f], folder_id);
