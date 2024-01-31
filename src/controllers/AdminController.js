@@ -125,8 +125,6 @@ const UpdateBrgyAdmin = async (req, res) => {
     const { body, file } = req;
     const user = JSON.parse(body.users);
 
-    console.log(user);
-
     if (!mongoose.Types.ObjectId.isValid(doc_id)) {
       return res.status(400).json({ error: "No such Barangay Admin" });
     }
@@ -135,7 +133,6 @@ const UpdateBrgyAdmin = async (req, res) => {
       name = null;
 
     if (file) {
-      const brgy = user.address.brgy.replace(/ /g, "_");
       const obj = await uploadFolderFiles(file, folder_id);
       id = obj.id;
       name = obj.name;
