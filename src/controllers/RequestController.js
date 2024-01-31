@@ -23,14 +23,12 @@ const GetAllRequest = async (req, res) => {
       query.$and.push({ _id: id });
     }
 
+    if (type !== undefined && type !== "all") {
+      query.$and.push({ service_name: type }); // Assuming the field is named 'service_name'
+    }
     if (status && status.toLowerCase() !== "all") {
       query.status = status;
     }
-
-    if (type && type.toLowerCase() !== "all") {
-      query.type = type;
-    }
-
     const totalRequests = await Request.countDocuments(query);
 
     const result = await Request.find(query)
@@ -86,11 +84,12 @@ const GetStatusPercentage = async (req, res) => {
 
 const GetAllPenReq= async (req, res) => {
   try {
-    const { isArchived, page } = req.query;
+    const { isArchived, page, brgy } = req.query;
     const itemsPerPage = 5; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
     const query = {
+      brgy,
       isArchived: isArchived,
       status: "Pending",
     };
@@ -106,6 +105,26 @@ const GetAllPenReq= async (req, res) => {
     return res
       .status(200)
       .json({ result, pageCount: Math.ceil(totalRequest / itemsPerPage) });
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
+const GetCountPenReq= async (req, res) => {
+  try {
+    const { isArchived, brgy } = req.query;
+    const query = {
+      brgy,
+      isArchived: isArchived,
+      status: "Pending",
+    };
+    const result = await Request.find(query);
+    if (result.length === 0) {
+      return res.status(400).json({ error: "No services found." });
+    }
+    return res
+      .status(200)
+      .json({ result});
   } catch (err) {
     res.send(err.message);
   }
@@ -1130,5 +1149,6 @@ module.exports = {
   RespondToRequest,
   ArchiveRequest,
   GetRevenueBrgyPerServices,
-  GetAllPenReq
+  GetAllPenReq,
+  GetCountPenReq
 };

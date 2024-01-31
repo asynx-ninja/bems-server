@@ -12,7 +12,7 @@ const GetAllNotifications = async (req, res) => {
           $and: [{ category: "Many" }, { "target.area": area }, { type: type }],
         },
         {
-          $or: [{ "target.user_id": user_id }, { category: "One" }],
+          $and: [{ "target.user_id": user_id }, { category: "One" }],
         },
       ],
     }).sort({ createdAt: -1 });

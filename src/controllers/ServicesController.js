@@ -169,8 +169,6 @@ const GetAllApprovedBrgyService = async (req, res) => {
     }
     const result = await Service.find(query);
 
-   
-
     res.json(result);
   } catch (err) {
     res.send(err.message);
@@ -179,18 +177,17 @@ const GetAllApprovedBrgyService = async (req, res) => {
 
 const GetAllPenBrgyService = async (req, res) => {
   try {
-    const { isArchived, status, page } = req.query;
+    const { archived, status, page } = req.query;
     const itemsPerPage = 5; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
     const query = {
-      isArchived: isArchived,
-      isApproved: status,
+      $and: [{ isArchived: archived }, { isApproved: status }],
     };
 
     const totalServices = await Service.countDocuments(query);
 
-    const result = await Service.find(query).skip(skip).limit(itemsPerPage);
+    const result = await Service.find(query);
 
     if (result.length === 0) {
       return res.status(400).json({ error: "No services found." });

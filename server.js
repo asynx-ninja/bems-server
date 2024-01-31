@@ -20,7 +20,9 @@ const MTouristSpot = require("./src/routes/MTouristSpot");
 const NotificationRoutes = require("./src/routes/Notification");
 const AnnouncementFormRoutes = require("./src/routes/AnnouncementForm");
 const EventsApplicationRoutes = require("./src/routes/EventsApplication");
-const CountCompletedRoutes = require("./src/routes/EventsApplication")
+const CountCompletedRoutes = require("./src/routes/EventsApplication");
+const FolderRoute = require("./src/routes/Folder");
+
 const connectDB = require("./src/config/DB");
 
 dotenv.config();
@@ -38,8 +40,8 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(
   cors({
-    origin: "*", 
-    
+    origin: "*",
+
     credentials: true,
   })
 );
@@ -64,6 +66,7 @@ app.use("/api/notification", NotificationRoutes);
 app.use("/api/event_form", AnnouncementFormRoutes);
 app.use("/api/application", EventsApplicationRoutes);
 app.use("/api/completed", CountCompletedRoutes);
+app.use("/api/folder", FolderRoute);
 
 app.get("/", (req, res) => {
   res.status(200).json({
