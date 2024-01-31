@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const HomepageInformation = require("../models/MAboutusInfoModel");
 
-const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
+const { uploadFolderFiles, deleteFolderFiles } = require("../utils/Drive");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const GetAboutusInformation = async (req, res) => {
@@ -34,6 +34,7 @@ const GetAboutusInformation = async (req, res) => {
 
 const AddAboutusInfo = async (req, res) => {
   try {
+    const { folder_id } = req.query;
     const { body, file } = req;
     const { title, details, brgy } = JSON.parse(body.aboutusinfo);
 
@@ -41,7 +42,7 @@ const AddAboutusInfo = async (req, res) => {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const { id, name } = await uploadPicDrive(file, ReturnBrgyFormat(brgy), "A");
+    const { id, name } = await uploadFolderFiles(file, folder_id);
 
     const banner = {
       link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
@@ -64,6 +65,7 @@ const AddAboutusInfo = async (req, res) => {
 
 const UpdateAboutusInfo = async (req, res) => {
   try {
+    const { folder_id } = req.query;
     const { doc_id } = req.query;
     const { body, file } = req;
 
@@ -77,12 +79,12 @@ const UpdateAboutusInfo = async (req, res) => {
       name = null;
 
     if (file !== undefined) {
-      const obj = await uploadPicDrive(file, aboutusInfos.brgy, "A");
+      const obj = await uploadFolderFiles(file, folder_id);
       id = obj.id;
       name = obj.name;
 
       if (aboutusInfos.banner.id !== "")
-        await deletePicDrive(aboutusInfos.banner.id, aboutusInfos.brgy, "A");
+        await deleteFolderFiles(aboutusInfos.banner.id, folder_id);
     }
     const result = await HomepageInformation.findOneAndUpdate(
       { _id: doc_id },
@@ -113,6 +115,7 @@ const UpdateAboutusInfo = async (req, res) => {
     return res.status(500).send(err.message);
   }
 };
+
 const ArchiveAboutus = async (req, res) => {
   try {
     const { id, archived } = req.params;

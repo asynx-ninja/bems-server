@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const TouristSpot = require("../models/MTouristSpotModel");
 
-const { uploadPicDrive, deleteFileDrive, deletePicDrive, uploadFileDrive } = require("../utils/Drive");
+const { uploadPicDrive, deleteFileDrive, deletePicDrive, uploadFileDrive,  uploadFolderFiles, deleteFolderFiles } = require("../utils/Drive");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const GetTouristSpotInformation = async (req, res) => {
@@ -52,6 +52,7 @@ const GetSpecificTouristInfo = async (req, res) => {
 
 const AddTouristSpotInfo = async (req, res) => {
   try {
+    const { folder_id } = req.query;
     const { body, files } = req; // 'files' instead of 'file' for multiple files
     const { name, details, brgy, section } = JSON.parse(body.touristspot);
     console.log(files);
@@ -63,11 +64,7 @@ const AddTouristSpotInfo = async (req, res) => {
     // Process each file and upload it
     let images = [];
     for (let f = 0; f < files.length; f += 1) {
-      const { id, name } = await uploadPicDrive(
-        files[f],
-        ReturnBrgyFormat(section),
-        "T"
-      );
+      const { id, name } = await uploadFolderFiles(files[f], folder_id);
 
       images.push({
         link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
@@ -103,6 +100,7 @@ const compareArrays = (array1, array2) => {
 
 const UpdateTouristSpotInfo = async (req, res) => {
     try {
+      const { folder_id } = req.query;
       const { id } = req.params;
       let { body, files } = req;
       let currentFiles = [];
@@ -128,12 +126,12 @@ const UpdateTouristSpotInfo = async (req, res) => {
       const toBeDeletedItems = compareArrays(fullItem, currentFiles);
   
       for (const item of toBeDeletedItems) {
-        await deletePicDrive(item.id,  touristspot.section, "T");
+        await deleteFolderFiles(item.id, folder_id);
       }
   
       if (files) {
         for (let f = 0; f < files.length; f += 1) {
-          const { id, name } = await uploadPicDrive(files[f], touristspot.section, "T");
+          const { id, name } = await uploadFolderFiles(files[f], folder_id);
   
           const file = {
             link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,

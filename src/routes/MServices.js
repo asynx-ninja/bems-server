@@ -11,7 +11,7 @@ const {
 } = require("../controllers/MServicesController");
 
 router.get("/", GetServicesInformation);
-router.post("/", upload.array("files", 10), AddServicesInfo);
+router.post("/", upload.single("file"), AddServicesInfo);
 router.patch("/manage", upload.single("file"), UpdateServicesInfo);
 router.patch("/archived/:id/:archived", ArchiveServicesInfo);
 

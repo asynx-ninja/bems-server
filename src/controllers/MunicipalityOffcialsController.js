@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const MunicipalityOfficial = require("../models/MunicipalityOfficialsModel");
 
-const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
+const { uploadPicDrive, deletePicDrive, uploadFolderFiles, deleteFolderFiles } = require("../utils/Drive");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const GetMunicipalityOfficial = async (req, res) => {
@@ -40,6 +40,7 @@ const GetMunicipalityOfficial = async (req, res) => {
 
 const AddMunicipalityOfficial = async (req, res) => {
   try {
+    const { folder_id } = req.query;
     const { brgy } = req.query;
     const { body, file } = req;
     const {
@@ -53,28 +54,21 @@ const AddMunicipalityOfficial = async (req, res) => {
       toYear,
     } = JSON.parse(body.official);
 
-    var file_id = null,
-      file_name = null;
-
-    if (file) {
-      const obj = await uploadPicDrive(file, ReturnBrgyFormat(brgy), "O");
-      file_id = obj.id;
-      file_name = obj.name;
+    if (!file) {
+      return res.status(400).json({ error: "No file uploaded" });
     }
+
+    const { id, name } = await uploadFolderFiles(file, folder_id);
+
+    const picture = {
+      link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+      id,
+      name,
+    };
 
     const result = await MunicipalityOfficial.create({
       brgy,
-      picture: file
-        ? {
-            link: `https://drive.google.com/thumbnail?id=${file_id}&sz=w1000`,
-            id: file_id,
-            name: file_name,
-          }
-        : {
-            link: "",
-            id: "",
-            name: "",
-          },
+      picture,
       firstName,
       lastName,
       middleName,
@@ -93,6 +87,7 @@ const AddMunicipalityOfficial = async (req, res) => {
 
 const UpdateMunicipalityOfficial = async (req, res) => {
   try {
+    const { folder_id } = req.query;
     const { brgy, doc_id } = req.query;
     const { body, file } = req;
 
@@ -110,20 +105,20 @@ const UpdateMunicipalityOfficial = async (req, res) => {
       toYear,
     } = official;
 
-    var file_id = null,
-      file_name = null;
+    let id = null,
+    name = null;
 
     if (!mongoose.Types.ObjectId.isValid(doc_id)) {
       return res.status(400).json({ error: "No such official" });
     }
 
     if (file) {
-      const obj = await uploadPicDrive(file, ReturnBrgyFormat(brgy), "O");
-      file_id = obj.id;
-      file_name = obj.name;
+      const obj = await uploadFolderFiles(file, folder_id);
+      id = obj.id;
+      name = obj.name;
 
       if (picture.id !== "") {
-        await deletePicDrive(picture.id, ReturnBrgyFormat(brgy), "O");
+        await deleteFolderFiles(picture.id, folder_id);
       }
     }
 
@@ -143,9 +138,9 @@ const UpdateMunicipalityOfficial = async (req, res) => {
           toYear,
           picture: file
             ? {
-                id: file_id,
-                name: file_name,
-                link: `https://drive.google.com/thumbnail?id=${file_id}&sz=w1000`,
+                id,
+                name,
+                link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
               }
             : picture,
         },

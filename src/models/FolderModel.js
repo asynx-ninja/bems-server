@@ -47,6 +47,7 @@ const FolderSchema = new Schema(
     brgy: {
       type: String,
       required: true,
+      uppercase: true,
       index: true,
       uppercase: true,
     },
