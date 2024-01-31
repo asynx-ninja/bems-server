@@ -35,7 +35,7 @@ const CreateBrgyFolders = async (req, res) => {
   try {
     const { brgy } = req.query;
 
-    const root_folder_id = await createBarangayFolder(brgy);
+    const root_folder_id = await createBarangayFolder(brgy.toUpperCase());
 
     const events_folder_id = await createRequiredFolders(
       "EVENTS",

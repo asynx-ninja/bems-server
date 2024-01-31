@@ -40,7 +40,6 @@ const GetBarangayAnnouncement = async (req, res) => {
   }
 };
 
-
 const GetAllOpenBrgyAnnouncement = async (req, res) => {
   try {
     const { brgy, page } = req.query;
@@ -75,7 +74,7 @@ const GetAllOpenBrgyAnnouncement = async (req, res) => {
 
 const CreateAnnouncement = async (req, res) => {
   try {
-    const {event_folder_id} = req.query;
+    const { event_folder_id } = req.query;
     const { body, files } = req;
     const { title, details, date, brgy, isOpen } = JSON.parse(
       body.announcement
@@ -134,7 +133,6 @@ const compareArrays = (array1, array2) => {
   return difference;
 };
 
-
 const UpdateAnnouncement = async (req, res) => {
   try {
     const { id } = req.params;
@@ -170,12 +168,12 @@ const UpdateAnnouncement = async (req, res) => {
     const toBeDeletedItems = compareArrays(fullItem, currentFiles);
 
     toBeDeletedItems.forEach(async (item) => {
-      await deleteFileDrive(item.id, folder_id);
+      await deleteFolderFiles(item.id, folder_id);
     });
 
     if (files) {
       for (let f = 0; f < files.length; f += 1) {
-        const { id, name } = await uploadFileDrive(files[f], folder_id);
+        const { id, name } = await uploadFolderFiles(files[f], folder_id);
 
         if (files[f].originalname === "banner") {
           banner = {
@@ -184,7 +182,7 @@ const UpdateAnnouncement = async (req, res) => {
             name,
           };
 
-          await deleteFileDrive(announcement.collections.banner.id, folder_id);
+          await deleteFolderFiles(announcement.collections.banner.id, folder_id);
         } else if (files[f].originalname === "logo") {
           logo = {
             link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
@@ -192,7 +190,7 @@ const UpdateAnnouncement = async (req, res) => {
             name,
           };
 
-          await deleteFileDrive(announcement.collections.logo.id, folder_id);
+          await deleteFolderFiles(announcement.collections.logo.id, folder_id);
         } else {
           fileArray.push({
             link: `https://drive.google.com/file/d/${id}/view`,
