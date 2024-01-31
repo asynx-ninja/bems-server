@@ -42,15 +42,24 @@ const GetInquiries = async (req, res) => {
 const GetInquiriesStatus = async (req, res) => {
   try {
     const barangays = [
-      "BALITE", "BURGOS", "GERONIMO", "MACABUD", "MANGGAHAN", 
-      "MASCAP", "PURAY", "ROSARIO", "SAN ISIDRO", "SAN JOSE", "SAN RAFAEL"
+      "BALITE",
+      "BURGOS",
+      "GERONIMO",
+      "MACABUD",
+      "MANGGAHAN",
+      "MASCAP",
+      "PURAY",
+      "ROSARIO",
+      "SAN ISIDRO",
+      "SAN JOSE",
+      "SAN RAFAEL",
     ];
 
     const inquiriesByStatusAndBarangay = await Inquiries.aggregate([
       {
         $match: {
-          brgy: { $in: barangays }
-        }
+          brgy: { $in: barangays },
+        },
       },
       {
         $group: {
@@ -73,8 +82,8 @@ const GetInquiriesStatus = async (req, res) => {
 
     res.json(inquiriesByStatusAndBarangay);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Server error' });
+    console.error("Error:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -85,7 +94,7 @@ const GetAdminInquiries = async (req, res) => {
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
     const query = {
-      "compose.to": to, 
+      "compose.to": to,
       isArchived: archived,
     };
 
@@ -94,28 +103,34 @@ const GetAdminInquiries = async (req, res) => {
     }
     const totalInquiries = await Inquiries.countDocuments(query);
     const result = await Inquiries.find(query)
-    .skip(skip)
-    .limit(itemsPerPage)
-    .sort({ createdAt: -1 });
-   
+      .skip(skip)
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
+
     return !result
       ? res.status(400).json({ error: `No such Announcement for ${to}` })
-      : res.status(200).json({ result, pageCount: Math.ceil(totalInquiries / itemsPerPage) });
+      : res
+          .status(200)
+          .json({
+            result,
+            pageCount: Math.ceil(totalInquiries / itemsPerPage),
+          });
   } catch (err) {
     res.send(err.message);
   }
 };
 
-
 const GetStaffInquiries = async (req, res) => {
   try {
-    const { brgy, archived, status, page } = req.query;
+    const { brgy, archived, status, page, label } = req.query;
     const itemsPerPage = 10;
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const query = { 
-      brgy, 
-      isArchived: archived };
+    const query = {
+      brgy,
+      isArchived: archived,
+      "compose.to": label,
+    };
 
     if (status && status.toLowerCase() !== "all") {
       query.isApproved = status;
@@ -129,14 +144,19 @@ const GetStaffInquiries = async (req, res) => {
       .sort({ createdAt: -1 });
 
     return !result
-      ? res.status(400).json({ error: `No such inquiries for Barangay ${brgy}` })
-      : res.status(200).json({ result, pageCount: Math.ceil(totalInquiries / itemsPerPage) });
+      ? res
+          .status(400)
+          .json({ error: `No such inquiries for Barangay ${brgy}` })
+      : res
+          .status(200)
+          .json({
+            result,
+            pageCount: Math.ceil(totalInquiries / itemsPerPage),
+          });
   } catch (err) {
     res.send(err.message);
   }
 };
-
-
 
 const CreateInquiries = async (req, res) => {
   try {
@@ -149,7 +169,7 @@ const CreateInquiries = async (req, res) => {
     const folder_id = await createRequiredFolders(inq_id, inq_folder_id);
 
     for (let f = 0; f < files.length; f += 1) {
-      const { id, name } = await  uploadFolderFiles(files[f], folder_id);
+      const { id, name } = await uploadFolderFiles(files[f], folder_id);
 
       fileArray.push({
         link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
@@ -215,7 +235,7 @@ const RespondToInquiry = async (req, res) => {
 
     if (files) {
       for (let f = 0; f < files.length; f++) {
-        const { id, name } = await  uploadFolderFiles(files[f], folder_id);
+        const { id, name } = await uploadFolderFiles(files[f], folder_id);
 
         fileArray.push({
           link: files[f].mimetype.includes("image")
@@ -275,7 +295,9 @@ const StatusInquiry = async (req, res) => {
 const getTotalStatusInquiries = async (req, res) => {
   try {
     // Update the matchCondition for "In Progress", "Pending", and "Completed"
-    let matchCondition = { isApproved: { $in: ["In Progress", "Pending", "Completed"] } };
+    let matchCondition = {
+      isApproved: { $in: ["In Progress", "Pending", "Completed"] },
+    };
 
     // Extract query parameters
     const { brgy } = req.query;
@@ -295,7 +317,7 @@ const getTotalStatusInquiries = async (req, res) => {
       },
       {
         $group: {
-          _id: "$isApproved", 
+          _id: "$isApproved",
           totalRequests: { $sum: 1 },
         },
       },
