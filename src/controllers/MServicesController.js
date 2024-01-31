@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const ServicesInformation = require("../models/MServicesInfoModel");
 
-const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
+const { uploadPicDrive, deletePicDrive, uploadFolderFiles, deleteFolderFiles } = require("../utils/Drive");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const GetServicesInformation = async (req, res) => {
@@ -37,32 +37,27 @@ const GetServicesInformation = async (req, res) => {
 
 const AddServicesInfo = async (req, res) => {
   try {
-    const { body, files } = req;
+    const { folder_id } = req.query;
+    const { body, file } = req;
     const { name, details, brgy } = JSON.parse(body.servicesinfo);
-    let fileArray = [];
 
-    for (let f = 0; f < files.length; f += 1) {
-      const { id, name } = await uploadPicDrive(
-        files[f],
-        ReturnBrgyFormat(brgy),
-        "SI"
-      );
-
-      fileArray.push({
-        link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
-        id,
-        name,
-      });
+    if (!file) {
+      return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const [icon] = fileArray;
-    const iconObject = Object.assign({}, icon);
+    const { id, name:filename } = await uploadFolderFiles(file, folder_id);
+
+    const icon = {
+      link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+      id,
+      filename,
+    };
 
     const result = await ServicesInformation.create({
       name,
       details,
       brgy,
-      icon: iconObject,
+      icon,
     });
 
     res.status(200).json(result);
@@ -73,6 +68,7 @@ const AddServicesInfo = async (req, res) => {
 
 const UpdateServicesInfo = async (req, res) => {
   try {
+    const { folder_id } = req.query;
     const { doc_id } = req.query;
     const { body, file } = req;
 
@@ -86,12 +82,12 @@ const UpdateServicesInfo = async (req, res) => {
       name = null;
 
     if (file) {
-      const obj = await uploadPicDrive(file, servicesInfos.brgy, "SI");
+      const obj = await uploadFolderFiles(file, folder_id);
       id = obj.id;
       name = obj.name;
 
       if (servicesInfos.icon.id !== "")
-        await deletePicDrive(servicesInfos.icon.id, servicesInfos.brgy, "SI");
+        await deleteFolderFiles(servicesInfos.icon.id, folder_id);
     }
     const result = await ServicesInformation.findOneAndUpdate(
       { _id: doc_id },

@@ -29,7 +29,6 @@ const GetBarangayInformation = async (req, res) => {
 
 const GetAllBarangay = async (req, res) => {
   try {
-    // Retrieve logo, barangay name, and banner link
     const allinfo = await BrgyInformation.aggregate([
       {
         $project: {
@@ -41,23 +40,18 @@ const GetAllBarangay = async (req, res) => {
           banner: "$banner.link",
           logo: "$logo.link",
         },
-      }, // Project the desired fields
+      },
     ]);
 
-    // Send successful response with the retrieved data
-    res.status(200).json(allinfo);
-
-    // Log the first document
     console.log("aa", allinfo);
 
-    // Check if no barangays found
     if (allinfo.length === 0) {
       return res.status(400).json({ error: "No barangays found." });
     }
+
+    res.status(200).json(allinfo);
   } catch (error) {
-    // Handle errors and send error response
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
   }
 };
 
