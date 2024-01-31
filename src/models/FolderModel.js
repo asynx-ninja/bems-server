@@ -14,6 +14,11 @@ const FolderSchema = new Schema(
       required: true,
       index: true,
     },
+    application: {
+      type: String,
+      required: true,
+      index: true,
+    },
     request: {
       type: String,
       required: true,

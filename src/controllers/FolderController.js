@@ -41,6 +41,10 @@ const CreateBrgyFolders = async (req, res) => {
       "EVENTS",
       root_folder_id
     );
+    const application_folder_id = await createRequiredFolders(
+      "APPLICATION",
+      root_folder_id
+    );
     const request_folder_id = await createRequiredFolders(
       "REQUESTS",
       root_folder_id
@@ -69,6 +73,7 @@ const CreateBrgyFolders = async (req, res) => {
       official: official_folder_id,
       info: info_folder_id,
       inquiries: inquiries_folder_id,
+      application: application_folder_id,
       brgy: brgy,
     });
 
