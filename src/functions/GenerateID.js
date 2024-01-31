@@ -16,7 +16,11 @@ const GenerateID = (title, brgyName = "", code) => {
   const todayTime = philippineTime.replace(/[A-Z\.:-]/g, "");
 
   const dateStr = todayDate + todayTime;
-  const firstCharacters = title.split(' ').map(word => word[0]).join('');
+  const firstCharacters = title
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase();
 
   switch (code) {
     // S-BALITE-BC-datestr

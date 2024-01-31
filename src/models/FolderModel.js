@@ -48,6 +48,7 @@ const FolderSchema = new Schema(
       type: String,
       required: true,
       index: true,
+      uppercase: true,
     },
   },
   { timestamps: true }
