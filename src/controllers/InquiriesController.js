@@ -109,12 +109,10 @@ const GetAdminInquiries = async (req, res) => {
 
     return !result
       ? res.status(400).json({ error: `No such Announcement for ${to}` })
-      : res
-          .status(200)
-          .json({
-            result,
-            pageCount: Math.ceil(totalInquiries / itemsPerPage),
-          });
+      : res.status(200).json({
+          result,
+          pageCount: Math.ceil(totalInquiries / itemsPerPage),
+        });
   } catch (err) {
     res.send(err.message);
   }
@@ -147,12 +145,10 @@ const GetStaffInquiries = async (req, res) => {
       ? res
           .status(400)
           .json({ error: `No such inquiries for Barangay ${brgy}` })
-      : res
-          .status(200)
-          .json({
-            result,
-            pageCount: Math.ceil(totalInquiries / itemsPerPage),
-          });
+      : res.status(200).json({
+          result,
+          pageCount: Math.ceil(totalInquiries / itemsPerPage),
+        });
   } catch (err) {
     res.send(err.message);
   }
@@ -160,7 +156,7 @@ const GetStaffInquiries = async (req, res) => {
 
 const CreateInquiries = async (req, res) => {
   try {
-    const { inq_folder_id } = req;
+    const { inq_folder_id } = req.query;
     const { body, files } = req;
     const { name, email, compose, brgy, user_id } = JSON.parse(body.inquiries);
 

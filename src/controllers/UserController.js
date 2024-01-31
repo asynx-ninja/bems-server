@@ -400,8 +400,7 @@ const CreateUser = async (req, res) => {
 
 const UpdateUser = async (req, res) => {
   try {
-    const { folder_id } = req.query;
-    const { doc_id } = req.query;
+    const { folder_id, doc_id } = req.query;
     const { body, file } = req;
     const user = JSON.parse(body.users);
 
