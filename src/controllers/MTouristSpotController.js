@@ -24,9 +24,29 @@ const GetTouristSpotInformation = async (req, res) => {
 
     return result
       ? res.status(200).json({ result, pageCount })
-      : res.status(400).json({ error: `No officials found for Municipality ${brgy}` });
+      : res.status(400).json({ error: "No officials found for Municipality" });
   } catch (err) {
     res.status(500).send(err.message);
+  }
+};
+
+const GetSpecificTouristInfo = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "No such tourist spot" });
+    }
+
+    const result = await TouristSpot.find({
+      _id: id,
+    });
+
+    return !result
+      ? res.status(400).json({ error: `No such tourist spot` })
+      : res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
   }
 };
 
@@ -71,15 +91,15 @@ const AddTouristSpotInfo = async (req, res) => {
 };
 
 const compareArrays = (array1, array2) => {
-    const difference = array1.filter((object1) => {
-      return !array2.some((object2) => {
-        return Object.keys(object1).every((key) => {
-          return object1[key] === object2[key];
-        });
+  const difference = array1.filter((object1) => {
+    return !array2.some((object2) => {
+      return Object.keys(object1).every((key) => {
+        return object1[key] === object2[key];
       });
     });
-    return difference;
-  };
+  });
+  return difference;
+};
 
 const UpdateTouristSpotInfo = async (req, res) => {
     try {
@@ -140,8 +160,8 @@ const UpdateTouristSpotInfo = async (req, res) => {
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  };
-  
+};
+
 
 const ArchiveTouristSpot = async (req, res) => {
   try {
@@ -164,6 +184,7 @@ const ArchiveTouristSpot = async (req, res) => {
 };
 module.exports = {
   GetTouristSpotInformation,
+  GetSpecificTouristInfo,
   AddTouristSpotInfo,
   UpdateTouristSpotInfo,
   ArchiveTouristSpot,

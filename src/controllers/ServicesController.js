@@ -4,9 +4,10 @@ const GenerateID = require("../functions/GenerateID");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const {
-  createFolder,
-  uploadFileDrive,
-  deleteFileDrive,
+  createBarangayFolder,
+  createRequiredFolders,
+  uploadFolderFiles,
+  deleteFolderFiles
 } = require("../utils/Drive");
 
 const GetBrgyService = async (req, res) => {
@@ -221,13 +222,14 @@ const GetBrgyServiceBanner = async (req, res) => {
 
 const CreateServices = async (req, res) => {
   try {
+    const { service_folder_id } = req.query;
     const { body, files } = req;
     const { name, type, details, fee, brgy } = JSON.parse(body.service);
 
     let fileArray = [];
 
     const service_id = GenerateID(brgy, "S", type.toUpperCase());
-    const folder_id = await createFolder(ReturnBrgyFormat(brgy), "S", service_id);
+    const folder_id = await createRequiredFolders(service_id, service_folder_id);
 
     for (let f = 0; f < files.length; f += 1) {
       const { id, name } = await uploadFileDrive(files[f], folder_id);
@@ -316,12 +318,12 @@ const UpdateServices = async (req, res) => {
     const toBeDeletedItems = compareArrays(fullItem, currentFiles);
 
     toBeDeletedItems.forEach(async (item) => {
-      await deleteFileDrive(item.id, folder_id);
+      await deleteFolderFiles(item.id, folder_id);
     });
 
     if (files) {
       for (let f = 0; f < files.length; f += 1) {
-        const { id, name } = await uploadFileDrive(files[f], folder_id);
+        const { id, name } = await uploadFolderFiles(files[f], folder_id);
 
         if (files[f].originalname === "banner") {
           banner = {
@@ -330,7 +332,7 @@ const UpdateServices = async (req, res) => {
             name,
           };
 
-          await deleteFileDrive(service.collections.banner.id, folder_id);
+          await deleteFolderFiles(service.collections.banner.id, folder_id);
         } else if (files[f].originalname === "logo") {
           logo = {
             link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
@@ -338,7 +340,7 @@ const UpdateServices = async (req, res) => {
             name,
           };
 
-          await deleteFileDrive(service.collections.logo.id, folder_id);
+          await deleteFolderFiles(service.collections.logo.id, folder_id);
         } else {
           fileArray.push({
             link: `https://drive.google.com/file/d/${id}/view`,
