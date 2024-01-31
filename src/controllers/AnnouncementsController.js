@@ -75,16 +75,17 @@ const GetAllOpenBrgyAnnouncement = async (req, res) => {
 
 const CreateAnnouncement = async (req, res) => {
   try {
+    const {event_folder_id} = req.query;
     const { body, files } = req;
     const { title, details, date, brgy, isOpen } = JSON.parse(
       body.announcement
     );
     let fileArray = [];
     const event_id = GenerateID(title, brgy, "E");
-    const folder_id = await createRequiredFolders();
+    const folder_id = await createRequiredFolders(event_id, event_folder_id);
 
     for (let f = 0; f < files.length; f += 1) {
-      const { id, name } = await uploadFileDrive(files[f], folder_id);
+      const { id, name } = await uploadFolderFiles(files[f], folder_id);
 
       fileArray.push({
         link:
