@@ -1,4 +1,4 @@
-const GenerateID = (brgyName = "", code, type = "") => {
+const GenerateID = (title, brgyName = "", code) => {
   let brgy = brgyName.toUpperCase();
   brgy = brgy.replace(/\s/g, "");
 
@@ -16,20 +16,27 @@ const GenerateID = (brgyName = "", code, type = "") => {
   const todayTime = philippineTime.replace(/[A-Z\.:-]/g, "");
 
   const dateStr = todayDate + todayTime;
+  const firstCharacters = title.split(' ').map(word => word[0]).join('');
 
   switch (code) {
-    case "S":
-    case "R":
-    case "U":
-      return brgy === "MUNISIPYO"
-        ? `${brgy}-${code}-${type.toUpperCase()}-${dateStr}`
-        : `BRGY-${brgy}-${code}-${type.toUpperCase()}-${dateStr}`;
+    // S-BALITE-BC-datestr
+    // R-BALITE-BC-datestr
+    // U-BALITE-dateStr
+    // Q-BALITE-dateStr
+    // E-BALITE-BC-dateStr
+    // A-BALITE-BC-dateSTr
     case "E":
-    case "Q":
+      return `E-${brgy}-${firstCharacters}-${dateStr}`;
     case "A":
-      return brgy === "MUNISIPYO"
-        ? `${brgy}-${code}-${dateStr}`
-        : `BRGY-${brgy}-${code}-${dateStr}`;
+      return `A-${brgy}-${firstCharacters}-${dateStr}`;
+    case "S":
+      return `S-${brgy}-${firstCharacters}-${dateStr}`;
+    case "R":
+      return `R-${brgy}-${firstCharacters}-${dateStr}`;
+    case "U":
+      return `U-${brgy}-${dateStr}`;
+    case "Q":
+      return `Q-${brgy}-${dateStr}`;
   }
 };
 

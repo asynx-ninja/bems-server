@@ -5,9 +5,10 @@ const GenerateID = require("../functions/GenerateID");
 const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const {
-  uploadFileDrive,
-  createFolder,
-  deleteFileDrive,
+  createBarangayFolder,
+  createRequiredFolders,
+  uploadFolderFiles,
+  deleteFolderFiles,
 } = require("../utils/Drive");
 
 const GetBarangayAnnouncement = async (req, res) => {
@@ -79,8 +80,8 @@ const CreateAnnouncement = async (req, res) => {
       body.announcement
     );
     let fileArray = [];
-    const event_id = GenerateID(brgy, "E");
-    const folder_id = await createFolder(ReturnBrgyFormat(brgy), "E", event_id);
+    const event_id = GenerateID(title, brgy, "E");
+    const folder_id = await createRequiredFolders();
 
     for (let f = 0; f < files.length; f += 1) {
       const { id, name } = await uploadFileDrive(files[f], folder_id);
