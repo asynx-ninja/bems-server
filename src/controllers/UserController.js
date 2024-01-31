@@ -404,7 +404,6 @@ const UpdateUser = async (req, res) => {
     const { doc_id } = req.query;
     const { body, file } = req;
     const user = JSON.parse(body.users);
-    console.log(user);
 
     if (!mongoose.Types.ObjectId.isValid(doc_id)) {
       return res.status(400).json({ error: "No such user" });
