@@ -52,6 +52,7 @@ const UpdateServiceForm = async (req, res) => {
       { _id: detail._id },
       {
         $set: {
+          form_name: detail.form_name,
           form: detail.form,
           isActive: detail.isActive,
         },
