@@ -27,6 +27,7 @@ const GetAllRequest = async (req, res) => {
     if (type !== undefined && type !== "all") {
       query.$and.push({ service_name: type }); // Assuming the field is named 'service_name'
     }
+    
     if (status && status.toLowerCase() !== "all") {
       query.status = status;
     }

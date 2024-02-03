@@ -43,13 +43,14 @@ const GetActiveForm = async (req, res) => {
 
 const CreateEventsForm = async (req, res) => {
   try {
-    const { brgy, event_id, checked } = req.query;
+    const { brgy, event_id, checked, title } = req.query;
     const { form, section } = req.body;
 
     const newForm = [form, section];
 
     const result = await AnnouncementForm.create({
       event_id: event_id,
+      title: title,
       form: newForm,
       version: GenerateVersionID(brgy),
       brgy,

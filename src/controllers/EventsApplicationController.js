@@ -11,7 +11,7 @@ const {
 
 const GetAllEventsApplication = async (req, res) => {
   try {
-    const { brgy, archived, id, status, page } = req.query;
+    const { brgy, archived, id, status, page, title } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
@@ -25,6 +25,10 @@ const GetAllEventsApplication = async (req, res) => {
 
     if (status && status.toLowerCase() !== "all") {
       query.status = status;
+    }
+
+    if (title && title.toLowerCase() !== "all") {
+      query.$and.push({ event_name: title });
     }
 
     const totalEventsApplications = await EventsApplication.countDocuments(

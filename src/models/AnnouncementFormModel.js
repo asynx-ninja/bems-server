@@ -9,6 +9,10 @@ const AnnouncementFormSchema = new Schema(
       requried: true,
       index: true,
     },
+    title: {
+      type: String,
+      required: true,
+    },
     form: {
       type: [Schema.Types.Mixed],
       required: true,
