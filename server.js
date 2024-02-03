@@ -33,17 +33,23 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use((req, res, next) => {
-  console.log(req.path, req.method);
-  next();
-});
 app.use(express.json());
 app.use(
   cors({
     origin: "*",
     credentials: true,
+    optionSuccessStatus: 200,
   })
 );
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,PATCH");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization"
+  );
+  next();
+});
 
 // Routes
 app.use("/api/services", ServicesRoutes);
