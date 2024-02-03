@@ -21,12 +21,13 @@ const GetAllServiceForm = async (req, res) => {
 const CreateServiceForm = async (req, res) => {
   try {
     const { brgy, service_id, checked } = req.query;
-    const { form, section } = req.body;
+    const { form, section, service_name } = req.body;
 
     const newForm = [form, section];
 
     const result = await ServicesForm.create({
       service_id: service_id,
+      service_name: service_name,
       form: newForm,
       version: GenerateVersionID(brgy),
       brgy,

@@ -9,6 +9,10 @@ const ServicesFormSchema = new Schema(
       requried: true,
       index: true,
     },
+    service_name: {
+      type: String,
+      required: true,
+    },
     form: {
       type: [Schema.Types.Mixed],
       required: true,
