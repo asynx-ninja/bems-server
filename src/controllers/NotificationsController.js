@@ -42,23 +42,44 @@ const CreateNotificationByUser = async (req, res) => {
     res.send(err.message);
   }
 };
+const GetSpecificID = async (req, res) => {
+  try {
+    const { id } = req.query;
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "No such notification" });
+    }
+
+    const result = await Notification.find({
+      _id: id,
+    });
+
+    return !result
+      ? res.status(400).json({ error: `No such notification` })
+      : res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
 const UpdateReadBy = async (req, res) => {
   try {
     const { notification_id } = req.query;
     const { readerId } = req.body;
 
-    const result = await Notification.findOneAndUpdate(
-      { _id: notification_id },
-      {
-        $push: {
-          read_by: {
-            readerId: readerId,
-          },
-        },
-      },
-      { new: true }
-    );
+    const notification = await Notification.findById(notification_id);
+
+    if (!notification) {
+      return res.status(400).json({ error: "Notification not found" });
+    }
+
+    const isUserRead = notification.read_by.some((item) => item.readerId === readerId);
+
+    if (isUserRead) {
+      return res.status(400).json({ error: "User has already read the notification" });
+    }
+
+    notification.read_by.push({ readerId });
+    const result = await notification.save();
 
     res.status(200).json(result);
   } catch (err) {
@@ -90,6 +111,7 @@ const CheckReadBy = async (req, res) => {
 module.exports = {
   GetAllNotifications,
   CreateNotificationByUser,
+  GetSpecificID,
   UpdateReadBy,
   CheckReadBy,
 };

@@ -189,7 +189,8 @@ const GetAllPenBrgyService = async (req, res) => {
 
     const totalServices = await Service.countDocuments(query);
 
-    const result = await Service.find(query);
+    const result = await Service.find(query) .skip(skip)
+    .limit(itemsPerPage);
 
     if (result.length === 0) {
       return res.status(400).json({ error: "No services found." });
