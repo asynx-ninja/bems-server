@@ -43,8 +43,8 @@ const GetActiveForm = async (req, res) => {
 
 const CreateEventsForm = async (req, res) => {
   try {
-    const { brgy, event_id, checked, title } = req.query;
-    const { form, section } = req.body;
+    const { brgy, event_id, checked } = req.query;
+    const { form, section, title } = req.body;
 
     const newForm = [form, section];
 
@@ -65,7 +65,7 @@ const CreateEventsForm = async (req, res) => {
 
 const UpdateEventsForm = async (req, res) => {
   try {
-    const { detail } = req.body;
+    const { detail, title } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(detail._id)) {
       return res.status(400).json({ error: "No such service form" });
@@ -75,6 +75,7 @@ const UpdateEventsForm = async (req, res) => {
       { _id: detail._id },
       {
         $set: {
+          title: title,
           form: detail.form,
           isActive: detail.isActive,
         },

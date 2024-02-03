@@ -9,7 +9,7 @@ const ServicesFormSchema = new Schema(
       requried: true,
       index: true,
     },
-    service_name: {
+    form_name: {
       type: String,
       required: true,
     },
