@@ -17,9 +17,8 @@ dotenv.config();
 // });
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
   port: 465,
-  secure: true,
   auth: {
     // type: "OAuth2",
     user: process.env.MAIL_USERNAME,
@@ -28,6 +27,7 @@ const transporter = nodemailer.createTransport({
     // clientSecret: process.env.OAUTH_CLIENT_SECRET,
     // refreshToken: process.env.OAUTH_REFRESH_TOKEN,
     // accessToken: oAuth2Client.getAccessToken(),
+    // access_type: "offline",
   },
 });
 
@@ -88,15 +88,35 @@ const FormatMail = (email, code) => {
 };
 
 const Send = async (email, subject, text, code) => {
-  const result = transporter.sendMail({
-    from: { name: "Bagong Montalban", address: process.env.MAIL_USERNAME },
-    to: email,
-    subject: subject,
-    text: text,
-    html: FormatMail(email, code), // html body
-  });
+  try {
+    const result = await new Promise((resolve, reject) => {
+      transporter.sendMail(
+        {
+          from: {
+            name: "Bagong Montalban",
+            address: process.env.MAIL_USERNAME,
+          },
+          to: email,
+          subject: subject,
+          text: text,
+          html: FormatMail(email, code), // html body
+        },
+        (err, info) => {
+          if (err) {
+            console.error(err);
+            reject(err);
+          } else {
+            console.log(info);
+            resolve(info);
+          }
+        }
+      );
+    });
 
-  return result;
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 module.exports = Send;

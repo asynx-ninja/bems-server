@@ -109,7 +109,7 @@ const UpdateCredentials = async (req, res) => {
   try {
     const { id } = req.params;
     const { username, password } = req.body;
-console.log("mm",username)
+    console.log("mm", username);
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such user" });
     }
