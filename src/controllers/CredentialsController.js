@@ -87,6 +87,24 @@ const SentPIN = async (req, res) => {
     res.send(err.message);
   }
 };
+const CheckEmail = async (req, res) => {
+  try {
+    const { email } = req.query;
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      res.status(200).json({ exists: true, type: existingUser.type });
+    } else {
+      res.status(200).json({ exists: false });
+    }
+  } catch (error) {
+    console.error('Error checking email:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+module.exports = { CheckEmail };
+
 
 // CHECK PIN
 const CheckPIN = async (req, res) => {
@@ -156,6 +174,7 @@ const UpdatePasswordOnly = async (req, res) => {
 module.exports = {
   GetCredentials,
   SentPIN,
+  CheckEmail,
   CheckPIN,
   UpdateCredentials,
   UpdatePasswordOnly,
