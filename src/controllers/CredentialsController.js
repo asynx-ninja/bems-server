@@ -93,7 +93,7 @@ const CheckEmail = async (req, res) => {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      res.status(200).json({ exists: true });
+      res.status(200).json({ exists: true, type: existingUser.type });
     } else {
       res.status(200).json({ exists: false });
     }
@@ -102,6 +102,9 @@ const CheckEmail = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+module.exports = { CheckEmail };
+
 
 // CHECK PIN
 const CheckPIN = async (req, res) => {
