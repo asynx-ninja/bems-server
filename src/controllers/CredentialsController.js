@@ -87,6 +87,7 @@ const SentPIN = async (req, res) => {
     res.send(err.message);
   }
 };
+
 const CheckEmail = async (req, res) => {
   try {
     const { email } = req.query;
@@ -102,8 +103,6 @@ const CheckEmail = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
-
-module.exports = { CheckEmail };
 
 
 // CHECK PIN
