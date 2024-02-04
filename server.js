@@ -22,6 +22,7 @@ const AnnouncementFormRoutes = require("./src/routes/AnnouncementForm");
 const EventsApplicationRoutes = require("./src/routes/EventsApplication");
 const CountCompletedRoutes = require("./src/routes/EventsApplication");
 const FolderRoute = require("./src/routes/Folder");
+const DocumentRoute = require("./src/routes/Document");
 
 const connectDB = require("./src/config/DB");
 
@@ -72,6 +73,7 @@ app.use("/api/event_form", AnnouncementFormRoutes);
 app.use("/api/application", EventsApplicationRoutes);
 app.use("/api/completed", CountCompletedRoutes);
 app.use("/api/folder", FolderRoute);
+app.use("/api/document", DocumentRoute);
 
 app.get("/", (req, res) => {
   res.status(200).json({
