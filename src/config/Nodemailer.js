@@ -87,6 +87,58 @@ const FormatMail = (email, code) => {
     </div>`;
 };
 
+const FormatSendEmail = (email, status, name) => {
+  return `<div style="max-width: 48rem; margin-left: auto; margin-right: auto;">
+      <div style="background: radial-gradient(at center top, rgb(64, 141, 81), rgb(41, 81, 65)); display: flex; padding-top: 0.5rem; padding-bottom: 0.5rem; padding-left: 1.25rem; padding-right: 1.25rem; justify-content: space-between; align-items: center; ">
+        <div style="text-align: center; margin: auto">
+          <span style="font-size: 1.25rem; font-weight: 700; color: #ffffff;">
+            MUNICIPALITY OF RODRIGUEZ, RIZAL 
+          </span>
+          <br/>
+          <span style="font-size: 0.875rem; font-weight: 500; color: #ffffff;">
+                M.H. Del Pilar Road, Rodriguez 1860 Rizal.
+          </span>
+        </div>
+      </div>
+      <div
+        style="padding-top: 1.25rem; padding-bottom: 1.25rem;">
+        <h1 style="font-size: 1.5rem; line-height: 2rem; font-weight: 700; text-align: center; text-transform: uppercase;">
+          ACCOUNT STATUS UPDATE
+        </h1>
+        <p style="margin-top: 0.5rem; font-weight: 700;">
+          Dear User,
+        </p>
+        <div style="text-align: justify;">
+          <p style="margin-top: 0.75rem;">
+            Thankyou For Signing up in Barangay Application
+            <span style="font-weight: 700;">${email}</span>
+            
+          </p>
+          <p style="margin-top: 0.75rem;">Your account Status is now:</p>
+          <div style="text-align: center; font-size: 3rem; font-weight: 700; height: 70px; margin: auto">
+            ${status}
+          </div>
+          <p>
+            If you have additional questions, please Contact us through  
+            <span style="font-weight: 700;">services.montalban@gmail.com </span>
+            or You can message us through our Mobile and Web Application
+          </p>
+          <p style="margin-top: 0.5rem;">
+            You received this message because this email address is listed as
+            your email in signing up on ouor application.
+           
+        </div>
+        <p style="margin-top: 0.75rem; font-weight: 700;">
+          Sincerely yours,
+        </p>
+        <p style="font-weight: 700; ">The Bagong Montalban team</p>
+      </div>
+      <div style="background: radial-gradient(at center top, rgb(64, 141, 81), rgb(41, 81, 65)); color: #ffffff; padding-top: 1rem; padding-bottom: 1rem; margin: auto; text-align: center;">
+        © 2023 Bagong Montalban, Inc. All Rights Reserved.
+      </div>
+    </div>`;
+};
+
 const Send = async (email, subject, text, code) => {
   try {
     const result = await new Promise((resolve, reject) => {
@@ -119,4 +171,40 @@ const Send = async (email, subject, text, code) => {
   }
 };
 
-module.exports = Send;
+const sendEmail = async (email, subject, text, status) => {
+  try {
+    const result = await new Promise((resolve, reject) => {
+      transporter.sendMail(
+        {
+          from: {
+            name: "Bagong Montalban",
+            address: process.env.MAIL_USERNAME,
+          },
+          to: email,
+          subject: subject,
+          text: text,
+          html: FormatSendEmail(email, status), // html body
+        },
+        (err, info) => {
+          if (err) {
+            console.error(err);
+            reject(err);
+          } else {
+            console.log(info);
+            resolve(info);
+          }
+        }
+      );
+    });
+
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+
+module.exports = {
+  Send,
+  sendEmail
+};

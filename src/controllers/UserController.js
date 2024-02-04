@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const { hash } = require("../config/BCrypt");
 const User = require("../models/UserModel");
 const GenerateID = require("../functions/GenerateID");
+const {Send, sendEmail} = require("../config/Nodemailer");
+
 
 const {
   createBarangayFolder,
@@ -490,6 +492,16 @@ const StatusUser = async (req, res) => {
       { $set: { isApproved: isApproved } },
       { new: true }
     );
+
+    // Check if the user has an email
+    if (result.email) {
+      // Update the email subject and text based on your requirements
+      const subject = "Resident Status Update";
+      const text = "The status of your resident has been updated.";
+      
+      // Use the sendEmail function to send the email
+      await sendEmail(result.email, subject, text, isApproved);
+    }
 
     res.status(200).json(result);
   } catch (err) {

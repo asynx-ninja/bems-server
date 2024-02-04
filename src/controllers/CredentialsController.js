@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const User = require("../models/UserModel");
 const BCrypt = require("../config/BCrypt");
-const Send = require("../config/Nodemailer");
+const {Send, sendEmail} = require("../config/Nodemailer");
 
 const GeneratePIN = require("../functions/GeneratePIN");
 
