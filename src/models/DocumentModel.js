@@ -19,6 +19,11 @@ const DocumentSchema = new Schema(
       required: true,
       index: true,
     },
+    service_id: {
+      type: String,
+      required: true,
+      index: true,
+    },
     details: {
       type: String,
       required: true,
