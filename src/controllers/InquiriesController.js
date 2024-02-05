@@ -87,6 +87,7 @@ const GetInquiriesStatus = async (req, res) => {
   }
 };
 
+
 const GetAdminInquiries = async (req, res) => {
   try {
     const { to, archived, page, status } = req.query;
