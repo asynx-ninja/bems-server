@@ -76,6 +76,7 @@ const UpdateDocumentForm = async (req, res) => {
           witnessed_by: document.witnessed_by,
           inputs: document.inputs,
           email: document.email,
+          form_id: document.form_id,
           address: document.address,
           tel: document.tel,
           isActive: document.isActive,
