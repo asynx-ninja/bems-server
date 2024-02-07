@@ -1,7 +1,6 @@
 const { google } = require("googleapis");
 const fs = require("fs");
 const authorize = require("../config/GDrive");
-const ReturnBarangay = require("../functions/ReturnBarangay");
 
 // CREATE FOLDER FOR BARANGAY
 const createBarangayFolder = async (brgy) => {

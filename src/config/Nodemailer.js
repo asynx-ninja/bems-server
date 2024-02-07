@@ -87,7 +87,7 @@ const FormatMail = (email, code) => {
     </div>`;
 };
 
-const FormatSendEmail = (email, status, name) => {
+const FormatSendEmail = (email, status) => {
   return `<div style="max-width: 48rem; margin-left: auto; margin-right: auto;">
       <div style="background: radial-gradient(at center top, rgb(64, 141, 81), rgb(41, 81, 65)); display: flex; padding-top: 0.5rem; padding-bottom: 0.5rem; padding-left: 1.25rem; padding-right: 1.25rem; justify-content: space-between; align-items: center; ">
         <div style="text-align: center; margin: auto">
@@ -110,23 +110,21 @@ const FormatSendEmail = (email, status, name) => {
         </p>
         <div style="text-align: justify;">
           <p style="margin-top: 0.75rem;">
-            Thankyou For Signing up in Barangay Application
+            Thank you for registering us in our Bagong Montalban Barangay E-Services Application
             <span style="font-weight: 700;">${email}</span>
-            
           </p>
-          <p style="margin-top: 0.75rem;">Your account Status is now:</p>
+          <p style="margin-top: 0.75rem;">Your account status is now:</p>
           <div style="text-align: center; font-size: 3rem; font-weight: 700; height: 70px; margin: auto">
             ${status}
           </div>
           <p>
-            If you have additional questions, please Contact us through  
+            If you have additional questions, please contact us through  
             <span style="font-weight: 700;">services.montalban@gmail.com </span>
-            or You can message us through our Mobile and Web Application
+            or you can message us through our Mobile and Web Application
           </p>
           <p style="margin-top: 0.5rem;">
             You received this message because this email address is listed as
-            your email in signing up on ouor application.
-           
+            your email in signing up on our application.
         </div>
         <p style="margin-top: 0.75rem; font-weight: 700;">
           Sincerely yours,

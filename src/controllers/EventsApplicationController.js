@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const EventsApplication = require("../models/EventsApplicationModel");
 const GenerateID = require("../functions/GenerateID");
-const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const {
   createRequiredFolders,

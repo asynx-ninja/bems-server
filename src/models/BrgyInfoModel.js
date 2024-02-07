@@ -51,6 +51,11 @@ const BrgyInfoSchema = new Schema(
       type: FileSchema,
       required: true,
     },
+    color: {
+      type: String,
+      required: true,
+      default: "",
+    },
   },
   { timestamps: true }
 );

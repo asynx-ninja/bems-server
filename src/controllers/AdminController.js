@@ -3,8 +3,6 @@ const { hash } = require("../config/BCrypt");
 const User = require("../models/UserModel");
 const GenerateID = require("../functions/GenerateID");
 
-// const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
-
 const {
   createBarangayFolder,
   createRequiredFolders,
@@ -28,8 +26,6 @@ const GetBrgyAdmin = async (req, res) => {
     res.send(err.message);
   }
 };
-
-
 
 const GetSpecificBrgyAdmin = async (req, res) => {
   try {

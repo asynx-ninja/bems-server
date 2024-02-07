@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
 const ServicesInformation = require("../models/MServicesInfoModel");
 
-const { uploadPicDrive, deletePicDrive, uploadFolderFiles, deleteFolderFiles } = require("../utils/Drive");
-const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
+const { uploadFolderFiles, deleteFolderFiles } = require("../utils/Drive");
 
 const GetServicesInformation = async (req, res) => {
   try {
@@ -26,14 +25,13 @@ const GetServicesInformation = async (req, res) => {
 
     return result
       ? res.status(200).json({ result, pageCount })
-      : res.status(400).json({ error: `No services found for Barangay ${brgy}` });
+      : res
+          .status(400)
+          .json({ error: `No services found for Barangay ${brgy}` });
   } catch (err) {
-    
     res.status(500).send(err.message);
   }
 };
-
-
 
 const AddServicesInfo = async (req, res) => {
   try {
@@ -45,7 +43,7 @@ const AddServicesInfo = async (req, res) => {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const { id, name:filename } = await uploadFolderFiles(file, folder_id);
+    const { id, name: filename } = await uploadFolderFiles(file, folder_id);
 
     const icon = {
       link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
