@@ -226,7 +226,7 @@ const RespondToEventsApplication = async (req, res) => {
       }
     }
 
-    if (user_type) {
+    if (user_type && last_response > 0) {
       await EventsApplication.findByIdAndUpdate(
         { _id: app_id },
         {

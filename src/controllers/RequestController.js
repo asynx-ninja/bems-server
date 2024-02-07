@@ -927,7 +927,7 @@ const RespondToRequest = async (req, res) => {
       }
     }
 
-    if (user_type) {
+    if (user_type && last_response > 0) {
       await Request.findByIdAndUpdate(
         { _id: req_id },
         {
