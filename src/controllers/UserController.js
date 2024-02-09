@@ -37,7 +37,7 @@ const GetUsers = async (req, res) => {
 
     return !result
       ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
-      : res.status(200).json({ result, pageCount });
+      : res.status(200).json({ result, pageCount, total: totalUsers });
   } catch (err) {
     res.send(err.message);
   }
