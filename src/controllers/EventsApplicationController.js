@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const EventsApplication = require("../models/EventsApplicationModel");
 const GenerateID = require("../functions/GenerateID");
-const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const {
   createRequiredFolders,
@@ -31,23 +30,18 @@ const GetAllEventsApplication = async (req, res) => {
       query.$and.push({ event_name: title });
     }
 
-    const totalEventsApplications = await EventsApplication.countDocuments(
-      query
-    );
+    const totalEventsApplications = await EventsApplication.countDocuments(query);
 
     const result = await EventsApplication.find(query)
       .skip(skip)
       .limit(itemsPerPage)
       .sort({ createdAt: -1 });
 
-    return !result
-      ? res
-          .status(400)
-          .json({ error: `No such events application for Barangay ${brgy}` })
-      : res.status(200).json({
-          result,
-          pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
-        });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
+      total: totalEventsApplications,
+    });
   } catch (err) {
     res.status(400).json(err.message);
   }
@@ -113,7 +107,6 @@ const GetAllPenApp = async (req, res) => {
     const totalEventsApplication = await EventsApplication.countDocuments(
       query
     );
-
     const result = await EventsApplication.find(query)
       .skip(skip)
       .limit(itemsPerPage);
@@ -127,6 +120,7 @@ const GetAllPenApp = async (req, res) => {
       .json({
         result,
         pageCount: Math.ceil(totalEventsApplication / itemsPerPage),
+        total: totalEventsApplication,
       });
   } catch (err) {
     res.send(err.message);

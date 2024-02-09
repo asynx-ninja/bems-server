@@ -2,9 +2,6 @@ const mongoose = require("mongoose");
 
 const BrgyOfficial = require("../models/BrgyOfficialModel");
 
-// const { uploadPicDrive, deletePicDrive } = require("../utils/Drive");
-const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
-
 const {
   createBarangayFolder,
   createRequiredFolders,

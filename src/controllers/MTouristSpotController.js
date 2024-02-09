@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
 const TouristSpot = require("../models/MTouristSpotModel");
 
-const { uploadPicDrive, deleteFileDrive, deletePicDrive, uploadFileDrive,  uploadFolderFiles, deleteFolderFiles } = require("../utils/Drive");
-const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
+const { uploadFolderFiles, deleteFolderFiles } = require("../utils/Drive");
 
 const GetTouristSpotInformation = async (req, res) => {
   try {
@@ -11,11 +10,11 @@ const GetTouristSpotInformation = async (req, res) => {
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
     const totalInformation = await TouristSpot.countDocuments({
-      $and: [ { isArchived: archived }],
+      $and: [{ isArchived: archived }],
     });
 
     const result = await TouristSpot.find({
-      $and: [ { isArchived: archived }],
+      $and: [{ isArchived: archived }],
     })
       .skip(skip)
       .limit(itemsPerPage);
@@ -99,67 +98,66 @@ const compareArrays = (array1, array2) => {
 };
 
 const UpdateTouristSpotInfo = async (req, res) => {
-    try {
-      const { folder_id } = req.query;
-      const { id } = req.params;
-      let { body, files } = req;
-      let currentFiles = [];
-      body = JSON.parse(JSON.stringify(req.body));
-      let { saved, touristspot } = body;
-  
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ error: "Invalid tourist spot ID" });
-      }
-  
-      if (saved !== undefined) {
-        if (Array.isArray(saved)) {
-          currentFiles = saved.map((item) => JSON.parse(item));
-        } else {
-          currentFiles.push(JSON.parse(saved));
-        }
-      }
-  
-      let fileArray = [...currentFiles];
-      touristspot = JSON.parse(body.touristspot);
-  
-      const fullItem = touristspot.image;
-      const toBeDeletedItems = compareArrays(fullItem, currentFiles);
-  
-      for (const item of toBeDeletedItems) {
-        await deleteFolderFiles(item.id, folder_id);
-      }
-  
-      if (files) {
-        for (let f = 0; f < files.length; f += 1) {
-          const { id, name } = await uploadFolderFiles(files[f], folder_id);
-  
-          const file = {
-            link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
-            id,
-            name,
-          };
-          fileArray.push(file);
-        }
-      }
-  
-      const result = await TouristSpot.findOneAndUpdate(
-        { _id: id },
-        {
-          name: touristspot.name,
-          details: touristspot.details,
-          section: touristspot.section,
-          brgy: touristspot.brgy,
-          image: fileArray,
-        },
-        { new: true }
-      );
-  
-      res.status(200).json(result);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-};
+  try {
+    const { folder_id } = req.query;
+    const { id } = req.params;
+    let { body, files } = req;
+    let currentFiles = [];
+    body = JSON.parse(JSON.stringify(req.body));
+    let { saved, touristspot } = body;
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid tourist spot ID" });
+    }
+
+    if (saved !== undefined) {
+      if (Array.isArray(saved)) {
+        currentFiles = saved.map((item) => JSON.parse(item));
+      } else {
+        currentFiles.push(JSON.parse(saved));
+      }
+    }
+
+    let fileArray = [...currentFiles];
+    touristspot = JSON.parse(body.touristspot);
+
+    const fullItem = touristspot.image;
+    const toBeDeletedItems = compareArrays(fullItem, currentFiles);
+
+    for (const item of toBeDeletedItems) {
+      await deleteFolderFiles(item.id, folder_id);
+    }
+
+    if (files) {
+      for (let f = 0; f < files.length; f += 1) {
+        const { id, name } = await uploadFolderFiles(files[f], folder_id);
+
+        const file = {
+          link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+          id,
+          name,
+        };
+        fileArray.push(file);
+      }
+    }
+
+    const result = await TouristSpot.findOneAndUpdate(
+      { _id: id },
+      {
+        name: touristspot.name,
+        details: touristspot.details,
+        section: touristspot.section,
+        brgy: touristspot.brgy,
+        image: fileArray,
+      },
+      { new: true }
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 const ArchiveTouristSpot = async (req, res) => {
   try {

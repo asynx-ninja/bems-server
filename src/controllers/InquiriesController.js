@@ -142,6 +142,7 @@ const GetStaffInquiries = async (req, res) => {
       .limit(itemsPerPage)
       .sort({ createdAt: -1 });
 
+      
     return !result
       ? res
           .status(400)
@@ -149,6 +150,7 @@ const GetStaffInquiries = async (req, res) => {
       : res.status(200).json({
           result,
           pageCount: Math.ceil(totalInquiries / itemsPerPage),
+          total: totalInquiries
         });
   } catch (err) {
     res.send(err.message);

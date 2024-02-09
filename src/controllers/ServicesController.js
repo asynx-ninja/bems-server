@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Service = require("../models/ServicesModel");
 const GenerateID = require("../functions/GenerateID");
-const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const {
   createBarangayFolder,
@@ -189,18 +188,17 @@ const GetAllPenBrgyService = async (req, res) => {
 
     const totalServices = await Service.countDocuments(query);
 
-    const result = await Service.find(query) .skip(skip)
-    .limit(itemsPerPage);
+    const result = await Service.find(query)
+      .skip(skip)
+      .limit(itemsPerPage);
 
-    if (result.length === 0) {
-      return res.status(400).json({ error: "No services found." });
-    }
-
-    return res
-      .status(200)
-      .json({ result, pageCount: Math.ceil(totalServices / itemsPerPage) });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(totalServices / itemsPerPage),
+      total: totalServices,
+    });
   } catch (err) {
-    res.send(err.message);
+    res.status(400).json(err.message);
   }
 };
 

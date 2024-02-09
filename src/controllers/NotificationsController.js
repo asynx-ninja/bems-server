@@ -83,7 +83,8 @@ const UpdateReadBy = async (req, res) => {
 
     res.status(200).json(result);
   } catch (err) {
-    res.send(err.message);
+    console.error("Error updating read_by:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 

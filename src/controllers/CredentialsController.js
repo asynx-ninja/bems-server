@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const User = require("../models/UserModel");
 const BCrypt = require("../config/BCrypt");
-const Send = require("../config/Nodemailer");
+const { Send, sendEmail } = require("../config/Nodemailer");
 
 const GeneratePIN = require("../functions/GeneratePIN");
 
@@ -88,6 +88,22 @@ const SentPIN = async (req, res) => {
   }
 };
 
+const CheckEmail = async (req, res) => {
+  try {
+    const { email } = req.query;
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      res.status(200).json({ exists: true, type: existingUser.type });
+    } else {
+      res.status(200).json({ exists: false });
+    }
+  } catch (error) {
+    console.error("Error checking email:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 // CHECK PIN
 const CheckPIN = async (req, res) => {
   try {
@@ -109,7 +125,7 @@ const UpdateCredentials = async (req, res) => {
   try {
     const { id } = req.params;
     const { username, password } = req.body;
-console.log("mm",username)
+    console.log("mm", username);
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "No such user" });
     }
@@ -156,6 +172,7 @@ const UpdatePasswordOnly = async (req, res) => {
 module.exports = {
   GetCredentials,
   SentPIN,
+  CheckEmail,
   CheckPIN,
   UpdateCredentials,
   UpdatePasswordOnly,

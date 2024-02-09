@@ -4,10 +4,10 @@ const GenerateVersionID = require("../functions/GenerateVersionID");
 
 const GetAllDocumentForm = async (req, res) => {
   try {
-    const { brgy, form_id } = req.query;
+    const { brgy, service_id } = req.query;
 
     const result = await Document.find({
-      $and: [{ brgy: brgy }, { form_id: form_id }],
+      $and: [{ brgy: brgy }, { service_id: service_id }],
     });
 
     return !result
@@ -23,6 +23,7 @@ const CreateDocumentForm = async (req, res) => {
     const { brgy, form_id, checked } = req.query;
     const {
       doc_title,
+      service_id,
       details,
       type,
       punong_brgy,
@@ -35,6 +36,7 @@ const CreateDocumentForm = async (req, res) => {
 
     const result = await Document.create({
       doc_title,
+      service_id,
       version_id: GenerateVersionID(brgy),
       form_id,
       details,
@@ -74,6 +76,7 @@ const UpdateDocumentForm = async (req, res) => {
           witnessed_by: document.witnessed_by,
           inputs: document.inputs,
           email: document.email,
+          form_id: document.form_id,
           address: document.address,
           tel: document.tel,
           isActive: document.isActive,

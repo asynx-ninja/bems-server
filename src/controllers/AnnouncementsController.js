@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const Announcement = require("../models/AnnouncementsModel");
 const GenerateID = require("../functions/GenerateID");
-const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const {
   createBarangayFolder,
@@ -21,6 +20,7 @@ const GetBarangayAnnouncement = async (req, res) => {
       $and: [{ brgy: brgy }, { isArchived: archived }],
     });
 
+    
     const result = await Announcement.find({
       $and: [{ brgy: brgy }, { isArchived: archived }],
     })
@@ -34,7 +34,7 @@ const GetBarangayAnnouncement = async (req, res) => {
       ? res
           .status(400)
           .json({ error: `No such Announcement for Barangay ${brgy}` })
-      : res.status(200).json({ result, pageCount });
+      : res.status(200).json({ result, pageCount, total:totalAnnouncements });
   } catch (err) {
     res.send(err.message);
   }
@@ -43,7 +43,7 @@ const GetBarangayAnnouncement = async (req, res) => {
 const GetAllOpenBrgyAnnouncement = async (req, res) => {
   try {
     const { brgy, page } = req.query;
-    const itemsPerPage = 10; // Number of items per page
+    const itemsPerPage = 3; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
     const query = {
