@@ -148,7 +148,7 @@ const GetStaffInquiries = async (req, res) => {
           .json({ error: `No such inquiries for Barangay ${brgy}` })
       : res.status(200).json({
           result,
-          pageCount: Math.floor(totalInquiries / itemsPerPage),
+          pageCount: Math.ceil(totalInquiries / itemsPerPage),
           total: totalInquiries
         });
   } catch (err) {

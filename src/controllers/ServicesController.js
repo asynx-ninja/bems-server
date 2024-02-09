@@ -40,7 +40,7 @@ const GetBrgyService = async (req, res) => {
       ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
       : res
           .status(200)
-          .json({ result, pageCount: Math.ceil(totalServices / itemsPerPage) });
+          .json({ result, pageCount: Math.ceil(totalServices / itemsPerPage), total: totalServices });
   } catch (err) {
     res.send(err.message);
   }
