@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Request = require("../models/RequestModel");
 const GenerateID = require("../functions/GenerateID");
-const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const {
   createBarangayFolder,
@@ -87,7 +86,7 @@ const GetStatusPercentage = async (req, res) => {
 const GetAllPenReq= async (req, res) => {
   try {
     const { isArchived, page, brgy } = req.query;
-    const itemsPerPage = 5; // Number of items per page
+    const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
     const query = {

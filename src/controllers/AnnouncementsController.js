@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const Announcement = require("../models/AnnouncementsModel");
 const GenerateID = require("../functions/GenerateID");
-const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
 
 const {
   createBarangayFolder,

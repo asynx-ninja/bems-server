@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const User = require("../models/UserModel");
 const BCrypt = require("../config/BCrypt");
-const Send = require("../config/Nodemailer");
+const { Send, sendEmail } = require("../config/Nodemailer");
 
 const GeneratePIN = require("../functions/GeneratePIN");
 
@@ -87,6 +87,7 @@ const SentPIN = async (req, res) => {
     res.send(err.message);
   }
 };
+
 const CheckEmail = async (req, res) => {
   try {
     const { email } = req.query;
@@ -98,13 +99,10 @@ const CheckEmail = async (req, res) => {
       res.status(200).json({ exists: false });
     }
   } catch (error) {
-    console.error('Error checking email:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error checking email:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
-
-module.exports = { CheckEmail };
-
 
 // CHECK PIN
 const CheckPIN = async (req, res) => {
