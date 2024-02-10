@@ -43,6 +43,30 @@ const FileSchema = new Schema(
   { _id: false }
 );
 
+const VerificationSchema = new Schema(
+  {
+    primary_id: {
+      type: String,
+      default: "",
+      required: true,
+    },
+    primary_file: {
+      type: [FileSchema],
+      required: true,
+    },
+    secondary_id: {
+      type: String,
+      default: "",
+      required: true,
+    },
+    secondary_file: {
+      type: [FileSchema],
+      required: true,
+    },
+  },
+  { _id: false }
+);
+
 const SocialsSchema = new Schema(
   {
     facebook: {
@@ -190,6 +214,10 @@ const UserSchema = new Schema(
     },
     socials: {
       type: SocialsSchema,
+      default: {},
+    },
+    verification: {
+      type: VerificationSchema,
       default: {},
     },
   },
