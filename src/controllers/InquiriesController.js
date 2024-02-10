@@ -33,6 +33,7 @@ const GetInquiries = async (req, res) => {
       : res.status(200).json({
           result,
           pageCount: Math.ceil(totalInquiries / itemsPerPage),
+         
         });
   } catch (err) {
     res.send(err.message);
@@ -113,6 +114,7 @@ const GetAdminInquiries = async (req, res) => {
       : res.status(200).json({
           result,
           pageCount: Math.ceil(totalInquiries / itemsPerPage),
+          total: totalInquiries,
         });
   } catch (err) {
     res.send(err.message);

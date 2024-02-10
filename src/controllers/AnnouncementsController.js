@@ -34,7 +34,7 @@ const GetBarangayAnnouncement = async (req, res) => {
       ? res
           .status(400)
           .json({ error: `No such Announcement for Barangay ${brgy}` })
-      : res.status(200).json({ result, pageCount });
+      : res.status(200).json({ result, pageCount, total:totalAnnouncements });
   } catch (err) {
     res.send(err.message);
   }
