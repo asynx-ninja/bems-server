@@ -60,7 +60,7 @@ const AddBarangayInfo = async (req, res) => {
   try {
     const { folder_id } = req.query;
     const { body, files } = req;
-    const { story, mission, vision, brgy } = JSON.parse(body.brgyinfo);
+    const { story, mission, vision, brgy, theme } = JSON.parse(body.brgyinfo);
     let fileArray = [];
 
     for (let f = 0; f < files.length; f += 1) {
@@ -85,6 +85,7 @@ const AddBarangayInfo = async (req, res) => {
       brgy,
       banner: bannerObject,
       logo: logoObject,
+      theme: theme
     });
 
     res.status(200).json(result);
@@ -100,7 +101,7 @@ const UpdateBarangayInfo = async (req, res) => {
   const { body, files } = req;
 
   const brgyData = JSON.parse(body.brgyinfo);
-  const { story, mission, vision, banner, logo } = brgyData;
+  const { story, mission, vision, banner, logo, theme } = brgyData;
 
   let bannerNew = null,
     logoNew = null;
@@ -138,6 +139,7 @@ const UpdateBarangayInfo = async (req, res) => {
         vision,
         banner: bannerNew === null ? banner : bannerNew,
         logo: logoNew === null ? logo : logoNew,
+        theme: theme
       },
     },
     { new: true }

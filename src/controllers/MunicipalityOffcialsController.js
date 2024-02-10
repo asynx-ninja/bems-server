@@ -2,8 +2,7 @@ const mongoose = require("mongoose");
 
 const MunicipalityOfficial = require("../models/MunicipalityOfficialsModel");
 
-const { uploadPicDrive, deletePicDrive, uploadFolderFiles, deleteFolderFiles } = require("../utils/Drive");
-const ReturnBrgyFormat = require("../functions/ReturnBrgyFormat");
+const { uploadFolderFiles, deleteFolderFiles } = require("../utils/Drive");
 
 const GetMunicipalityOfficial = async (req, res) => {
   try {

@@ -20,6 +20,38 @@ const FileSchema = new Schema(
   { _id: false }
 );
 
+const ColorSchema = new Schema(
+  {
+    primary: {
+      type: String,
+      default: "#295141",
+    },
+    secondary: {
+      type: String,
+      default: "#268F26",
+    },
+    gradient: {
+      type: {
+        start: {
+          type: String,
+          required: true,
+          default: "#295141"
+        },
+        end: {
+          type: String,
+          required: true,
+          default: "#408D51"
+        }
+      },
+    },
+    hover: {
+      type: String,
+      default: "#D3B574"
+    }
+  },
+  { _id: false }
+);
+
 const BrgyInfoSchema = new Schema(
   {
     story: {
@@ -51,6 +83,10 @@ const BrgyInfoSchema = new Schema(
       type: FileSchema,
       required: true,
     },
+    theme: {
+      type: ColorSchema,
+      required: true,
+    }
   },
   { timestamps: true }
 );
