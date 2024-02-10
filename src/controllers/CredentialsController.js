@@ -49,7 +49,7 @@ const SentPIN = async (req, res) => {
     const { type } = req.body;
 
     const found = await User.find({ email: email });
-    console.log(found[0].type);
+
     if (found.length === 0)
       return res.status(400).json({ error: "Email not registered!" });
 
@@ -66,8 +66,6 @@ const SentPIN = async (req, res) => {
       "4 Digit PIN",
       code
     );
-
-    console.log(result);
 
     if (!result.response) return res.status(400).json({ error: "Error email" });
 
