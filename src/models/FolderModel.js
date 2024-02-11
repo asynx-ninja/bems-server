@@ -49,6 +49,11 @@ const FolderSchema = new Schema(
       required: true,
       index: true,
     },
+    verification: {
+      type: String,
+      required: true,
+      index: true,
+    },
     brgy: {
       type: String,
       required: true,

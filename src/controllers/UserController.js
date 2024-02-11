@@ -477,6 +477,61 @@ const UpdateUser = async (req, res) => {
   }
 };
 
+const CreateVerification = async (req, res) => {
+  try {
+    const { folder_id, doc_id } = req.query;
+    const { body, files } = req;
+    const user = JSON.parse(body.users);
+    let primaryFile = [],
+      secondaryFile = [];
+
+    if (!mongoose.Types.ObjectId.isValid(doc_id)) {
+      return res.status(400).json({ error: "No such user" });
+    }
+
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        const { id, name } = await uploadFolderFiles(files[i], folder_id);
+
+        if (files[i].originalname.includes("primary")) {
+          primaryFile.push({
+            link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+            id,
+            name,
+          });
+        } else {
+          secondaryFile.push({
+            link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+            id,
+            name,
+          });
+        }
+      }
+    }
+
+    const result = await User.findOneAndUpdate(
+      { _id: doc_id },
+      {
+        $set: {
+          verification: {
+            primary_id: user.primary_id,
+            primary_file: primaryFile,
+            secondary_id: user.primaryFile,
+            secondary_file: secondaryFile,
+          },
+        },
+      },
+      { new: true }
+    );
+
+    console.log("result", result);
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const StatusUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -580,4 +635,5 @@ module.exports = {
   StatusUser,
   ArchiveUser,
   getAllResidentIsArchived,
+  CreateVerification,
 };
