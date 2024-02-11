@@ -24,10 +24,12 @@ const ColorSchema = new Schema(
   {
     primary: {
       type: String,
+      uppercase: true,
       default: "#295141",
     },
     secondary: {
       type: String,
+      uppercase: true,
       default: "#268F26",
     },
     gradient: {
@@ -35,17 +37,20 @@ const ColorSchema = new Schema(
         start: {
           type: String,
           required: true,
+          uppercase: true,
           default: "#295141"
         },
         end: {
           type: String,
           required: true,
+          uppercase: true,
           default: "#408D51"
         }
       },
     },
     hover: {
       type: String,
+      uppercase: true,
       default: "#D3B574"
     }
   },
