@@ -26,7 +26,7 @@ const GetAllRequest = async (req, res) => {
     if (type !== undefined && type !== "all") {
       query.$and.push({ service_name: type }); // Assuming the field is named 'service_name'
     }
-    
+
     if (status && status.toLowerCase() !== "all") {
       query.status = status;
     }
@@ -40,8 +40,8 @@ const GetAllRequest = async (req, res) => {
     return !result
       ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
       : res
-          .status(200)
-          .json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage) });
+        .status(200)
+        .json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage) });
   } catch (err) {
     res.status(400).json(err.message);
   }
@@ -83,7 +83,7 @@ const GetStatusPercentage = async (req, res) => {
   }
 };
 
-const GetAllPenReq= async (req, res) => {
+const GetAllPenReq = async (req, res) => {
   try {
     const { isArchived, page, brgy } = req.query;
     const itemsPerPage = 10; // Number of items per page
@@ -111,7 +111,7 @@ const GetAllPenReq= async (req, res) => {
   }
 };
 
-const GetCountPenReq= async (req, res) => {
+const GetCountPenReq = async (req, res) => {
   try {
     const { isArchived, brgy } = req.query;
     const query = {
@@ -125,7 +125,7 @@ const GetCountPenReq= async (req, res) => {
     }
     return res
       .status(200)
-      .json({ result});
+      .json({ result });
   } catch (err) {
     res.send(err.message);
   }
@@ -817,28 +817,63 @@ const getTotalCompletedRequests = async (req, res) => {
 
 const GetRequestByUser = async (req, res) => {
   try {
-    const { user_id, page } = req.query;
+    const { user_id, service_name, req_id, page } = req.query;
 
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    const totalEventsApplications = await Request.countDocuments({
-      "form.user_id.value": user_id,
-    });
+    let totalEventsApplications = 0
 
-    const result = await Request.find({
+    let result = []
+
+    if (service_name === "all" && req_id === "") {
+      totalEventsApplications = await Request.countDocuments({
+        "form.user_id.value": user_id,
+      });
+
+      result = await Request.find({
+        "form.user_id.value": user_id,
+      })
+        .skip(skip)
+        .limit(itemsPerPage)
+        .sort({ createdAt: -1 });
+
+    } else if (req_id) {
+      totalEventsApplications = await Request.countDocuments({
+        "req_id": req_id,
+      });
+
+
+      result = await Request.find({
+        "req_id": req_id,
+      })
+        .skip(skip)
+        .limit(itemsPerPage)
+        .sort({ createdAt: -1 });
+    } else {
+      totalEventsApplications = await Request.countDocuments({
+        "service_name": service_name,
+      });
+
+      result = await Request.find({
+        "service_name": service_name,
+      })
+        .skip(skip)
+        .limit(itemsPerPage)
+        .sort({ createdAt: -1 });
+    }
+
+    const all = await Request.find({
       "form.user_id.value": user_id,
     })
-      .skip(skip)
-      .limit(itemsPerPage)
-      .sort({ createdAt: -1 });
 
     return !result
       ? res.status(400).json({ error: `No such event application` })
       : res.status(200).json({
-          result,
-          pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
-        });
+        result,
+        all,
+        pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
+      });
   } catch (error) {
     console.log(error);
   }
@@ -1119,8 +1154,8 @@ const GetRevenueBrgyPerServices = async (req, res) => {
 
     console.log("Service Revenue Summary:", feeSummary);
 
-     // Check if feeSummary is empty (no services and revenue)
-     if (feeSummary.length === 0) {
+    // Check if feeSummary is empty (no services and revenue)
+    if (feeSummary.length === 0) {
       // Return zero revenue with a custom message
       return res.json({ brgy: "No Availed Service for that time period", service_name: "Zero", TransactionCompleted: 0, Paid: 0 });
     }
