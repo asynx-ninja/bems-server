@@ -66,7 +66,7 @@ const GetBrgyAdmin = async (req, res) => {
       ? res.status(400).json({ error: `No such user` })
       : res
           .status(200)
-          .json({ result, pageCount: Math.ceil(totalStaffs / itemsPerPage) });
+          .json({ result, pageCount: Math.ceil(totalStaffs / itemsPerPage), total:totalStaffs });
   } catch (err) {
     res.send(err.message);
   }
@@ -94,7 +94,7 @@ const GetArchiveBrgyAdmin = async (req, res) => {
       ? res.status(400).json({ error: `No such user` })
       : res
           .status(200)
-          .json({ result, pageCount: Math.ceil(totalStaffs / itemsPerPage) });
+          .json({ result, pageCount: Math.ceil(totalStaffs / itemsPerPage), total:totalStaffs });
   } catch (err) {
     res.send(err.message);
   }

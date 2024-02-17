@@ -152,9 +152,10 @@ const GetAdminInquiries = async (req, res) => {
     return !result
       ? res.status(400).json({ error: `No such Announcement for ${to}` })
       : res.status(200).json({
-        result,
-        pageCount: Math.ceil(totalInquiries / itemsPerPage),
-      });
+          result,
+          pageCount: Math.ceil(totalInquiries / itemsPerPage),
+          total: totalInquiries,
+        });
   } catch (err) {
     res.send(err.message);
   }
