@@ -13,7 +13,7 @@ const {
 // RESIDENT ONLY
 const GetInquiries = async (req, res) => {
   try {
-    const { id, brgy, archived, page } = req.query;
+    const { id, brgy, archived, to, inq_id, page } = req.query;
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
@@ -21,19 +21,60 @@ const GetInquiries = async (req, res) => {
 
     const totalInquiries = await Inquiries.countDocuments(query);
 
-    const result = await Inquiries.find(query)
-      .skip(skip)
-      .limit(itemsPerPage)
-      .sort({ createdAt: -1 });
+    let totalEventsApplications = 0
+
+    let result = []
+
+    if (to === "all" && inq_id === "") {
+      totalEventsApplications = await Inquiries.countDocuments({
+        "user_id": id,
+      });
+
+      result = await Inquiries.find({
+        "user_id": id,
+      })
+        .skip(skip)
+        .limit(itemsPerPage)
+        .sort({ createdAt: -1 });
+
+    } else if (inq_id) {
+      totalEventsApplications = await Inquiries.countDocuments({
+        "inq_id": inq_id,
+      });
+
+
+      result = await Inquiries.find({
+        "inq_id": inq_id,
+      })
+        .skip(skip)
+        .limit(itemsPerPage)
+        .sort({ createdAt: -1 });
+    } else {
+      totalEventsApplications = await Inquiries.countDocuments({
+        "compose.to": to,
+      });
+
+      result = await Inquiries.find({
+        "compose.to": to,
+      })
+        .skip(skip)
+        .limit(itemsPerPage)
+        .sort({ createdAt: -1 });
+    }
+
+    const all = await Inquiries.find({
+      "user_id": id,
+    })
 
     return !result
       ? res
-          .status(400)
-          .json({ error: `No such inquiries for Barangay ${brgy}` })
+        .status(400)
+        .json({ error: `No such inquiries for Barangay ${brgy}` })
       : res.status(200).json({
-          result,
-          pageCount: Math.ceil(totalInquiries / itemsPerPage),
-        });
+        result,
+        all,
+        pageCount: Math.ceil(totalInquiries / itemsPerPage),
+      });
   } catch (err) {
     res.send(err.message);
   }
@@ -111,9 +152,9 @@ const GetAdminInquiries = async (req, res) => {
     return !result
       ? res.status(400).json({ error: `No such Announcement for ${to}` })
       : res.status(200).json({
-          result,
-          pageCount: Math.ceil(totalInquiries / itemsPerPage),
-        });
+        result,
+        pageCount: Math.ceil(totalInquiries / itemsPerPage),
+      });
   } catch (err) {
     res.send(err.message);
   }
@@ -144,8 +185,8 @@ const GetStaffInquiries = async (req, res) => {
       
     return !result
       ? res
-          .status(400)
-          .json({ error: `No such inquiries for Barangay ${brgy}` })
+        .status(400)
+        .json({ error: `No such inquiries for Barangay ${brgy}` })
       : res.status(200).json({
           result,
           pageCount: Math.ceil(totalInquiries / itemsPerPage),
