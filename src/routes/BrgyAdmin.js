@@ -8,13 +8,13 @@ const {
   CreateBrgyAdmin,
   UpdateBrgyAdmin,
   ArchiveBrgyAdmin,
-} = require("../controllers/AdminController");
+} = require("../controllers/BrgyAdminController");
 
 const upload = require("../config/Multer");
 
 router.get("/", GetBrgyAdmin);
 router.get("/specific/:id", GetSpecificBrgyAdmin);
-router.get("/showArchived/", GetArchivedBrgyAdmin);
+router.get("/showArchivedAdmin/", GetArchivedBrgyAdmin);
 router.post("/", CreateBrgyAdmin);
 router.patch("/:doc_id", upload.single("file"), UpdateBrgyAdmin);
 router.patch("/archived/:id/:archived", ArchiveBrgyAdmin);

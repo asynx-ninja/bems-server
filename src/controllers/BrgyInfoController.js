@@ -43,7 +43,7 @@ const GetAllBarangay = async (req, res) => {
       },
     ]);
 
-    console.log("aa", allinfo);
+    // console.log("aa", allinfo);
 
     if (allinfo.length === 0) {
       return res.status(400).json({ error: "No barangays found." });
