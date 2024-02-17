@@ -334,58 +334,85 @@ const GetArchivedUsers = async (req, res) => {
 
 const CreateUser = async (req, res) => {
   try {
-    const {
-      firstName,
-      middleName,
-      lastName,
-      suffix,
-      religion,
-      email,
-      birthday,
-      age,
-      contact,
-      sex,
-      address,
-      occupation,
-      civil_status,
-      type,
-      isVoter,
-      isHead,
-      isArchived,
-      isApproved,
-      username,
-      password,
-    } = req.body;
+    const { folder_id } = req.query;
+    const { body, files } = req;
+    const user = JSON.parse(body.user);
 
-    const user_id = GenerateID("", address.brgy, "U");
+    let primary = [],
+      secondary = [],
+      selfie = {};
+
+    const user_id = GenerateID("", user.address.brgy, "U");
+
+    const user_folder_id = await createRequiredFolders(user_id, folder_id);
+
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        try {
+          const { id, name } = await uploadFolderFiles(
+            files[i],
+            user_folder_id
+          );
+
+          if (files[i].originalname.includes("PRIMARY"))
+            primary.push({
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            });
+          else if (files[i].originalname.includes("SECONDARY"))
+            secondary.push({
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            });
+          else if (files[i].originalname.includes("SELFIE"))
+            Object.assign(selfie, {
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            });
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    }
 
     // Hash the password before saving
-    const hashedPassword = await hash(password);
+    const hashedPassword = await hash(user.password);
 
     const result = await User.create({
       user_id,
-      firstName,
-      middleName,
-      lastName,
-      suffix,
-      religion,
-      email,
-      birthday,
-      age,
-      contact,
-      sex,
-      address,
-      occupation,
-      civil_status,
-      type,
-      isVoter,
-      isHead,
-      isArchived,
+      firstName: user.firstName,
+      middleName: user.middleName,
+      lastName: user.lastName,
+      suffix: user.suffix,
+      religion: user.religion,
+      email: user.email,
+      birthday: user.birthday,
+      age: user.age,
+      contact: user.contact,
+      sex: user.sex,
+      address: user.address,
+      occupation: user.occupation,
+      civil_status: user.civil_status,
+      type: user.type,
+      isVoter: user.isVoter,
+      isHead: user.isHead,
+      isArchived: user.isArchived,
       profile: {},
       socials: {},
-      username,
+      username: user.username,
       password: hashedPassword, // Save the hashed password
-      isApproved: isApproved,
+      isApproved: user.isApproved,
+      verification: {
+        user_folder_id: user_folder_id,
+        primary_id: user.primary_id,
+        primary_file: primary,
+        secondary_id: user.secondary_id,
+        secondary_file: secondary,
+        selfie: selfie,
+      },
     });
 
     res.status(200).json(result);
@@ -477,58 +504,116 @@ const UpdateUser = async (req, res) => {
   }
 };
 
-const CreateVerification = async (req, res) => {
+const UpdateVerification = async (req, res) => {
   try {
-    const { folder_id, doc_id } = req.query;
-    const { body, files } = req;
-    const user = JSON.parse(body.users);
-    let primaryFile = [],
-      secondaryFile = [];
+    const { id } = req.params;
+    let { body, files } = req;
+    let primaryCurrentFiles = [],
+      secondaryCurrentFiles = [];
+    body = JSON.parse(JSON.stringify(req.body));
+    let { primarySaved, secondarySaved, user } = body;
+    let selfie = null;
 
-    if (!mongoose.Types.ObjectId.isValid(doc_id)) {
-      return res.status(400).json({ error: "No such user" });
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "No such service" });
     }
 
-    if (files) {
-      for (let i = 0; i < files.length; i++) {
-        const { id, name } = await uploadFolderFiles(files[i], folder_id);
+    if (primarySaved !== undefined) {
+      if (typeof body.primarySaved === "object") {
+        for (const item of primarySaved) {
+          const parsed = JSON.parse(item);
+          primaryCurrentFiles.push(parsed);
+        }
+      } else {
+        const parsed = JSON.parse(primarySaved);
+        primaryCurrentFiles.push(parsed);
+      }
+    }
 
-        if (files[i].originalname.includes("primary")) {
-          primaryFile.push({
-            link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
-            id,
-            name,
-          });
-        } else {
-          secondaryFile.push({
-            link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
-            id,
-            name,
-          });
+    if (secondarySaved !== undefined) {
+      if (typeof body.secondarySaved === "object") {
+        for (const item of secondarySaved) {
+          const parsed = JSON.parse(item);
+          secondaryCurrentFiles.push(parsed);
+        }
+      } else {
+        const parsed = JSON.parse(secondarySaved);
+        secondaryCurrentFiles.push(parsed);
+      }
+    }
+
+    let primaryFiles = [...primaryCurrentFiles];
+    let secondaryFiles = [...secondaryCurrentFiles];
+    user = JSON.parse(body.user);
+    const folder_id = user.verification.user_folder_id;
+    const primaryFullItem = user.verification.primary_file;
+    const secondaryFullItem = user.verification.primary_file;
+    const primaryDeletedItems = compareArrays(primaryFullItem, primaryFiles);
+    const secondaryDeletedItems = compareArrays(
+      secondaryFullItem,
+      secondaryFiles
+    );
+
+    primaryDeletedItems.forEach(async (item) => {
+      await deleteFolderFiles(item.id, folder_id);
+    });
+
+    secondaryDeletedItems.forEach(async (item) => {
+      await deleteFolderFiles(item.id, folder_id);
+    });
+
+    if (files) {
+      for (let f = 0; f < files.length; f += 1) {
+        try {
+          const { id, name } = await uploadFolderFiles(
+            files[i],
+            user_folder_id
+          );
+
+          if (files[i].originalname.includes("PRIMARY"))
+            primary.push({
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            });
+          else if (files[i].originalname.includes("SECONDARY"))
+            secondary.push({
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            });
+          else if (files[i].originalname.includes("SELFIE")) {
+            Object.assign(selfie, {
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            });
+
+            await deleteFolderFiles(user.verification.selfie.id, folder_id);
+          }
+        } catch (err) {
+          console.log(err);
         }
       }
     }
 
     const result = await User.findOneAndUpdate(
-      { _id: doc_id },
+      { _id: id },
       {
-        $set: {
-          verification: {
-            primary_id: user.primary_id,
-            primary_file: primaryFile,
-            secondary_id: user.primaryFile,
-            secondary_file: secondaryFile,
-          },
+        verification: {
+          primary_id: user.verification.primary_id,
+          primary_file: primaryFiles,
+          secondary_id: user.verification.secondary_id,
+          secondary_file: secondaryFiles,
+          selfie: selfie === null ? user.verification.selfie : selfie,
         },
       },
       { new: true }
     );
 
-    console.log("result", result);
-
     res.status(200).json(result);
   } catch (err) {
-    console.log(err);
+    res.send(err.message);
   }
 };
 
@@ -635,5 +720,5 @@ module.exports = {
   StatusUser,
   ArchiveUser,
   getAllResidentIsArchived,
-  CreateVerification,
+  UpdateVerification,
 };

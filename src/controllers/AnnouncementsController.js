@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const Announcement = require("../models/AnnouncementsModel");
 const GenerateID = require("../functions/GenerateID");
+const compareArrays = require("../functions/CompareArrays");
 
 const {
   createBarangayFolder,
@@ -42,7 +43,7 @@ const GetBarangayAnnouncement = async (req, res) => {
 const GetAllOpenBrgyAnnouncement = async (req, res) => {
   try {
     const { brgy, page } = req.query;
-    const itemsPerPage = 3; // Number of items per page
+    const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
     const query = {
@@ -75,7 +76,9 @@ const CreateAnnouncement = async (req, res) => {
   try {
     const { event_folder_id } = req.query;
     const { body, files } = req;
-    const { title, details, date, brgy, isOpen } = JSON.parse(body.announcement);
+    const { title, details, date, brgy, isOpen } = JSON.parse(
+      body.announcement
+    );
     let fileArray = [];
     const event_id = GenerateID(title, brgy, "E");
     const folder_id = await createRequiredFolders(event_id, event_folder_id);
@@ -117,17 +120,6 @@ const CreateAnnouncement = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-};
-
-const compareArrays = (array1, array2) => {
-  const difference = array1.filter((object1) => {
-    return !array2.some((object2) => {
-      return Object.keys(object1).every((key) => {
-        return object1[key] === object2[key];
-      });
-    });
-  });
-  return difference;
 };
 
 const UpdateAnnouncement = async (req, res) => {
@@ -179,7 +171,10 @@ const UpdateAnnouncement = async (req, res) => {
             name,
           };
 
-          await deleteFolderFiles(announcement.collections.banner.id, folder_id);
+          await deleteFolderFiles(
+            announcement.collections.banner.id,
+            folder_id
+          );
         } else if (files[f].originalname === "logo") {
           logo = {
             link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,

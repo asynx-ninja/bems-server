@@ -45,6 +45,11 @@ const FileSchema = new Schema(
 
 const VerificationSchema = new Schema(
   {
+    user_folder_id: {
+      type: String,
+      default: "",
+      required: true,
+    },
     primary_id: {
       type: String,
       default: "",
@@ -61,6 +66,10 @@ const VerificationSchema = new Schema(
     },
     secondary_file: {
       type: [FileSchema],
+      required: true,
+    },
+    selfie: {
+      type: FileSchema,
       required: true,
     },
   },

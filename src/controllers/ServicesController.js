@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Service = require("../models/ServicesModel");
 const GenerateID = require("../functions/GenerateID");
+const compareArrays = require("../functions/CompareArrays");
 
 const {
   createBarangayFolder,
@@ -265,17 +266,6 @@ const CreateServices = async (req, res) => {
   } catch (err) {
     res.send(err.message);
   }
-};
-
-const compareArrays = (array1, array2) => {
-  const difference = array1.filter((object1) => {
-    return !array2.some((object2) => {
-      return Object.keys(object1).every((key) => {
-        return object1[key] === object2[key];
-      });
-    });
-  });
-  return difference;
 };
 
 const UpdateServices = async (req, res) => {
