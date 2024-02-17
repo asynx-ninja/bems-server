@@ -48,29 +48,23 @@ const VerificationSchema = new Schema(
     user_folder_id: {
       type: String,
       default: "",
-      required: true,
     },
     primary_id: {
       type: String,
       default: "",
-      required: true,
     },
     primary_file: {
       type: [FileSchema],
-      required: true,
     },
     secondary_id: {
       type: String,
       default: "",
-      required: true,
     },
     secondary_file: {
       type: [FileSchema],
-      required: true,
     },
     selfie: {
       type: FileSchema,
-      required: true,
     },
   },
   { _id: false }
