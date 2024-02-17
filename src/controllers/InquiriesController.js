@@ -124,11 +124,11 @@ const GetStaffInquiries = async (req, res) => {
     const { brgy, archived, status, page, label } = req.query;
     const itemsPerPage = 10;
     const skip = (parseInt(page) || 0) * itemsPerPage;
-
+    console.log(skip)
     const query = {
       brgy,
       isArchived: archived,
-      "compose.to": label,
+      "compose.to": label
     };
 
     if (status && status.toLowerCase() !== "all") {
@@ -136,12 +136,12 @@ const GetStaffInquiries = async (req, res) => {
     }
 
     const totalInquiries = await Inquiries.countDocuments(query);
-
+  
     const result = await Inquiries.find(query)
       .skip(skip)
       .limit(itemsPerPage)
       .sort({ createdAt: -1 });
-
+      
     return !result
       ? res
           .status(400)
@@ -149,6 +149,7 @@ const GetStaffInquiries = async (req, res) => {
       : res.status(200).json({
           result,
           pageCount: Math.ceil(totalInquiries / itemsPerPage),
+          total: totalInquiries
         });
   } catch (err) {
     res.send(err.message);

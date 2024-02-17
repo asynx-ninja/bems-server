@@ -41,7 +41,7 @@ const GetAllRequest = async (req, res) => {
       ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
       : res
           .status(200)
-          .json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage) });
+          .json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage), total: totalRequests });
   } catch (err) {
     res.status(400).json(err.message);
   }

@@ -30,7 +30,7 @@ const GetBarangayOfficial = async (req, res) => {
     const pageCount = Math.ceil(totalOfficials / itemsPerPage);
 
     return result.length > 0
-      ? res.status(200).json({ result, pageCount })
+      ? res.status(200).json({ result, pageCount, total: totalOfficials })
       : res.status(400).json({ error: `No officials found for Barangay ${brgy}` });
   } catch (err) {
     res.status(500).send(err.message);

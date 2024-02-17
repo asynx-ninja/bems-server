@@ -6,13 +6,14 @@ const GetAllDocumentForm = async (req, res) => {
   try {
     const { brgy, service_id } = req.query;
 
+    // console.log("REQ QUERY NG DOCU: ", req.query);
     const result = await Document.find({
       $and: [{ brgy: brgy }, { service_id: service_id }],
     });
 
     return !result
       ? res.status(400).json({ error: "No such Service Form" })
-      : res.status(200).json(result);
+      : res.status(200).json(result); 
   } catch (err) {
     res.send(err.message);
   }

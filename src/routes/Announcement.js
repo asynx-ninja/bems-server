@@ -11,10 +11,12 @@ const {
   ArchiveAnnouncement,
   GetBrgyAnnouncementBanner,
   UpdateAttendees,
+  GetSpecificBarangayAnnouncement,
 } = require("../controllers/AnnouncementsController");
 
 router.get("/", GetBarangayAnnouncement);
 router.get("/all", GetAllOpenBrgyAnnouncement);
+router.get("/specific", GetSpecificBarangayAnnouncement);
 router.get("/banner/:brgy", GetBrgyAnnouncementBanner);
 router.post("/", upload.array("files", 10), CreateAnnouncement);
 router.patch("/:id", upload.array("files", 10), UpdateAnnouncement);

@@ -21,6 +21,7 @@ const GetBarangayAnnouncement = async (req, res) => {
       $and: [{ brgy: brgy }, { isArchived: archived }],
     });
 
+    
     const result = await Announcement.find({
       $and: [{ brgy: brgy }, { isArchived: archived }],
     })
@@ -34,7 +35,7 @@ const GetBarangayAnnouncement = async (req, res) => {
       ? res
           .status(400)
           .json({ error: `No such Announcement for Barangay ${brgy}` })
-      : res.status(200).json({ result, pageCount });
+      : res.status(200).json({ result, pageCount, total:totalAnnouncements });
   } catch (err) {
     res.send(err.message);
   }
@@ -274,6 +275,24 @@ const UpdateAttendees = async (req, res) => {
   }
 };
 
+const GetSpecificBarangayAnnouncement = async (req, res) => {
+  try {
+    const { brgy, archived, event_id } = req.query;
+
+    const result = await Announcement.findOne({
+      $and: [{ brgy: brgy }, { isArchived: archived }, { event_id: event_id }],
+    }).sort({ createdAt: -1 });
+
+    return !result
+      ? res
+          .status(400)
+          .json({ error: `No such Announcement for Barangay ${brgy} and Event ID ${event_id}` })
+      : res.status(200).json({ result });
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 module.exports = {
   GetBarangayAnnouncement,
   GetAllOpenBrgyAnnouncement,
@@ -282,4 +301,5 @@ module.exports = {
   ArchiveAnnouncement,
   GetBrgyAnnouncementBanner,
   UpdateAttendees,
+  GetSpecificBarangayAnnouncement,
 };
