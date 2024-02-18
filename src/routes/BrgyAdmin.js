@@ -16,7 +16,7 @@ router.get("/", GetBrgyAdmin);
 router.get("/specific/:id", GetSpecificBrgyAdmin);
 router.get("/showArchivedAdmin/", GetArchivedBrgyAdmin);
 router.post("/", CreateBrgyAdmin);
-router.patch("/:doc_id", upload.single("file"), UpdateBrgyAdmin);
+router.patch("/", upload.single("file"), UpdateBrgyAdmin);
 router.patch("/archived/:id/:archived", ArchiveBrgyAdmin);
 
 module.exports = router;

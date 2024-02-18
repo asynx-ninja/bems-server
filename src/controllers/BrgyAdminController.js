@@ -114,14 +114,6 @@ const CreateBrgyAdmin = async (req, res) => {
       username,
       password: hashedPassword, // Save the hashed password
       isApproved: isApproved,
-      verification: {
-        user_folder_id: "",
-        primary_id: "",
-        primary_file: [{}],
-        secondary_id: "",
-        secondary_file: [{}],
-        selfie: {},
-      }
     });
 
     res.status(200).json(result);
@@ -139,13 +131,12 @@ const CreateBrgyAdmin = async (req, res) => {
 
 const UpdateBrgyAdmin = async (req, res) => {
   try {
-    const { folder_id } = req.query;
-    const { doc_id } = req.params;
+    const { folder_id, doc_id } = req.query;
     const { body, file } = req;
     const user = JSON.parse(body.users);
 
     if (!mongoose.Types.ObjectId.isValid(doc_id)) {
-      return res.status(400).json({ error: "No such Barangay Admin" });
+      return res.status(400).json({ error: "No such user" });
     }
 
     var id = null,
@@ -170,6 +161,7 @@ const UpdateBrgyAdmin = async (req, res) => {
           suffix: user.suffix,
           religion: user.religion,
           email: user.email,
+          username: user.username,
           birthday: user.birthday,
           birthplace: user.birthplace,
           age: user.age,

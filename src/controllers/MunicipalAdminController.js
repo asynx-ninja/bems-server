@@ -131,13 +131,12 @@ const CreateMunicipalAdmin = async (req, res) => {
 
 const UpdateMunicipalAdmin = async (req, res) => {
   try {
-    const { folder_id } = req.query;
-    const { doc_id } = req.params;
+    const { folder_id, doc_id } = req.query;
     const { body, file } = req;
     const user = JSON.parse(body.users);
 
     if (!mongoose.Types.ObjectId.isValid(doc_id)) {
-      return res.status(400).json({ error: "No such Barangay Admin" });
+      return res.status(400).json({ error: "No such user" });
     }
 
     var id = null,
@@ -162,6 +161,7 @@ const UpdateMunicipalAdmin = async (req, res) => {
           suffix: user.suffix,
           religion: user.religion,
           email: user.email,
+          username: user.username,
           birthday: user.birthday,
           birthplace: user.birthplace,
           age: user.age,
@@ -208,36 +208,36 @@ const UpdateMunicipalAdmin = async (req, res) => {
 };
 
 const GetArchivedMunicipalAdmin = async (req, res) => {
-        try {
-          const { brgy, page, type } = req.query;
-          console.log("Received Admin Type:", type);
-          const itemsPerPage = 10; // Number of items per page
-          const skip = (parseInt(page) || 0) * itemsPerPage;
-      
-          const query = {
-            $and: [{ "address.brgy": brgy }, { isArchived: true }],
-          };
-      
-          // Conditionally add the type filter
-          if (type && type.toLowerCase() !== "all") {
-            query.$and.push({ type: type });
-          }
-      
-          console.log("Query after Type Filter:", query);
-      
-          const result = await User.find(query).skip(skip).limit(itemsPerPage);
-      
-          const totalUsers = await User.countDocuments(query);
-      
-          const pageCount = Math.ceil(totalUsers / itemsPerPage);
-      
-          return !result
-            ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
-            : res.status(200).json({ result, pageCount });
-        } catch (err) {
-          res.send(err.message);
-        }
-      };
+  try {
+    const { brgy, page, type } = req.query;
+    console.log("Received Admin Type:", type);
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
+
+    const query = {
+      $and: [{ "address.brgy": brgy }, { isArchived: true }],
+    };
+
+    // Conditionally add the type filter
+    if (type && type.toLowerCase() !== "all") {
+      query.$and.push({ type: type });
+    }
+
+    console.log("Query after Type Filter:", query);
+
+    const result = await User.find(query).skip(skip).limit(itemsPerPage);
+
+    const totalUsers = await User.countDocuments(query);
+
+    const pageCount = Math.ceil(totalUsers / itemsPerPage);
+
+    return !result
+      ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
+      : res.status(200).json({ result, pageCount });
+  } catch (err) {
+    res.send(err.message);
+  }
+};
 
 const ArchiveMunicipalAdmin = async (req, res) => {
   try {

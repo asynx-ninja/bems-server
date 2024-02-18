@@ -16,7 +16,7 @@ router.get("/", GetMunicipalAdmin);
 router.get("/specific/:id", GetSpecificMunicipalAdmin);
 router.get("/showArchivedAdmin/", GetArchivedMunicipalAdmin);
 router.post("/", CreateMunicipalAdmin);
-router.patch("/:doc_id", upload.single("file"), UpdateMunicipalAdmin);
+router.patch("/", upload.single("file"), UpdateMunicipalAdmin);
 router.patch("/archived/:id/:archived", ArchiveMunicipalAdmin);
 
 module.exports = router;
