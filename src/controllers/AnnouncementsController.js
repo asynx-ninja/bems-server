@@ -42,7 +42,7 @@ const GetBarangayAnnouncement = async (req, res) => {
 const GetAllOpenBrgyAnnouncement = async (req, res) => {
   try {
     const { brgy, page } = req.query;
-    const itemsPerPage = 3; // Number of items per page
+    const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
     const query = {
