@@ -18,12 +18,14 @@ const {
   GetRevenueBrgyPerServices,
   GetAllPenReq,
   GetCountPenReq,
+  GetDoneBlotters,
 } = require("../controllers/RequestController");
 
 const upload = require("../config/Multer");
 
 router.get("/specific/", GetRequestByUser);
 router.get("/pendingrequest", GetAllPenReq)
+router.get("/getdoneblotters", GetDoneBlotters)
 router.get("/getallpending", GetCountPenReq)
 router.get("/get_revenue", GetRevenue);
 router.get("/get_brgy_revenue", GetRevenueBrgy);

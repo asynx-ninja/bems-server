@@ -40,8 +40,41 @@ const GetAllRequest = async (req, res) => {
     return !result
       ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
       : res
-          .status(200)
-          .json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage), total: totalRequests });
+        .status(200)
+        .json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage), total: totalRequests });
+  } catch (err) {
+    res.status(400).json(err.message);
+  }
+};
+
+const GetDoneBlotters = async (req, res) => {
+  try {
+    const { brgy, archived, status, type, page } = req.query;
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
+
+    let query = {
+      $and: [{ brgy: brgy }, { isArchived: archived }],
+    };
+
+  
+    // Add condition to fetch requests with service name "Barangay - Blotters" or status "TRANSACTION COMPLETED"
+    if (type === "Barangay - Blotters" || status === "TRANSACTION COMPLETED") {
+      query.$or = [{ service_name: "Barangay Blotter" }, { status: "TRANSACTION COMPLETED" }];
+    }
+
+    const totalRequests = await Request.countDocuments(query);
+
+    const result = await Request.find(query)
+      .skip(skip)
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
+
+    return !result
+      ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
+      : res
+        .status(200)
+        .json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage), total: totalRequests });
   } catch (err) {
     res.status(400).json(err.message);
   }
@@ -1183,5 +1216,6 @@ module.exports = {
   ArchiveRequest,
   GetRevenueBrgyPerServices,
   GetAllPenReq,
-  GetCountPenReq
+  GetCountPenReq,
+  GetDoneBlotters,
 };
