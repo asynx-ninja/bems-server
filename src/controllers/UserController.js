@@ -3,6 +3,7 @@ const { hash } = require("../config/BCrypt");
 const User = require("../models/UserModel");
 const GenerateID = require("../functions/GenerateID");
 const { Send, sendEmail } = require("../config/Nodemailer");
+const compareArrays = require("../functions/CompareArrays");
 
 const {
   createBarangayFolder,
@@ -29,7 +30,10 @@ const GetUsers = async (req, res) => {
       query.$and.push({ type: type });
     }
 
-    const result = await User.find(query).skip(skip).limit(itemsPerPage);
+    const result = await User.find(query)
+      .skip(skip)
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
 
     const totalUsers = await User.countDocuments(query);
 
@@ -506,69 +510,56 @@ const UpdateUser = async (req, res) => {
 
 const UpdateVerification = async (req, res) => {
   try {
-    const { id } = req.params;
-    let { body, files } = req;
-    let primaryCurrentFiles = [],
-      secondaryCurrentFiles = [];
-    body = JSON.parse(JSON.stringify(req.body));
-    let { primarySaved, secondarySaved, user } = body;
-    let selfie = null;
+    const { doc_id, user_id, root_folder } = req.query;
+    const { body, files } = req;
+    let primary = [],
+      secondary = [],
+      selfie = {},
+      folder_id;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "No such service" });
+    if (!mongoose.Types.ObjectId.isValid(doc_id)) {
+      return res.status(400).json({ error: "No such user" });
     }
 
-    if (primarySaved !== undefined) {
-      if (typeof body.primarySaved === "object") {
-        for (const item of primarySaved) {
-          const parsed = JSON.parse(item);
-          primaryCurrentFiles.push(parsed);
-        }
-      } else {
-        const parsed = JSON.parse(primarySaved);
-        primaryCurrentFiles.push(parsed);
-      }
+    const primarySaved = JSON.parse(body.primarySaved);
+    const secondarySaved = JSON.parse(body.secondarySaved);
+    const oldVerification = JSON.parse(body.oldVerification);
+    const newVerification = JSON.parse(body.newVerification);
+
+    primary.push(...primarySaved);
+    secondary.push(...secondarySaved);
+
+    if (oldVerification.user_folder_id === "") {
+      folder_id = await createRequiredFolders(user_id, root_folder);
+    } else {
+      folder_id = oldVerification.user_folder_id;
     }
 
-    if (secondarySaved !== undefined) {
-      if (typeof body.secondarySaved === "object") {
-        for (const item of secondarySaved) {
-          const parsed = JSON.parse(item);
-          secondaryCurrentFiles.push(parsed);
-        }
-      } else {
-        const parsed = JSON.parse(secondarySaved);
-        secondaryCurrentFiles.push(parsed);
-      }
-    }
+    const primaryFullItem = oldVerification.primary_file;
+    const secondaryFullItem = oldVerification.secondary_file;
 
-    let primaryFiles = [...primaryCurrentFiles];
-    let secondaryFiles = [...secondaryCurrentFiles];
-    user = JSON.parse(body.user);
-    const folder_id = user.verification.user_folder_id;
-    const primaryFullItem = user.verification.primary_file;
-    const secondaryFullItem = user.verification.primary_file;
-    const primaryDeletedItems = compareArrays(primaryFullItem, primaryFiles);
+    const primaryDeletedItems = compareArrays(primaryFullItem, primarySaved);
     const secondaryDeletedItems = compareArrays(
       secondaryFullItem,
-      secondaryFiles
+      secondarySaved
     );
 
-    primaryDeletedItems.forEach(async (item) => {
-      await deleteFolderFiles(item.id, folder_id);
-    });
+    if (primaryDeletedItems.length > 0) {
+      primaryDeletedItems.forEach(async (item) => {
+        await deleteFolderFiles(item.id, folder_id);
+      });
+    }
 
-    secondaryDeletedItems.forEach(async (item) => {
-      await deleteFolderFiles(item.id, folder_id);
-    });
+    if (secondaryDeletedItems.length > 0) {
+      secondaryDeletedItems.forEach(async (item) => {
+        await deleteFolderFiles(item.id, folder_id);
+      });
+    }
 
     if (files) {
-      for (let f = 0; f < files.length; f += 1) {
+      for (let i = 0; i < files.length; i += 1) {
         try {
-          const { id, name } = await uploadFolderFiles(
-            files[i],
-            user_folder_id
-          );
+          const { id, name } = await uploadFolderFiles(files[i], folder_id);
 
           if (files[i].originalname.includes("PRIMARY"))
             primary.push({
@@ -589,23 +580,27 @@ const UpdateVerification = async (req, res) => {
               name,
             });
 
-            await deleteFolderFiles(user.verification.selfie.id, folder_id);
+            await deleteFolderFiles(oldVerification.selfie.id, folder_id);
           }
         } catch (err) {
-          console.log(err);
+          console.log("gege", err.message);
         }
       }
     }
 
     const result = await User.findOneAndUpdate(
-      { _id: id },
+      { _id: doc_id },
       {
         verification: {
-          primary_id: user.verification.primary_id,
-          primary_file: primaryFiles,
-          secondary_id: user.verification.secondary_id,
-          secondary_file: secondaryFiles,
-          selfie: selfie === null ? user.verification.selfie : selfie,
+          primary_id: newVerification.primary_id,
+          primary_file: primary,
+          secondary_id: newVerification.secondary_id,
+          secondary_file: secondary,
+          selfie: !selfie.hasOwnProperty("link") ? verification.selfie : selfie,
+          user_folder_id:
+            oldVerification.user_folder_id === ""
+              ? folder_id
+              : Verification.user_folder_id,
         },
       },
       { new: true }
