@@ -25,7 +25,7 @@ const GetInquiries = async (req, res) => {
 
     let result = []
 
-    if (to === "all" && inq_id === "") {
+    if (to === "all" && inq_id === undefined) {
       totalEventsApplications = await Inquiries.countDocuments({
         "user_id": id,
       });
