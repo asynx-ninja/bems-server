@@ -596,11 +596,11 @@ const UpdateVerification = async (req, res) => {
           primary_file: primary,
           secondary_id: newVerification.secondary_id,
           secondary_file: secondary,
-          selfie: !selfie.hasOwnProperty("link") ? verification.selfie : selfie,
+          selfie: !selfie.hasOwnProperty("link") ? oldVerification.selfie : selfie,
           user_folder_id:
             oldVerification.user_folder_id === ""
               ? folder_id
-              : Verification.user_folder_id,
+              : oldVerification.user_folder_id,
         },
       },
       { new: true }
