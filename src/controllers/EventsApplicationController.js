@@ -30,7 +30,9 @@ const GetAllEventsApplication = async (req, res) => {
       query.$and.push({ event_name: title });
     }
 
-    const totalEventsApplications = await EventsApplication.countDocuments(query);
+    const totalEventsApplications = await EventsApplication.countDocuments(
+      query
+    );
 
     const result = await EventsApplication.find(query)
       .skip(skip)
@@ -54,9 +56,9 @@ const GetEventsApplicationByUser = async (req, res) => {
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    let totalEventsApplications = 0
+    let totalEventsApplications = 0;
 
-    let result = []
+    let result = [];
 
     if (event_name === "all") {
       totalEventsApplications = await EventsApplication.countDocuments({
@@ -72,11 +74,11 @@ const GetEventsApplicationByUser = async (req, res) => {
 
     }else {
       totalEventsApplications = await EventsApplication.countDocuments({
-        "event_name": event_name,
+        event_name: event_name,
       });
 
       result = await EventsApplication.find({
-        "event_name": event_name,
+        event_name: event_name,
       })
         .skip(skip)
         .limit(itemsPerPage)
@@ -85,15 +87,15 @@ const GetEventsApplicationByUser = async (req, res) => {
 
     const all = await EventsApplication.find({
       "form.user_id.value": user_id,
-    })
+    });
 
     return !result
       ? res.status(400).json({ error: `No such event application` })
       : res.status(200).json({
-        result,
-        all,
-        pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
-      });
+          result,
+          all,
+          pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
+        });
   } catch (error) {
     console.log(error);
   }
@@ -138,13 +140,11 @@ const GetAllPenApp = async (req, res) => {
       return res.status(400).json({ error: "No services found." });
     }
 
-    return res
-      .status(200)
-      .json({
-        result,
-        pageCount: Math.ceil(totalEventsApplication / itemsPerPage),
-        total: totalEventsApplication,
-      });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(totalEventsApplication / itemsPerPage),
+      total: totalEventsApplication,
+    });
   } catch (err) {
     res.send(err.message);
   }

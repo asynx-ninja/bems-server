@@ -12,16 +12,27 @@ const {
 
 const GetBrgyAdmin = async (req, res) => {
   try {
-    const result = await User.find({
-      $and: [
-        { type: "Brgy Admin" },
-        { isArchived: false },
-      ],
-    });
+    const { page, type } = req.query;
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
+
+    const query = {
+      $and: [{ isArchived: false }, { type: "Brgy Admin" }],
+    };
+
+    if (type && type.toLowerCase() !== "all") {
+      query.type = type;
+    }
+
+    const totalStaffs = await User.countDocuments(query);
+
+    const result = await User.find(query).skip(skip).limit(itemsPerPage);
 
     return !result
-      ? res.status(400).json({ error: `No such Barangay Admin` })
-      : res.status(200).json(result);
+      ? res.status(400).json({ error: `No such user` })
+      : res
+          .status(200)
+          .json({ result, pageCount: Math.ceil(totalStaffs / itemsPerPage), total:totalStaffs });
   } catch (err) {
     res.send(err.message);
   }
@@ -46,6 +57,8 @@ const GetSpecificBrgyAdmin = async (req, res) => {
     res.send(err.message);
   }
 };
+
+
 
 const CreateBrgyAdmin = async (req, res) => {
   try {
@@ -104,7 +117,9 @@ const CreateBrgyAdmin = async (req, res) => {
     });
 
     res.status(200).json(result);
+    console.log("hey", result)
   } catch (err) {
+    console.log("hey", err)
     if (err.code === 11000) {
       return res
         .status(400)
@@ -116,13 +131,12 @@ const CreateBrgyAdmin = async (req, res) => {
 
 const UpdateBrgyAdmin = async (req, res) => {
   try {
-    const { folder_id } = req.query;
-    const { doc_id } = req.params;
+    const { folder_id, doc_id } = req.query;
     const { body, file } = req;
     const user = JSON.parse(body.users);
 
     if (!mongoose.Types.ObjectId.isValid(doc_id)) {
-      return res.status(400).json({ error: "No such Barangay Admin" });
+      return res.status(400).json({ error: "No such user" });
     }
 
     var id = null,
@@ -147,6 +161,7 @@ const UpdateBrgyAdmin = async (req, res) => {
           suffix: user.suffix,
           religion: user.religion,
           email: user.email,
+          username: user.username,
           birthday: user.birthday,
           birthplace: user.birthplace,
           age: user.age,
@@ -193,18 +208,32 @@ const UpdateBrgyAdmin = async (req, res) => {
 };
 
 const GetArchivedBrgyAdmin = async (req, res) => {
-  try {
-    const result = await User.find({
-      $and: [{ type: "Brgy Admin" }, { isArchived: true }],
-    });
-
-    return !result
-      ? res.status(400).json({ error: `No such Barangay Admin` })
-      : res.status(200).json(result);
-  } catch (err) {
-    res.send(err.message);
-  }
-};
+      try {
+        const { page, type } = req.query;
+        const itemsPerPage = 10; // Number of items per page
+        const skip = (parseInt(page) || 0) * itemsPerPage;
+    
+        const query = {
+          $and: [{ isArchived: true }, { type: "Brgy Admin" }],
+        };
+    
+        if (type && type.toLowerCase() !== "all") {
+          query.type = type;
+        }
+    
+        const totalStaffs = await User.countDocuments(query);
+    
+        const result = await User.find(query).skip(skip).limit(itemsPerPage);
+    
+        return !result
+          ? res.status(400).json({ error: `No such user` })
+          : res
+              .status(200)
+              .json({ result, pageCount: Math.ceil(totalStaffs / itemsPerPage), total:totalStaffs });
+      } catch (err) {
+        res.send(err.message);
+      }
+    };
 
 const ArchiveBrgyAdmin = async (req, res) => {
   try {

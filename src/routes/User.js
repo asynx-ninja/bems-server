@@ -31,7 +31,7 @@ router.get("/specific/:id", GetSpecificUser);
 router.get("/showArchived/", GetArchivedUsers);
 router.post("/", upload.array("files", 10), CreateUser);
 router.patch("/", upload.single("file"), UpdateUser);
-router.patch("/verification", upload.array("files", 10), UpdateVerification);
+router.patch("/verification", upload.array("files", 20), UpdateVerification);
 router.patch("/status/:id", StatusUser);
 router.patch("/archived/:id/:archived", ArchiveUser);
 

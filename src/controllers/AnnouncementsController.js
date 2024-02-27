@@ -21,7 +21,6 @@ const GetBarangayAnnouncement = async (req, res) => {
       $and: [{ brgy: brgy }, { isArchived: archived }],
     });
 
-    
     const result = await Announcement.find({
       $and: [{ brgy: brgy }, { isArchived: archived }],
     })

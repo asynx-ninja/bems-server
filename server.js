@@ -13,7 +13,7 @@ const BrgyOfficialRoutes = require("./src/routes/BrgyOfficial");
 const BrgyInquiriesRoutes = require("./src/routes/Inquiries");
 const StaffRoutes = require("./src/routes/Staff");
 const MunicipalityOfficialsRoutes = require("./src/routes/MunicipalityOfficials");
-const AdminRoutes = require("./src/routes/BrgyAdmin");
+const BrgyAdminRoutes = require("./src/routes/BrgyAdmin");
 const MAboutusRoute = require("./src/routes/MAboutus");
 const MServicesRoute = require("./src/routes/MServices");
 const MTouristSpot = require("./src/routes/MTouristSpot");
@@ -23,7 +23,7 @@ const EventsApplicationRoutes = require("./src/routes/EventsApplication");
 const CountCompletedRoutes = require("./src/routes/EventsApplication");
 const FolderRoute = require("./src/routes/Folder");
 const DocumentRoute = require("./src/routes/Document");
-
+const MunicipalAdminRoute = require("./src/routes/MunicipalAdmin")
 
 const connectDB = require("./src/config/DB");
 
@@ -66,7 +66,7 @@ app.use("/api/brgyofficial", BrgyOfficialRoutes);
 app.use("/api/inquiries", BrgyInquiriesRoutes);
 app.use("/api/staffs", StaffRoutes);
 app.use("/api/mofficials", MunicipalityOfficialsRoutes);
-app.use("/api/admin", AdminRoutes);
+app.use("/api/brgy_admin", BrgyAdminRoutes);
 app.use("/api/aboutus", MAboutusRoute);
 app.use("/api/services_info", MServicesRoute);
 app.use("/api/tourist_spot", MTouristSpot);
@@ -76,7 +76,7 @@ app.use("/api/application", EventsApplicationRoutes);
 app.use("/api/completed", CountCompletedRoutes);
 app.use("/api/folder", FolderRoute);
 app.use("/api/document", DocumentRoute);
-
+app.use("/api/municipal_admin", MunicipalAdminRoute);
 
 app.get("/", (req, res) => {
   res.status(200).json({
