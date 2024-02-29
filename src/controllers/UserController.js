@@ -206,24 +206,25 @@ const GetAllBrgyResident = async (req, res) => {
               _id: "$_id",
               name: "$name",
               status: {
-                $cond: {
-                  if: { $eq: ["$isApproved", "Registered"] },
-                  then: "Registered",
-                  else: {
-                    $cond: {
-                      if: { $eq: ["$isApproved", "Pending"] },
-                      then: "Pending",
-                      else: "Denied",
-                    },
-                  },
+                $switch: {
+                  branches: [
+                    { case: { $eq: ["$isApproved", "Registered"] }, then: "Registered" },
+                    { case: { $eq: ["$isApproved", "Pending"] }, then: "Pending" },
+                    { case: { $eq: ["$isApproved", "Denied"] }, then: "Denied" },
+                    { case: { $eq: ["$isApproved", "Verified"] }, then: "Verified" },
+                    { case: { $eq: ["$isApproved", "Verification Approval"] }, then: "Verification Approval" },
+                    // Add more cases as needed
+                  ],
+                  default: "Unknown",
                 },
               },
-              isArchived: "$isArchived", // Include the isArchived field
+              isArchived: "$isArchived",
             },
           },
         },
       },
     ]);
+
     res.json(residentsInBrgy);
   } catch (err) {
     res.status(500).send("Server Error");
