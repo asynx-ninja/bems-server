@@ -202,7 +202,7 @@ const UserSchema = new Schema(
     },
     isApproved: {
       type: String,
-      enum: ["Registered", "Denied", "Pending", "Verified"],
+      enum: ["Registered", "Denied", "Pending", "Verified", "Verification APPROVAL"],
       index: true,
       default: "Pending",
     },

@@ -51,7 +51,7 @@ const GetAllEventsApplication = async (req, res) => {
 
 const GetEventsApplicationByUser = async (req, res) => {
   try {
-    const { user_id, event_name, application_id, page } = req.query;
+    const { user_id, event_name, page } = req.query;
 
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
@@ -60,7 +60,7 @@ const GetEventsApplicationByUser = async (req, res) => {
 
     let result = [];
 
-    if (event_name === "all" && application_id === undefined) {
+    if (event_name === "all") {
       totalEventsApplications = await EventsApplication.countDocuments({
         "form.user_id.value": user_id,
       });
@@ -71,18 +71,8 @@ const GetEventsApplicationByUser = async (req, res) => {
         .skip(skip)
         .limit(itemsPerPage)
         .sort({ createdAt: -1 });
-    } else if (application_id) {
-      totalEventsApplications = await EventsApplication.countDocuments({
-        application_id: application_id,
-      });
 
-      result = await EventsApplication.find({
-        application_id: application_id,
-      })
-        .skip(skip)
-        .limit(itemsPerPage)
-        .sort({ createdAt: -1 });
-    } else {
+    }else {
       totalEventsApplications = await EventsApplication.countDocuments({
         event_name: event_name,
       });

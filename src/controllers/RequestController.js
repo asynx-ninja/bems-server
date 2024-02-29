@@ -850,7 +850,7 @@ const getTotalCompletedRequests = async (req, res) => {
 
 const GetRequestByUser = async (req, res) => {
   try {
-    const { user_id, service_name, req_id, page } = req.query;
+    const { user_id, service_name, page } = req.query;
 
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
@@ -859,7 +859,7 @@ const GetRequestByUser = async (req, res) => {
 
     let result = []
 
-    if (service_name === "all" && req_id === "") {
+    if (service_name === "all") {
       totalEventsApplications = await Request.countDocuments({
         "form.user_id.value": user_id,
       });
@@ -871,18 +871,6 @@ const GetRequestByUser = async (req, res) => {
         .limit(itemsPerPage)
         .sort({ createdAt: -1 });
 
-    } else if (req_id) {
-      totalEventsApplications = await Request.countDocuments({
-        "req_id": req_id,
-      });
-
-
-      result = await Request.find({
-        "req_id": req_id,
-      })
-        .skip(skip)
-        .limit(itemsPerPage)
-        .sort({ createdAt: -1 });
     } else {
       totalEventsApplications = await Request.countDocuments({
         "service_name": service_name,
