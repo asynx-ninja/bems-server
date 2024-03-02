@@ -20,6 +20,27 @@ const FileSchema = new Schema(
     { _id: false }
 );
 
+const receiverSchema = new Schema(
+    {
+        lastName: {
+            type: String,
+            default: "",
+        },
+        firstName: {
+            type: String,
+            default: "",
+        },
+        middleName: {
+            type: String,
+            default: "",
+        },
+        type: {
+            type: String,
+            enum: ["Complainant", "Defendant"]
+        }
+    }
+)
+
 const ResponseSchema = new Schema(
     {
         sender: {
@@ -28,7 +49,7 @@ const ResponseSchema = new Schema(
         },
         type: {
             type: String,
-            enum: ["Admin", "Staff", "Resident"],
+            enum: ["Complainant", "Staff", "Defendant"],
         },
         message: {
             type: String,
@@ -57,7 +78,7 @@ const PatawagSchema = new Schema(
             index: true,
         },
         to: {
-            type: [String],
+            type: [receiverSchema],
             default: [],
         },
         brgy: {
@@ -65,16 +86,11 @@ const PatawagSchema = new Schema(
             uppercase: true,
             required: true,
             index: true,
-          },
+        },
         responses: {
             type: [ResponseSchema],
             default: [],
-        },
-        user_id: {
-            type: String,
-            default: "",
-            required: true,
-          },
+        }
     },
     { timestamps: true }
 );
