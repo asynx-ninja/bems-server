@@ -606,11 +606,15 @@ const UpdateVerification = async (req, res) => {
       { new: true }
     );
 
+    
+    await StatusUser({ params: { id: doc_id }, body: { isApproved: "For Review" } });
+
     res.status(200).json(result);
   } catch (err) {
     res.send(err.message);
   }
 };
+
 
 const StatusUser = async (req, res) => {
   try {
