@@ -40,8 +40,41 @@ const GetAllRequest = async (req, res) => {
     return !result
       ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
       : res
-          .status(200)
-          .json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage), total: totalRequests });
+        .status(200)
+        .json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage), total: totalRequests });
+  } catch (err) {
+    res.status(400).json(err.message);
+  }
+};
+
+const GetDoneBlotters = async (req, res) => {
+  try {
+    const { brgy, archived, status, type, page } = req.query;
+    const itemsPerPage = 10; // Number of items per page
+    const skip = (parseInt(page) || 0) * itemsPerPage;
+
+    let query = {
+      $and: [{ brgy: brgy }, { isArchived: archived }],
+    };
+
+  
+    // Add condition to fetch requests with service name "Barangay - Blotters" or status "TRANSACTION COMPLETED"
+    if (type === "Barangay - Blotters" || status === "TRANSACTION COMPLETED") {
+      query.$or = [{ service_name: "Barangay Blotter" }, { status: "TRANSACTION COMPLETED" }];
+    }
+
+    const totalRequests = await Request.countDocuments(query);
+
+    const result = await Request.find(query)
+      .skip(skip)
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
+
+    return !result
+      ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
+      : res
+        .status(200)
+        .json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage), total: totalRequests });
   } catch (err) {
     res.status(400).json(err.message);
   }
@@ -817,7 +850,7 @@ const getTotalCompletedRequests = async (req, res) => {
 
 const GetRequestByUser = async (req, res) => {
   try {
-    const { user_id, service_name, req_id, page } = req.query;
+    const { user_id, service_name, page } = req.query;
 
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
@@ -826,7 +859,7 @@ const GetRequestByUser = async (req, res) => {
 
     let result = []
 
-    if (service_name === "all" && req_id === "") {
+    if (service_name === "all") {
       totalEventsApplications = await Request.countDocuments({
         "form.user_id.value": user_id,
       });
@@ -838,18 +871,6 @@ const GetRequestByUser = async (req, res) => {
         .limit(itemsPerPage)
         .sort({ createdAt: -1 });
 
-    } else if (req_id) {
-      totalEventsApplications = await Request.countDocuments({
-        "req_id": req_id,
-      });
-
-
-      result = await Request.find({
-        "req_id": req_id,
-      })
-        .skip(skip)
-        .limit(itemsPerPage)
-        .sort({ createdAt: -1 });
     } else {
       totalEventsApplications = await Request.countDocuments({
         "service_name": service_name,
@@ -1183,5 +1204,6 @@ module.exports = {
   ArchiveRequest,
   GetRevenueBrgyPerServices,
   GetAllPenReq,
-  GetCountPenReq
+  GetCountPenReq,
+  GetDoneBlotters,
 };
