@@ -24,6 +24,7 @@ const CountCompletedRoutes = require("./src/routes/EventsApplication");
 const FolderRoute = require("./src/routes/Folder");
 const DocumentRoute = require("./src/routes/Document");
 const MunicipalAdminRoute = require("./src/routes/MunicipalAdmin")
+const BlotterRoutes = require("./src/routes/Blotter")
 
 const connectDB = require("./src/config/DB");
 
@@ -77,6 +78,7 @@ app.use("/api/completed", CountCompletedRoutes);
 app.use("/api/folder", FolderRoute);
 app.use("/api/document", DocumentRoute);
 app.use("/api/municipal_admin", MunicipalAdminRoute);
+app.use("/api/blotter", BlotterRoutes)
 
 app.get("/", (req, res) => {
   res.status(200).json({

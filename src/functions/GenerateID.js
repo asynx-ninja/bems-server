@@ -41,6 +41,8 @@ const GenerateID = (title, brgyName = "", code) => {
       return `U-${brgy}-${dateStr}`;
     case "Q":
       return `Q-${brgy}-${dateStr}`;
+    case "P":
+      return `P-${brgy}-${dateStr}`;
   }
 };
 
