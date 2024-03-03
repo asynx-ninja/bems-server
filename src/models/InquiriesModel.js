@@ -80,7 +80,6 @@ const InquiriesSchema = new Schema(
       file: {
         type: [FileSchema],
       },
-
       to: {
         type: String,
         enum: ["Admin", "Staff", "Resident"],
