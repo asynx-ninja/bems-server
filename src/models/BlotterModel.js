@@ -72,6 +72,11 @@ const PatawagSchema = new Schema(
             required: true,
             index: true,
         },
+        req_id: {
+            type: String,
+            required: true,
+            index: true,
+        },
         name: {
             type: String,
             required: true,

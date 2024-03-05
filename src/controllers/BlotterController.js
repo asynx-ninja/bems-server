@@ -10,6 +10,7 @@ const composePatawag = async (req, res) => {
 
         const patawag = new Patawag({
             patawag_id,
+            req_id,
             name,
             to,
             brgy,
