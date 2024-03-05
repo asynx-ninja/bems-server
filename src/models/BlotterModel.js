@@ -90,7 +90,12 @@ const PatawagSchema = new Schema(
         responses: {
             type: [ResponseSchema],
             default: [],
-        }
+        },
+        req_id: {
+            type: String,
+            required: true,
+            index: true,
+          },
     },
     { timestamps: true }
 );

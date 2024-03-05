@@ -49,7 +49,7 @@ const GetAllRequest = async (req, res) => {
 
 const GetDoneBlotters = async (req, res) => {
   try {
-    const { brgy, archived, page } = req.query;
+    const { brgy, archived } = req.query;
 
     const query = {
       brgy: brgy,
