@@ -27,9 +27,9 @@ const composePatawag = async (req, res) => {
 
 const Respond = async (req, res) => {
     try {
-        const { id } = req.query;
+        const { patawag_id } = req.query;
 
-        const patawag = await Patawag.findById(id);
+        const patawag = await Patawag.findById(patawag_id);
         if (!patawag) {
             return res.status(404).json({ error: "Patawag not found" });
         }
@@ -48,9 +48,9 @@ const Respond = async (req, res) => {
 
 const specPatawag = async (req, res) => {
     try {
-        const { id, brgy } = req.query;
+        const { req_id, brgy } = req.query;
 
-        const patawag = await Patawag.findOne({ _id: id, brgy: brgy });
+        const patawag = await Patawag.findOne({ req_id: req_id, brgy: brgy });
 
         if (!patawag) {
             return res.status(404).json({ error: "Patawag not found" });
