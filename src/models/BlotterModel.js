@@ -43,31 +43,36 @@ const receiverSchema = new Schema(
 
 const ResponseSchema = new Schema(
     {
-      sender: {
-        type: String,
-        default: "",
-      },
-      type: {
-        type: String,
-        enum: ["Complainant", "Staff", "Defendant"],
-      },
-      message: {
-        type: String,
-        default: "",
-      },
-      date: {
-        type: Date,
-      },
-      file: {
-        type: [FileSchema],
-      },
+        sender: {
+            type: String,
+            default: "",
+        },
+        type: {
+            type: String,
+            enum: ["Complainant", "Staff", "Defendant"],
+        },
+        message: {
+            type: String,
+            default: "",
+        },
+        date: {
+            type: Date,
+        },
+        file: {
+            type: [FileSchema],
+        },
     },
     { _id: false }
-  );
+);
 
 const PatawagSchema = new Schema(
     {
         patawag_id: {
+            type: String,
+            required: true,
+            index: true,
+        },
+        req_id: {
             type: String,
             required: true,
             index: true,
@@ -91,11 +96,10 @@ const PatawagSchema = new Schema(
             type: [ResponseSchema],
             default: [],
         },
-        req_id: {
+        folder_id: {
             type: String,
             required: true,
-            index: true,
-          },
+        },
     },
     { timestamps: true }
 );
