@@ -58,10 +58,7 @@ const GetDoneBlotters = async (req, res) => {
       service_name: "Barangay Blotter"
     };
 
-    
- 
     const result = await Request.find(query);
-
 
     return res.status(200).json({ result });
   } catch (error) {
