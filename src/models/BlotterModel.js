@@ -21,6 +21,10 @@ const FileSchema = new Schema(
 );
 
 const receiverSchema = new Schema({
+  user_id: {
+    type: String,
+    default: "",
+  },
   lastName: {
     type: String,
     default: "",
@@ -58,6 +62,7 @@ const ResponseSchema = new Schema(
     },
     file: {
       type: [FileSchema],
+      default: [],
     },
   },
   { _id: false }
@@ -98,6 +103,10 @@ const PatawagSchema = new Schema(
       type: String,
       required: true,
     },
+    // file: {
+    //   type: [FileSchema],
+    //   default: [],
+    // },
   },
   { timestamps: true }
 );

@@ -8,6 +8,6 @@ const { composePatawag, Respond, specPatawag } = require("../controllers/Blotter
 
 router.get("/", specPatawag)
 router.post("/", upload.array("files", 10), composePatawag);
-router.post("/response", upload.array("files", 10), Respond)
+router.patch("/", upload.array("files", 10), Respond)
 
 module.exports = router;
