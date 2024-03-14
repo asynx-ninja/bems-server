@@ -103,6 +103,17 @@ const PatawagSchema = new Schema(
       type: String,
       required: true,
     },
+    status: {
+      type: String,
+      required: true,
+      enum: [
+        "In Progress",
+        "Completed",
+        "Rejected",
+      ],
+      default: "In Progress",
+      index: true,
+    },
     // file: {
     //   type: [FileSchema],
     //   default: [],

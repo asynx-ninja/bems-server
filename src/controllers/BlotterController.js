@@ -55,6 +55,7 @@ const composePatawag = async (req, res) => {
         file: fileArray,
       })),
       brgy,
+      status: "In Progress",
       folder_id,
       // file: fileArray,
     });
@@ -72,7 +73,7 @@ const Respond = async (req, res) => {
     const { patawag_id } = req.query;
     const { body, files } = req;
     const response = JSON.parse(body.response);
-    const { sender, type, message, date, folder_id } = response;
+    const { sender, type, message, date, status, folder_id } = response;
 
     console.log(body, files);
     console.log("patawag_id: ", patawag_id);
@@ -108,6 +109,9 @@ const Respond = async (req, res) => {
             file: fileArray,
           },
         },
+        $set: {
+          status: status,
+        },
       },
       { new: true }
     );
@@ -136,8 +140,25 @@ const specPatawag = async (req, res) => {
   }
 };
 
+const getAllPatawag = async (req, res) => {
+  try {
+    const { brgy } = req.query;
+
+    const patawag = await Patawag.find({ brgy: brgy });
+
+    if (!patawag) {
+      return res.status(404).json({ error: "Patawag not found" });
+    }
+
+    res.status(200).json(patawag);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   composePatawag,
   Respond,
   specPatawag,
+  getAllPatawag,
 };
