@@ -30,6 +30,8 @@ const GetBrgyService = async (req, res) => {
     if (type && type.toLowerCase() !== "all") {
       query.type = type;
     }
+
+    
     const totalServices = await Service.countDocuments(query);
 
     const result = await Service.find(query)
