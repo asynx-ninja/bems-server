@@ -108,7 +108,7 @@ const MessageSchema = new Schema(
     go_to: {
       type: String,
       default: "",
-      enum: ["Events", "Application", "Services", "Requests", "Inquiries", null],
+      enum: ["Events", "Application", "Services", "Requests", "Inquiries", "Patawag", null],
     },
   },
   { _id: false }
@@ -133,7 +133,7 @@ const ReadBySchema = new Schema(
 const TargetSchema = new Schema(
   {
     user_id: {
-      type: String,
+      type: [String],
       default: null,
     },
     area: {
