@@ -40,8 +40,12 @@ const GetAllRequest = async (req, res) => {
     return !result
       ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
       : res
-        .status(200)
-        .json({ result, pageCount: Math.ceil(totalRequests / itemsPerPage), total: totalRequests });
+          .status(200)
+          .json({
+            result,
+            pageCount: Math.ceil(totalRequests / itemsPerPage),
+            total: totalRequests,
+          });
   } catch (err) {
     res.status(400).json(err.message);
   }
@@ -55,18 +59,16 @@ const GetDoneBlotters = async (req, res) => {
       brgy: brgy,
       isArchived: archived,
       status: "Transaction Completed",
-      service_name: "Barangay Blotter"
+      service_name: "Barangay Blotter",
     };
 
     const result = await Request.find(query);
 
     return res.status(200).json({ result });
   } catch (error) {
-
     return res.status(400).json({ error: error.message });
   }
 };
-
 
 const GetStatusPercentage = async (req, res) => {
   try {
@@ -144,9 +146,7 @@ const GetCountPenReq = async (req, res) => {
     if (result.length === 0) {
       return res.status(400).json({ error: "No services found." });
     }
-    return res
-      .status(200)
-      .json({ result });
+    return res.status(200).json({ result });
   } catch (err) {
     res.send(err.message);
   }
@@ -679,7 +679,11 @@ const getTotalAvailedServices = async (req, res) => {
     // Check if serviceSummary is empty
     if (serviceSummary.length === 0) {
       // If there are no services, return zero and the specified message
-      return res.json({ totalRequests: 0, totalFee: 0, message: "No Availed Service for that time period" });
+      return res.json({
+        totalRequests: 0,
+        totalFee: 0,
+        message: "No Availed Service for that time period",
+      });
     }
 
     res.json(serviceSummary);
@@ -843,9 +847,9 @@ const GetRequestByUser = async (req, res) => {
     const itemsPerPage = 10; // Number of items per page
     const skip = (parseInt(page) || 0) * itemsPerPage;
 
-    let totalEventsApplications = 0
+    let totalEventsApplications = 0;
 
-    let result = []
+    let result = [];
 
     if (service_name === "all") {
       totalEventsApplications = await Request.countDocuments({
@@ -858,14 +862,23 @@ const GetRequestByUser = async (req, res) => {
         .skip(skip)
         .limit(itemsPerPage)
         .sort({ createdAt: -1 });
-
     } else {
       totalEventsApplications = await Request.countDocuments({
-        "service_name": service_name,
+        $and: [
+          { "form.user_id.value": user_id },
+          {
+            service_name: service_name,
+          },
+        ],
       });
 
       result = await Request.find({
-        "service_name": service_name,
+        $and: [
+          { "form.user_id.value": user_id },
+          {
+            service_name: service_name,
+          },
+        ],
       })
         .skip(skip)
         .limit(itemsPerPage)
@@ -874,15 +887,15 @@ const GetRequestByUser = async (req, res) => {
 
     const all = await Request.find({
       "form.user_id.value": user_id,
-    })
+    });
 
     return !result
       ? res.status(400).json({ error: `No such event application` })
       : res.status(200).json({
-        result,
-        all,
-        pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
-      });
+          result,
+          all,
+          pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
+        });
   } catch (error) {
     console.log(error);
   }
@@ -1166,7 +1179,12 @@ const GetRevenueBrgyPerServices = async (req, res) => {
     // Check if feeSummary is empty (no services and revenue)
     if (feeSummary.length === 0) {
       // Return zero revenue with a custom message
-      return res.json({ brgy: "No Availed Service for that time period", service_name: "Zero", TransactionCompleted: 0, Paid: 0 });
+      return res.json({
+        brgy: "No Availed Service for that time period",
+        service_name: "Zero",
+        TransactionCompleted: 0,
+        Paid: 0,
+      });
     }
 
     // Return the actual feeSummary

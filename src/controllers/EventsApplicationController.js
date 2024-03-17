@@ -71,14 +71,23 @@ const GetEventsApplicationByUser = async (req, res) => {
         .skip(skip)
         .limit(itemsPerPage)
         .sort({ createdAt: -1 });
-
-    }else {
+    } else {
       totalEventsApplications = await EventsApplication.countDocuments({
-        event_name: event_name,
+        $and: [
+          { "form.user_id.value": user_id },
+          {
+            event_name: event_name,
+          },
+        ],
       });
 
       result = await EventsApplication.find({
-        event_name: event_name,
+        $and: [
+          { "form.user_id.value": user_id },
+          {
+            event_name: event_name,
+          },
+        ],
       })
         .skip(skip)
         .limit(itemsPerPage)
