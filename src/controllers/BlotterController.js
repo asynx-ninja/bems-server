@@ -187,10 +187,47 @@ const getSpecUserPatawag = async (req, res) => {
   }
 }
 
+const GetStaffBlotter = async (req, res) => {
+  try {
+    const { brgy, status, page, label } = req.query;
+    const itemsPerPage = 10;
+    const skip = (parseInt(page) || 0) * itemsPerPage;
+    console.log(skip)
+    const query = {
+      brgy,
+      "responses.type": label
+    };
+
+    if (status && status.toLowerCase() !== "all") {
+      query.status = status;
+    }
+
+    const totalPatawag = await Patawag.countDocuments(query);
+
+    const result = await Patawag.find(query)
+      .skip(skip)
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
+
+    return !result
+      ? res
+        .status(400)
+        .json({ error: `No such patawags for Barangay ${brgy}` })
+      : res.status(200).json({
+        result,
+        pageCount: Math.ceil(totalPatawag / itemsPerPage),
+        total: totalPatawag
+      });
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 module.exports = {
   composePatawag,
   Respond,
   specPatawag,
   getAllPatawag,
-  getSpecUserPatawag
+  getSpecUserPatawag,
+  GetStaffBlotter,
 };
