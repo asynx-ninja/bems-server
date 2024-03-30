@@ -55,9 +55,7 @@ const GetAllRequest = async (req, res) => {
 
 const GetDoneBlotters = async (req, res) => {
   try {
-    const { brgy, archived, page } = req.query;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
+    const { brgy, archived } = req.query;
 
     const query = {
       brgy: brgy,
@@ -66,24 +64,12 @@ const GetDoneBlotters = async (req, res) => {
       service_name: "Barangay Blotter",
     };
 
-    const totalRequests = await Request.countDocuments(query);
+    const result = await Request.find(query);
 
-    const result = await Request.find(query)
-      .skip(skip)
-      .limit(itemsPerPage)
-      .sort({ createdAt: -1 });
+    return res.status(200).json({ result });
+  } catch (error) {
 
-    return !result
-      ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
-      : res
-          .status(200)
-          .json({
-            result,
-            pageCount: Math.ceil(totalRequests / itemsPerPage),
-            total: totalRequests,
-          });
-  } catch (err) {
-    res.status(400).json(err.message);
+    return res.status(400).json({ error: error.message });
   }
 };
 

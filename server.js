@@ -25,6 +25,7 @@ const FolderRoute = require("./src/routes/Folder");
 const DocumentRoute = require("./src/routes/Document");
 const MunicipalAdminRoute = require("./src/routes/MunicipalAdmin")
 const BlotterRoutes = require("./src/routes/Blotter")
+const DocumentBlotterRoutes = require("./src/routes/DocumentBlotter")
 
 const connectDB = require("./src/config/DB");
 
@@ -79,6 +80,7 @@ app.use("/api/folder", FolderRoute);
 app.use("/api/document", DocumentRoute);
 app.use("/api/municipal_admin", MunicipalAdminRoute);
 app.use("/api/blotter", BlotterRoutes)
+app.use("/api/blotter_documents", DocumentBlotterRoutes)
 
 app.get("/", (req, res) => {
   res.status(200).json({

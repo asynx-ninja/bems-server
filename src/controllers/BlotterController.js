@@ -3,66 +3,162 @@ const mongoose = require("mongoose");
 const Patawag = require("../models/BlotterModel");
 const GenerateID = require("../functions/GenerateID");
 
+const {
+  createRequiredFolders,
+  uploadFolderFiles,
+  deleteFolderFiles,
+} = require("../utils/Drive");
+
 const composePatawag = async (req, res) => {
-    try {
-        const { name, to, responses, brgy, user_id } = req.body;
-        const patawag_id = GenerateID("", brgy, "P");
+  try {
+    const { patawag_folder_id } = req.query;
+    const { body, files } = req;
+    const { name, to, responses, brgy, req_id } = JSON.parse(body.patawag);
 
-        const patawag = new Patawag({
-            patawag_id,
-            name,
-            to,
-            brgy,
-            responses,
-            user_id
+    // console.log("patawag_folder_id: ", patawag_folder_id);
+    // console.log("responses: ", responses);
+    // console.log("body: ", body);
+    // console.log("to: ", to);
+    // console.log("files: ", files);
+
+    let fileArray = [];
+    const patawag_id = GenerateID("", brgy, "P");
+    const folder_id = await createRequiredFolders(
+      patawag_id,
+      patawag_folder_id
+    );
+
+    // console.log("folder_id: ", folder_id);
+
+    if (files) {
+      for (let f = 0; f < files.length; f += 1) {
+        const { id, name } = await uploadFolderFiles(files[f], folder_id);
+
+        fileArray.push({
+          link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+          id,
+          name,
         });
-
-        const savedPatawag = await patawag.save();
-        res.status(201).json(savedPatawag);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
+      }
     }
+
+    const result = await Patawag.create({
+      patawag_id,
+      req_id,
+      name,
+      to: to,
+      responses: responses.map(response => ({
+        sender: response.sender || "",
+        type: response.type || "",
+        message: response.message || "",
+        date: response.date || new Date().toISOString(),
+        file: fileArray,
+      })),
+      brgy,
+      status: "In Progress",
+      folder_id,
+      // file: fileArray,
+    });
+
+    console.log("Create Patawag Result: ", result);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 const Respond = async (req, res) => {
-    try {
-        const { id } = req.query;
+  try {
+    const { patawag_id } = req.query;
+    const { body, files } = req;
+    const response = JSON.parse(body.response);
+    const { sender, type, message, date, status, folder_id } = response;
 
-        const patawag = await Patawag.findById(id);
-        if (!patawag) {
-            return res.status(404).json({ error: "Patawag not found" });
-        }
+    console.log(body, files);
+    console.log("patawag_id: ", patawag_id);
+    // console.log(sender, type, message, date, folder_id);
+    // console.log("response: ", response);
 
-        const { sender, type, message, date, file } = req.body;
-        const response = { sender, type, message, date, file };
+    let fileArray = [];
 
-        patawag.responses.push(response);
-        const updatedPatawag = await patawag.save();
+    if (files) {
+      for (let f = 0; f < files.length; f++) {
+        const { id, name } = await uploadFolderFiles(files[f], folder_id);
 
-        res.json(updatedPatawag);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+        fileArray.push({
+          link: files[f].mimetype.includes("image")
+            ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000`
+            : `https://drive.google.com/file/d/${id}/view`,
+          id,
+          name,
+        });
+      }
     }
-}
+
+    // take note yung laman ng patawag_id dito is _id
+    const result = await Patawag.findByIdAndUpdate(
+      { _id: patawag_id },
+      {
+        $push: {
+          responses: {
+            sender: sender,
+            type: type,
+            message: message,
+            date: date,
+            file: fileArray,
+          },
+        },
+        $set: {
+          status: status,
+        },
+      },
+      { new: true }
+    );
+
+    console.log("result: ", result);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 const specPatawag = async (req, res) => {
-    try {
-        const { id, brgy } = req.query;
+  try {
+    const { req_id, brgy } = req.query;
 
-        const patawag = await Patawag.findOne({ _id: id, brgy: brgy });
+    const patawag = await Patawag.findOne({ req_id: req_id, brgy: brgy });
 
-        if (!patawag) {
-            return res.status(404).json({ error: "Patawag not found" });
-        }
-
-        res.status(200).json(patawag);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    if (!patawag) {
+      return res.status(404).json({ error: "Patawag not found" });
     }
-}
+
+    res.status(200).json(patawag);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getAllPatawag = async (req, res) => {
+  try {
+    const { brgy } = req.query;
+
+    const patawag = await Patawag.find({ brgy: brgy });
+
+    if (!patawag) {
+      return res.status(404).json({ error: "Patawag not found" });
+    }
+
+    res.status(200).json(patawag);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 module.exports = {
-    composePatawag,
-    Respond,
-    specPatawag
-}
+  composePatawag,
+  Respond,
+  specPatawag,
+  getAllPatawag,
+};

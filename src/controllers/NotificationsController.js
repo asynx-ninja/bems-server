@@ -28,6 +28,8 @@ const CreateNotificationByUser = async (req, res) => {
   try {
     const { category, compose, target, banner, logo, type } = req.body;
 
+    console.log("NOTIFICATIONS CONTENTS: ", category, compose, target, banner, logo, type );
+
     const result = await Notification.create({
       category,
       compose,
@@ -42,6 +44,7 @@ const CreateNotificationByUser = async (req, res) => {
     res.send(err.message);
   }
 };
+
 const GetSpecificID = async (req, res) => {
   try {
     const { id } = req.query;
@@ -61,6 +64,7 @@ const GetSpecificID = async (req, res) => {
     res.send(err.message);
   }
 };
+
 const UpdateReadBy = async (req, res) => {
   try {
     const { notification_id } = req.query;
