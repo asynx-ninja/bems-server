@@ -68,7 +68,6 @@ const GetDoneBlotters = async (req, res) => {
 
     return res.status(200).json({ result });
   } catch (error) {
-
     return res.status(400).json({ error: error.message });
   }
 };
@@ -867,11 +866,21 @@ const GetRequestByUser = async (req, res) => {
         .sort({ createdAt: -1 });
     } else {
       totalEventsApplications = await Request.countDocuments({
-        service_name: service_name,
+        $and: [
+          { "form.user_id.value": user_id },
+          {
+            service_name: service_name,
+          },
+        ],
       });
 
       result = await Request.find({
-        service_name: service_name,
+        $and: [
+          { "form.user_id.value": user_id },
+          {
+            service_name: service_name,
+          },
+        ],
       })
         .skip(skip)
         .limit(itemsPerPage)
