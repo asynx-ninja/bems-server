@@ -66,6 +66,10 @@ const CreateBrgyFolders = async (req, res) => {
       "VERIFICATION",
       root_folder_id
     );
+    const blotters_folder_id = await createRequiredFolders(
+      "BLOTTERS",
+      root_folder_id
+    );
 
     const result = await Folder.create({
       root: root_folder_id,
@@ -78,6 +82,7 @@ const CreateBrgyFolders = async (req, res) => {
       inquiries: inquiries_folder_id,
       application: application_folder_id,
       verification: verification_folder_id,
+      blotters: blotters_folder_id,
       brgy: brgy,
     });
 

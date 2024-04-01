@@ -54,6 +54,11 @@ const FolderSchema = new Schema(
       required: true,
       index: true,
     },
+    blotters: {
+      type: String,
+      required: true,
+      index: true,
+    },
     brgy: {
       type: String,
       required: true,
