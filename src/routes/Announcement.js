@@ -5,6 +5,7 @@ const upload = require("../config/Multer");
 
 const {
   GetBarangayAnnouncement,
+  SearchBarangayAnnouncement,
   GetAllOpenBrgyAnnouncement,
   CreateAnnouncement,
   UpdateAnnouncement,
@@ -15,6 +16,7 @@ const {
 } = require("../controllers/AnnouncementsController");
 
 router.get("/", GetBarangayAnnouncement);
+router.get("/search", SearchBarangayAnnouncement);
 router.get("/all", GetAllOpenBrgyAnnouncement);
 router.get("/specific", GetSpecificBarangayAnnouncement);
 router.get("/banner/:brgy", GetBrgyAnnouncementBanner);

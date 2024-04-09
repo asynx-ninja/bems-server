@@ -47,6 +47,30 @@ const GetBrgyService = async (req, res) => {
   }
 };
 
+const SearchBrgyServices = async (req, res) => {
+  try {
+    const { brgy, archived, approved } = req.query;
+
+    let query = {
+      $and: [{ brgy: brgy }, { isArchived: archived }],
+    };
+
+    if (approved !== undefined) {
+      query.$and.push({ isApproved: approved });
+    }
+
+    const result = await Service.find(query)
+
+    return !result
+      ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
+      : res
+          .status(200)
+          .json({ result });
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 const GetServiceAndForm = async (req, res) => {
   try {
     const { service_id } = req.query;
@@ -406,6 +430,7 @@ const ArchiveService = async (req, res) => {
 
 module.exports = {
   GetBrgyService,
+  SearchBrgyServices,
   GetAllBrgyService,
   GetAllApprovedBrgyService,
   GetAllPenBrgyService,

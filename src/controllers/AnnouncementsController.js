@@ -22,7 +22,7 @@ const GetBarangayAnnouncement = async (req, res) => {
       ...(archived !== undefined && { isArchived: archived }),
     };
 
-   
+
 
     const totalAnnouncements = await Announcement.countDocuments(query);
 
@@ -35,9 +35,30 @@ const GetBarangayAnnouncement = async (req, res) => {
 
     return !result
       ? res
-          .status(400)
-          .json({ error: `No such Announcement for Barangay ${brgy}` })
+        .status(400)
+        .json({ error: `No such Announcement for Barangay ${brgy}` })
       : res.status(200).json({ result, pageCount, total: totalAnnouncements });
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
+const SearchBarangayAnnouncement = async (req, res) => {
+  try {
+    const { brgy, archived } = req.query;
+
+    let query = {
+      brgy: brgy,
+      ...(archived !== undefined && { isArchived: archived }),
+    };
+
+    const result = await Announcement.find(query)
+
+    return !result
+      ? res
+        .status(400)
+        .json({ error: `No such Announcement for Barangay ${brgy}` })
+      : res.status(200).json({ result });
   } catch (err) {
     res.send(err.message);
   }
@@ -67,8 +88,8 @@ const GetAllOpenBrgyAnnouncement = async (req, res) => {
 
     return !result
       ? res
-          .status(400)
-          .json({ error: `No such Announcement for Barangay ${brgy}` })
+        .status(400)
+        .json({ error: `No such Announcement for Barangay ${brgy}` })
       : res.status(200).json({ result, pageCount });
   } catch (err) {
     res.send(err.message);
@@ -252,8 +273,8 @@ const GetBrgyAnnouncementBanner = async (req, res) => {
 
   return !result
     ? res
-        .status(400)
-        .json({ error: `No such Announcement for Barangay ${brgy}` })
+      .status(400)
+      .json({ error: `No such Announcement for Barangay ${brgy}` })
     : res.status(200).json(result);
 };
 
@@ -287,8 +308,8 @@ const GetSpecificBarangayAnnouncement = async (req, res) => {
 
     return !result
       ? res
-          .status(400)
-          .json({ error: `No such Announcement for Barangay ${brgy} and Event ID ${event_id}` })
+        .status(400)
+        .json({ error: `No such Announcement for Barangay ${brgy} and Event ID ${event_id}` })
       : res.status(200).json({ result });
   } catch (err) {
     res.send(err.message);
@@ -297,6 +318,7 @@ const GetSpecificBarangayAnnouncement = async (req, res) => {
 
 module.exports = {
   GetBarangayAnnouncement,
+  SearchBarangayAnnouncement,  
   GetAllOpenBrgyAnnouncement,
   CreateAnnouncement,
   UpdateAnnouncement,
