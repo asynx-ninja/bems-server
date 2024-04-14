@@ -98,5 +98,125 @@
     "password": "securepass567",
     "type": "Brgy Admin",
     "isApproved": "Registered"
+  },
+  {
+    "firstName": "John",
+    "middleName": "Doe",
+    "lastName": "Smith",
+    "suffix": "",
+    "age": 35,
+    "email": "johndoe@example.com",
+    "birthday": "1989-05-15",
+    "contact": "+1234567890",
+    "sex": "Male",
+    "address": {
+      "street": "123 Main Street",
+      "brgy": "Mascap",
+      "city": "Sample City"
+    },
+    "username": "johnsmith",
+    "password": "password123",
+    "type": "Brgy Admin",
+    "isApproved": "Registered"
+  },
+  {
+    "firstName": "Jane",
+    "middleName": "E.",
+    "lastName": "Doe",
+    "suffix": "",
+    "age": 28,
+    "email": "janedoe@example.com",
+    "birthday": "1996-10-20",
+    "contact": "+1987654321",
+    "sex": "Female",
+    "address": {
+      "street": "456 Elm Street",
+      "brgy": "Puray",
+      "city": "Sample City"
+    },
+    "username": "janedoe",
+    "password": "securepassword",
+    "type": "Brgy Admin",
+    "isApproved": "Registered"
+  },
+  {
+    "firstName": "Michael",
+    "middleName": "James",
+    "lastName": "Johnson",
+    "suffix": "",
+    "age": 42,
+    "email": "michaeljohnson@example.com",
+    "birthday": "1982-03-10",
+    "contact": "+1122334455",
+    "sex": "Male",
+    "address": {
+      "street": "789 Oak Street",
+      "brgy": "Rosario",
+      "city": "Sample City"
+    },
+    "username": "michaeljohnson",
+    "password": "pass1234",
+    "type": "Brgy Admin",
+    "isApproved": "Registered"
+  },
+  {
+    "firstName": "Maria",
+    "middleName": "Luisa",
+    "lastName": "Garcia",
+    "suffix": "",
+    "age": 31,
+    "email": "mlgarcia@example.com",
+    "birthday": "1993-07-05",
+    "contact": "+1555666777",
+    "sex": "Female",
+    "address": {
+      "street": "321 Maple Street",
+      "brgy": "San Isidro",
+      "city": "Sample City"
+    },
+    "username": "mlgarcia",
+    "password": "mypass789",
+    "type": "Brgy Admin",
+    "isApproved": "Registered"
+  },
+  {
+    "firstName": "Juan",
+    "middleName": "Carlos",
+    "lastName": "Martinez",
+    "suffix": "",
+    "age": 38,
+    "email": "juancmartinez@example.com",
+    "birthday": "1986-12-18",
+    "contact": "+1444333222",
+    "sex": "Male",
+    "address": {
+      "street": "567 Pine Street",
+      "brgy": "San Jose",
+      "city": "Sample City"
+    },
+    "username": "juancmartinez",
+    "password": "juancpass",
+    "type": "Brgy Admin",
+    "isApproved": "Registered"
+  },
+  {
+    "firstName": "Ana",
+    "middleName": "Marie",
+    "lastName": "Santos",
+    "suffix": "",
+    "age": 25,
+    "email": "anamsantos@example.com",
+    "birthday": "1999-09-30",
+    "contact": "+1666777888",
+    "sex": "Female",
+    "address": {
+      "street": "101 Cedar Street",
+      "brgy": "San Rafael",
+      "city": "Sample City"
+    },
+    "username": "anamsantos",
+    "password": "ana12345",
+    "type": "Brgy Admin",
+    "isApproved": "Registered"
   }
 ]
