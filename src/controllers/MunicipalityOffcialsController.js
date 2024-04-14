@@ -37,6 +37,23 @@ const GetMunicipalityOfficial = async (req, res) => {
   }
 };
 
+const GetMunicipalityMayor = async (req, res) => {
+  try {
+    const { brgy, archived } = req.query;
+    // Initialize the query as an empty object
+
+    const result = await MunicipalityOfficial.find({
+      $and: [{ brgy: brgy }, { isArchived: archived }, {position: "City Mayor"}],
+    })
+
+    return result
+      ? res.status(200).json({ result })
+      : res.status(400).json({ error: `No officials found for Municipality ${brgy}` });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
 const AddMunicipalityOfficial = async (req, res) => {
   try {
     const { folder_id } = req.query;
@@ -175,6 +192,7 @@ const ArchiveOfficial = async (req, res) => {
 
 module.exports = {
   GetMunicipalityOfficial,
+  GetMunicipalityMayor,
   AddMunicipalityOfficial,
   UpdateMunicipalityOfficial,
   ArchiveOfficial,
