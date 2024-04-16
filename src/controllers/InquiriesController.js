@@ -39,10 +39,12 @@ const GetInquiries = async (req, res) => {
 
     } else {
       totalEventsApplications = await Inquiries.countDocuments({
+        "user_id": id,
         "compose.to": to,
       });
 
       result = await Inquiries.find({
+        "user_id": id,
         "compose.to": to,
       })
         .skip(skip)
