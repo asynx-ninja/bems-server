@@ -41,13 +41,11 @@ const GetAllRequest = async (req, res) => {
 
     return !result
       ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
-      : res
-          .status(200)
-          .json({
-            result,
-            pageCount: Math.ceil(totalRequests / itemsPerPage),
-            total: totalRequests,
-          });
+      : res.status(200).json({
+          result,
+          pageCount: Math.ceil(totalRequests / itemsPerPage),
+          total: totalRequests,
+        });
   } catch (err) {
     res.status(400).json(err.message);
   }
@@ -1196,6 +1194,30 @@ const GetRevenueBrgyPerServices = async (req, res) => {
   }
 };
 
+const CancelRequest = async (req, res) => {
+  try {
+    const { req_id, status } = req.query;
+
+    if (!mongoose.Types.ObjectId.isValid(req_id)) {
+      return res.status(400).json({ error: "No such request" });
+    }
+
+    const result = await Request.findByIdAndUpdate(
+      { _id: req_id },
+      {
+        $set: {
+          status: status,
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
 module.exports = {
   GetAllRequest,
   GetStatusPercentage,
@@ -1214,4 +1236,5 @@ module.exports = {
   GetAllPenReq,
   GetCountPenReq,
   GetDoneBlotters,
+  CancelRequest,
 };

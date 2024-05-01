@@ -37,6 +37,22 @@ const GetBarangayOfficial = async (req, res) => {
   }
 };
 
+const GetBarangayChairman = async (req, res) => {
+  try {
+    const { brgy, archived} = req.query;
+
+    const query = { $and: [{ brgy: brgy }, { isArchived: archived }, {position: "Barangay Chairman"}] };
+
+    const result = await BrgyOfficial.find(query)
+
+    return result.length > 0
+      ? res.status(200).json({ result })
+      : res.status(400).json({ error: `No officials found for Barangay ${brgy}` });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
 const AddBarangayOfficial = async (req, res) => {
   try {
     const { folder_id } = req.query;
@@ -161,6 +177,7 @@ const ArchiveOfficial = async (req, res) => {
 
 module.exports = {
   GetBarangayOfficial,
+  GetBarangayChairman,
   AddBarangayOfficial,
   UpdateBarangayOfficial,
   ArchiveOfficial,
