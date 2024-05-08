@@ -66,8 +66,32 @@ const UpdateServiceForm = async (req, res) => {
   }
 };
 
+const GetActiveForm = async (req, res) => {
+  try {
+    const { brgy, service_id } = req.query;
+    let result;
+
+    if (brgy === undefined) {
+      result = await ServicesForm.find({
+        $and: [{ service_id: service_id }, { isActive: true }],
+      });
+    } else {
+      result = await ServicesForm.find({
+        $and: [{ brgy: brgy }, { service_id: service_id }, { isActive: true }],
+      });
+    }
+
+    return !result
+      ? res.status(400).json({ error: "No such Service Form" })
+      : res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
 module.exports = {
   GetAllServiceForm,
   CreateServiceForm,
   UpdateServiceForm,
+  GetActiveForm,
 };
