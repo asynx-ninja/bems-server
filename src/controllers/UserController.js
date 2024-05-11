@@ -205,6 +205,8 @@ const GetAllBrgyResident = async (req, res) => {
             $push: {
               _id: "$_id",
               name: "$name",
+              isApproved: "$isApproved",
+              firstName: `$firstName`,
               status: {
                 $switch: {
                   branches: [
@@ -213,9 +215,10 @@ const GetAllBrgyResident = async (req, res) => {
                     { case: { $eq: ["$isApproved", "Denied"] }, then: "Denied" },
                     { case: { $eq: ["$isApproved", "Verified"] }, then: "Verified" },
                     { case: { $eq: ["$isApproved", "Verification Approval"] }, then: "Verification Approval" },
+                    { case: { $eq: ["$isApproved", "For Review"] }, then: "For Review" },
                     // Add more cases as needed
                   ],
-                  default: "Unknown",
+                  default: "Woahh",
                 },
               },
               isArchived: "$isArchived",

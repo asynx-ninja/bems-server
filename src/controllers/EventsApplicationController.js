@@ -89,9 +89,6 @@ const GetEventsApplicationByUser = async (req, res) => {
           },
         ],
       })
-        .skip(skip)
-        .limit(itemsPerPage)
-        .sort({ createdAt: -1 });
     }
 
     const all = await EventsApplication.find({

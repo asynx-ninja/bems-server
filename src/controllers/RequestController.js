@@ -880,9 +880,6 @@ const GetRequestByUser = async (req, res) => {
           },
         ],
       })
-        .skip(skip)
-        .limit(itemsPerPage)
-        .sort({ createdAt: -1 });
     }
 
     const all = await Request.find({
