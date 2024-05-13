@@ -30,6 +30,8 @@ const GetAllRequest = async (req, res) => {
     if (status && status.toLowerCase() !== "all") {
       query.status = status;
     }
+    // Exclude service_name "Barangay Blotter"
+    // query.$and.push({ service_name: { $ne: "Barangay Blotter" } });
     const totalRequests = await Request.countDocuments(query);
 
     const result = await Request.find(query)
@@ -39,11 +41,13 @@ const GetAllRequest = async (req, res) => {
 
     return !result
       ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
-      : res.status(200).json({
-          result,
-          pageCount: Math.ceil(totalRequests / itemsPerPage),
-          total: totalRequests,
-        });
+      : res
+          .status(200)
+          .json({
+            result,
+            pageCount: Math.ceil(totalRequests / itemsPerPage),
+            total: totalRequests,
+          });
   } catch (err) {
     res.status(400).json(err.message);
   }
@@ -862,22 +866,15 @@ const GetRequestByUser = async (req, res) => {
         .sort({ createdAt: -1 });
     } else {
       totalEventsApplications = await Request.countDocuments({
-        $and: [
-          { "form.user_id.value": user_id },
-          {
-            service_name: service_name,
-          },
-        ],
+        service_name: service_name,
       });
 
       result = await Request.find({
-        $and: [
-          { "form.user_id.value": user_id },
-          {
-            service_name: service_name,
-          },
-        ],
+        service_name: service_name,
       })
+        .skip(skip)
+        .limit(itemsPerPage)
+        .sort({ createdAt: -1 });
     }
 
     const all = await Request.find({
