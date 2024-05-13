@@ -28,7 +28,7 @@ const CreateNotificationByUser = async (req, res) => {
   try {
     const { category, compose, target, banner, logo, type } = req.body;
 
-    console.log("NOTIFICATIONS CONTENTS: ", category, compose, target, banner, logo, type );
+    // console.log("NOTIFICATIONS CONTENTS: ", category, compose, target, banner, logo, type );
 
     const result = await Notification.create({
       category,

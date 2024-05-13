@@ -1,7 +1,8 @@
 const dotenv = require("dotenv");
 const cors = require("cors");
 const express = require("express");
-
+const Server = require('socket.io').Server
+const http = require('http')
 const AnnouncementRoutes = require("./src/routes/Announcement");
 const ServicesRoutes = require("./src/routes/Services");
 const RequestRoutes = require("./src/routes/Request");
@@ -55,6 +56,32 @@ app.use((req, res, next) => {
   console.log(req.path, req.method);
   next();
 });
+
+const server = http.createServer(app)
+const io = new Server(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: ['https://bems-server.onrender.com'],
+  },
+})
+
+io.on('connection', (socket) => {
+  console.log('Connected to Socket.io')
+
+  socket.on('setup', (userData) => {
+    socket.join(userData._id)
+    socket.emit('connected')
+  })
+  socket.on('disconnect', () => {
+    console.log('Disconnected')
+  })
+
+  socket.on('send-inquiry', (inquiry) => {
+    // socket.join(inquiry.id)
+    console.log(inquiry)
+    io.emit('receive-inquiry', inquiry)
+  })
+})
 
 // Routes
 app.use("/api/services", ServicesRoutes);
@@ -111,6 +138,6 @@ app.get("/", (req, res) => {
   });
 });
 
-app.listen(process.env.PORT, () =>
+server.listen(process.env.PORT, () =>
   console.log(`Server started on port ${process.env.PORT}`)
 );

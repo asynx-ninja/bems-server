@@ -866,15 +866,22 @@ const GetRequestByUser = async (req, res) => {
         .sort({ createdAt: -1 });
     } else {
       totalEventsApplications = await Request.countDocuments({
-        service_name: service_name,
+        $and: [
+          { "form.user_id.value": user_id },
+          {
+            service_name: service_name,
+          },
+        ],
       });
 
       result = await Request.find({
-        service_name: service_name,
+        $and: [
+          { "form.user_id.value": user_id },
+          {
+            service_name: service_name,
+          },
+        ],
       })
-        .skip(skip)
-        .limit(itemsPerPage)
-        .sort({ createdAt: -1 });
     }
 
     const all = await Request.find({
