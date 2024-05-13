@@ -480,10 +480,10 @@ const UpdateUser = async (req, res) => {
           isHead: user.isHead,
           profile: file
             ? {
-                link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
-                id,
-                name,
-              }
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            }
             : user.profile,
           socials: {
             facebook: {
@@ -525,10 +525,15 @@ const UpdateVerification = async (req, res) => {
       return res.status(400).json({ error: "No such user" });
     }
 
+    // console.log("gago1", body, files);
+
     const primarySaved = JSON.parse(body.primarySaved);
     const secondarySaved = JSON.parse(body.secondarySaved);
     const oldVerification = JSON.parse(body.oldVerification);
     const newVerification = JSON.parse(body.newVerification);
+
+    // console.log("gago", primarySaved, secondarySaved, oldVerification, newVerification);
+
 
     primary.push(...primarySaved);
     secondary.push(...secondarySaved);
@@ -542,11 +547,15 @@ const UpdateVerification = async (req, res) => {
     const primaryFullItem = oldVerification.primary_file;
     const secondaryFullItem = oldVerification.secondary_file;
 
+    //console.log("gago", primaryFullItem, secondaryFullItem);
+
     const primaryDeletedItems = compareArrays(primaryFullItem, primarySaved);
     const secondaryDeletedItems = compareArrays(
       secondaryFullItem,
       secondarySaved
     );
+
+    //console.log(primaryDeletedItems, secondaryDeletedItems);
 
     if (primaryDeletedItems.length > 0) {
       primaryDeletedItems.forEach(async (item) => {
@@ -578,6 +587,7 @@ const UpdateVerification = async (req, res) => {
               name,
             });
           else if (files[i].originalname.includes("SELFIE")) {
+            console.log("omsem")
             Object.assign(selfie, {
               link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
               id,
@@ -610,8 +620,9 @@ const UpdateVerification = async (req, res) => {
       { new: true }
     );
 
-    
-    await StatusUser({ params: { id: doc_id }, body: { isApproved: "For Review" } });
+    const subject = "Resident Status Update";
+    const text = "The status of your resident has been updated.";
+    await sendEmail(result.email, subject, text, "For Review");
 
     res.status(200).json(result);
   } catch (err) {
