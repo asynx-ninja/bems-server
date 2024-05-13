@@ -61,7 +61,7 @@ const server = http.createServer(app)
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: ['https://bems-server.onrender.com'],
+    origin: ['https://manage-montalban-admin.netlify.app', 'https://manage-montalban-brgy.netlify.app', 'https://ebrgy-montalban.netlify.app'],
   },
 })
 
