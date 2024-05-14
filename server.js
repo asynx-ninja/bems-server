@@ -61,7 +61,7 @@ const server = http.createServer(app)
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: ['https://manage-montalban-admin.netlify.app', 'https://manage-montalban-brgy.netlify.app', 'https://ebrgy-montalban.netlify.app'],
+    origin: ['https://manage-montalban-admin.netlify.app', 'https://manage-montalban-brgy.netlify.app', 'https://ebrgy-montalban.netlify.app', 'http://localhost:5173', 'http://localhost:5174'],
   },
 })
 
@@ -76,10 +76,23 @@ io.on('connection', (socket) => {
     console.log('Disconnected')
   })
 
-  socket.on('send-inquiry', (inquiry) => {
+  socket.on('send-event_appli', (event_appli) => {
     // socket.join(inquiry.id)
-    console.log(inquiry)
-    io.emit('receive-inquiry', inquiry)
+    console.log(event_appli)
+    io.emit('receive-event_appli', event_appli)
+  })
+
+  
+  socket.on('send-muni_inquiry', (muni_inquiry) => {
+    // socket.join(inquiry.id)
+    console.log(muni_inquiry)
+    io.emit('receive-muni_inquiry', muni_inquiry)
+  })
+
+  socket.on('send-staff_inquiry', (staff_inquiry) => {
+    // socket.join(inquiry.id)
+    console.log(staff_inquiry)
+    io.emit('receive-staff_inquiry', staff_inquiry)
   })
 })
 
