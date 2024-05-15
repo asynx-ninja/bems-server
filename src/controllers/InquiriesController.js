@@ -121,9 +121,7 @@ const GetInquiriesStatus = async (req, res) => {
 
 const GetAdminInquiries = async (req, res) => {
   try {
-    const { to, archived, page, status } = req.query;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
+    const { to, archived, status } = req.query;
 
     const query = {
       "compose.to": to,
@@ -133,23 +131,21 @@ const GetAdminInquiries = async (req, res) => {
     if (status && status.toLowerCase() !== "all") {
       query.isApproved = status;
     }
-    const totalInquiries = await Inquiries.countDocuments(query);
-    const result = await Inquiries.find(query)
-      .skip(skip)
-      .limit(itemsPerPage)
-      .sort({ createdAt: -1 });
+
+    const result = await Inquiries.find(query).sort({ createdAt: -1 });
 
     return !result
       ? res.status(400).json({ error: `No such Announcement for ${to}` })
       : res.status(200).json({
-        result,
-        pageCount: Math.ceil(totalInquiries / itemsPerPage),
-        total: totalInquiries,
-      });
+          result,
+          pageCount: Math.ceil(result.length / 10),
+          total: result.length,
+        });
   } catch (err) {
     res.send(err.message);
   }
 };
+
 
 const GetStaffInquiries = async (req, res) => {
   try {

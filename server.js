@@ -81,7 +81,6 @@ io.on('connection', (socket) => {
     console.log(event_appli)
     io.emit('receive-event_appli', event_appli)
   })
-
   
   socket.on('send-muni_inquiry', (muni_inquiry) => {
     // socket.join(inquiry.id)
@@ -93,6 +92,12 @@ io.on('connection', (socket) => {
     // socket.join(inquiry.id)
     console.log(staff_inquiry)
     io.emit('receive-staff_inquiry', staff_inquiry)
+  })
+
+  socket.on('send-get_events', (get_events) => {
+    // socket.join(inquiry.id)
+    console.log(get_events)
+    io.emit('receive-get_events', get_events)
   })
 })
 
