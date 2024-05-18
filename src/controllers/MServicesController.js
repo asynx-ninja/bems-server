@@ -5,29 +5,19 @@ const { uploadFolderFiles, deleteFolderFiles } = require("../utils/Drive");
 
 const GetServicesInformation = async (req, res) => {
   try {
-    const { brgy, archived, status, page } = req.query;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
+    const { brgy, archived } = req.query;
 
-    const query = { brgy, isArchived: archived };
+    const query = { brgy: brgy, isArchived: archived };
 
-    if (status && status.toLowerCase() !== "all") {
-      query.isApproved = status;
-    }
+    const result = await ServicesInformation.find(query).sort({
+      createdAt: -1,
+    });
 
-    const totalInformation = await ServicesInformation.countDocuments(query);
-
-    const result = await ServicesInformation.find(query)
-      .skip(skip)
-      .limit(itemsPerPage);
-
-    const pageCount = Math.ceil(totalInformation / itemsPerPage);
-
-    return result
-      ? res.status(200).json({ result, pageCount })
-      : res
-          .status(400)
-          .json({ error: `No services found for Barangay ${brgy}` });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
+    });
   } catch (err) {
     res.status(500).send(err.message);
   }

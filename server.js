@@ -59,7 +59,6 @@ app.use((req, res, next) => {
 
 const server = http.createServer(app)
 const io = new Server(server, {
-  pingTimeout: 60000,
   cors: {
     origin: ['https://manage-montalban-admin.netlify.app', 'https://manage-montalban-brgy.netlify.app', 'https://ebrgy-montalban.netlify.app', 'http://localhost:5173', 'http://localhost:5174'],
   },
@@ -98,6 +97,18 @@ io.on('connection', (socket) => {
     // socket.join(inquiry.id)
     console.log(get_events)
     io.emit('receive-get_events', get_events)
+  })
+
+  socket.on('send-get_events_forms', (get_events_forms) => {
+    // socket.join(inquiry.id)
+    console.log(get_events_forms)
+    io.emit('receive-get_events_forms', get_events_forms)
+  })
+
+  socket.on('send-edit_events_forms', (edit_events_forms) => {
+    // socket.join(inquiry.id)
+    console.log(edit_events_forms)
+    io.emit('receive-edit_events_forms', edit_events_forms)
   })
 })
 

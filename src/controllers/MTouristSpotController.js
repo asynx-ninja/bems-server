@@ -5,25 +5,17 @@ const { uploadFolderFiles, deleteFolderFiles } = require("../utils/Drive");
 
 const GetTouristSpotInformation = async (req, res) => {
   try {
-    const { brgy, archived, page } = req.query;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
-
-    const totalInformation = await TouristSpot.countDocuments({
-      $and: [{ isArchived: archived }],
-    });
+    const { brgy, archived } = req.query;
 
     const result = await TouristSpot.find({
-      $and: [{ isArchived: archived }],
-    })
-      .skip(skip)
-      .limit(itemsPerPage);
+      $and: [{isArchived: archived }],
+    }).sort({ createdAt: -1 });
 
-    const pageCount = Math.ceil(totalInformation / itemsPerPage);
-
-    return result
-      ? res.status(200).json({ result, pageCount })
-      : res.status(400).json({ error: "No officials found for Municipality" });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
+    });
   } catch (err) {
     res.status(500).send(err.message);
   }

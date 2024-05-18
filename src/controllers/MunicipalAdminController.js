@@ -12,31 +12,24 @@ const {
 
 const GetMunicipalAdmin = async (req, res) => {
   try {
-    const { brgy, status, page, type } = req.query;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
+    const { brgy, type, archived } = req.query;
 
     let query = {
-      $and: [{ "address.brgy": brgy }, { isArchived: false }],
+      $and: [{ "address.brgy": brgy }, { isArchived: archived }],
     };
 
-    // If status is provided and not "all", add it to the query
-    if (status && status.toLowerCase() !== "all") {
-      query.$and.push({ isApproved: status });
-    }
+
     if (type && type.toLowerCase() !== "all") {
       query.$and.push({ type: type });
     }
 
-    const result = await User.find(query).skip(skip).limit(itemsPerPage);
+    const result = await User.find(query).sort({ createdAt: -1 });
 
-    const totalUsers = await User.countDocuments(query);
-
-    const pageCount = Math.ceil(totalUsers / itemsPerPage);
-
-    return !result
-      ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
-      : res.status(200).json({ result, pageCount, total: totalUsers });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
+    });
   } catch (err) {
     res.send(err.message);
   }

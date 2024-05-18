@@ -5,27 +5,17 @@ const { uploadFolderFiles, deleteFolderFiles } = require("../utils/Drive");
 
 const GetAboutusInformation = async (req, res) => {
   try {
-    const { brgy, archived, page } = req.query;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
-
-    const totalInformation = await HomepageInformation.countDocuments({
-      $and: [{ brgy: brgy }, { isArchived: archived }],
-    });
+    const { brgy, archived } = req.query;
 
     const result = await HomepageInformation.find({
       $and: [{ brgy: brgy }, { isArchived: archived }],
-    })
-      .skip(skip)
-      .limit(itemsPerPage);
+    }).sort({ createdAt: -1 });
 
-    const pageCount = Math.ceil(totalInformation / itemsPerPage);
-    console.log(result);
-    return result
-      ? res.status(200).json({ result, pageCount })
-      : res
-          .status(400)
-          .json({ error: `No officials found for Municipality ${brgy}` });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
+    });
   } catch (err) {
     res.status(500).send(err.message);
   }

@@ -10,17 +10,11 @@ const {
 
 const GetAllEventsApplication = async (req, res) => {
   try {
-    const { brgy, archived, id, status, page, title } = req.query;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
+    const { brgy, archived, status, title } = req.query;
 
     let query = {
-      $and: [{ brgy: brgy }, { isArchived: archived }],
+      $and: [{ isArchived: archived }, { brgy: brgy }],
     };
-
-    if (id !== undefined) {
-      query.$and.push({ _id: id });
-    }
 
     if (status && status.toLowerCase() !== "all") {
       query.status = status;
@@ -30,24 +24,18 @@ const GetAllEventsApplication = async (req, res) => {
       query.$and.push({ event_name: title });
     }
 
-    const totalEventsApplications = await EventsApplication.countDocuments(
-      query
-    );
-
-    const result = await EventsApplication.find(query)
-      .skip(skip)
-      .limit(itemsPerPage)
-      .sort({ createdAt: -1 });
+    const result = await EventsApplication.find(query).sort({ createdAt: -1 });
 
     return res.status(200).json({
       result,
-      pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
-      total: totalEventsApplications,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
     });
   } catch (err) {
     res.status(400).json(err.message);
   }
 };
+
 
 const GetEventsApplicationByUser = async (req, res) => {
   try {

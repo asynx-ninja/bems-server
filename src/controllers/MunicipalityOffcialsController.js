@@ -6,9 +6,7 @@ const { uploadFolderFiles, deleteFolderFiles } = require("../utils/Drive");
 
 const GetMunicipalityOfficial = async (req, res) => {
   try {
-    const { brgy, archived, page, position } = req.query;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
+    const { brgy, archived, position } = req.query;
 
     // Initialize the query as an empty object
     const query = {};
@@ -19,19 +17,13 @@ const GetMunicipalityOfficial = async (req, res) => {
 
     const result = await MunicipalityOfficial.find({
       $and: [{ brgy: brgy }, { isArchived: archived }, query],
-    })
-      .skip(skip)
-      .limit(itemsPerPage);
+    }).sort({ createdAt: -1 });
 
-    const totalOfficials = await MunicipalityOfficial.countDocuments({
-      $and: [{ brgy: brgy }, { isArchived: archived }, query],
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
     });
-
-    const pageCount = Math.ceil(totalOfficials / itemsPerPage);
-
-    return result
-      ? res.status(200).json({ result, pageCount })
-      : res.status(400).json({ error: `No officials found for Municipality ${brgy}` });
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -43,12 +35,18 @@ const GetMunicipalityMayor = async (req, res) => {
     // Initialize the query as an empty object
 
     const result = await MunicipalityOfficial.find({
-      $and: [{ brgy: brgy }, { isArchived: archived }, {position: "City Mayor"}],
-    })
+      $and: [
+        { brgy: brgy },
+        { isArchived: archived },
+        { position: "City Mayor" },
+      ],
+    });
 
     return result
       ? res.status(200).json({ result })
-      : res.status(400).json({ error: `No officials found for Municipality ${brgy}` });
+      : res
+          .status(400)
+          .json({ error: `No officials found for Municipality ${brgy}` });
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -122,7 +120,7 @@ const UpdateMunicipalityOfficial = async (req, res) => {
     } = official;
 
     let id = null,
-    name = null;
+      name = null;
 
     if (!mongoose.Types.ObjectId.isValid(doc_id)) {
       return res.status(400).json({ error: "No such official" });
