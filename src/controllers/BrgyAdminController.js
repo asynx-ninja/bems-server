@@ -12,12 +12,12 @@ const {
 
 const GetBrgyAdmin = async (req, res) => {
   try {
-    const {archived } = req.query;
- 
+    const { archived } = req.query;
+
     const query = {
       $and: [{ isArchived: archived }, { type: "Brgy Admin" }],
     };
-    
+
     const result = await User.find(query).sort({ createdAt: -1 });
 
     return res.status(200).json({
@@ -167,10 +167,10 @@ const UpdateBrgyAdmin = async (req, res) => {
           isHead: user.isHead,
           profile: file
             ? {
-                link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
-                id,
-                name,
-              }
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            }
             : user.profile,
           socials: {
             facebook: {
@@ -199,33 +199,32 @@ const UpdateBrgyAdmin = async (req, res) => {
   }
 };
 
+
 const GetArchivedBrgyAdmin = async (req, res) => {
-      try {
-        const { page, type } = req.query;
-        const itemsPerPage = 10; // Number of items per page
-        const skip = (parseInt(page) || 0) * itemsPerPage;
-    
-        const query = {
-          $and: [{ isArchived: true }, { type: "Brgy Admin" }],
-        };
-    
-        if (type && type.toLowerCase() !== "all") {
-          query.type = type;
-        }
-    
-        const totalStaffs = await User.countDocuments(query);
-    
-        const result = await User.find(query).skip(skip).limit(itemsPerPage);
-    
-        return !result
-          ? res.status(400).json({ error: `No such user` })
-          : res
-              .status(200)
-              .json({ result, pageCount: Math.ceil(totalStaffs / itemsPerPage), total:totalStaffs });
-      } catch (err) {
-        res.send(err.message);
-      }
+  try {
+    const { type } = req.query;
+
+    const query = {
+      $and: [{ isArchived: true }, { type: "Brgy Admin" }],
     };
+
+    if (type && type.toLowerCase() !== "all") {
+      query.type = type;
+    }
+
+    const totalStaffs = await User.countDocuments(query);
+
+    const result = await User.find(query).sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
+    });
+  } catch (err) {
+    res.send(err.message);
+  }
+};
 
 const ArchiveBrgyAdmin = async (req, res) => {
   try {
