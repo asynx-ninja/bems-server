@@ -10,8 +10,6 @@ const SocketIO = (app) => {
         },
     })
 
-    const users = {};
-
     io.on('connection', (socket) => {
         console.log('Connected to Socket.io')
 
@@ -89,9 +87,14 @@ const SocketIO = (app) => {
             io.emit('receive-edit-service-doc', obj)
         })
 
-        // EDITING PATAWAG
+        // EDITING PATAWAG DOCUMENT
         socket.on('send-patawag', (obj) => {
             io.emit('receive-patawag', obj)
+        })
+
+        // REPLYING PATAWAG
+        socket.on('send-reply-patawag', (obj) => {
+            io.emit('receive-reply-patawag', obj)
         })
     })
 
