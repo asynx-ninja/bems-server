@@ -21,19 +21,7 @@ const SocketIO = (app) => {
         })
 
         socket.on('disconnect', () => {
-            delete users[socket.id];
-        })
-
-        socket.on('get-login', () => {
-            io.emit('receive-login', users)
-        })
-
-        socket.on("login", (data) => {
-            users[socket.id] = data;
-        });
-
-        socket.on('logout', () => {
-            delete users[socket.id];
+            console.log('Disconnected from Socket.io')
         })
 
         // SENDING EVENT APPLICATIONS
