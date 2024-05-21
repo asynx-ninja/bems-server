@@ -69,6 +69,12 @@ const SocketIO = (app) => {
             io.emit('receive-get-event', obj)
         })
 
+          // UPDATE EVENT
+        socket.on('send-update-event', (obj) => {
+            io.emit('receive-update-event', obj)
+        })
+
+
         // EDITING EVENT FORMS
         socket.on('send-edit-event-form', (obj) => {
             io.emit('receive-edit-event-form', obj)
@@ -92,6 +98,30 @@ const SocketIO = (app) => {
         // EDITING PATAWAG
         socket.on('send-patawag', (obj) => {
             io.emit('receive-patawag', obj)
+        })
+
+        socket.on('send-muni-about', (obj) => {
+            io.emit('receive-muni-about', obj)
+        })
+
+        socket.on('send-offered-serv', (obj) => {
+            io.emit('receive-offered-serv', obj)
+        })
+
+        socket.on('send-tourist-spot', (obj) => {
+            io.emit('receive-tourist-spot', obj)
+        })
+
+        socket.on('send-muni-official', (obj) => {
+            io.emit('receive-muni-official', obj)
+        })
+
+        socket.on('send-muni-admin', (obj) => {
+            io.emit('receive-muni-admin', obj)
+        })
+
+        socket.on('send-brgy-admin', (obj) => {
+            io.emit('receive-brgy-admin', obj)
         })
     })
 
