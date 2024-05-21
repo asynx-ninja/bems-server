@@ -74,6 +74,11 @@ const SocketIO = (app) => {
       io.emit("receive-get-event", obj);
     });
 
+    // UPDATING EVENT
+    socket.on("send-update-event", (obj) => {
+      io.emit("receive-update-event", obj);
+    });
+
     // CREATE EVENT FORMS
     socket.on("send-create-event-form", (obj) => {
       io.emit("receive-create-event-form", obj);
@@ -99,6 +104,11 @@ const SocketIO = (app) => {
       io.emit("receive-edit-service-doc", obj);
     });
 
+    // CREATE PATAWAG DOCUMENT
+    socket.on("send-create-patawag-doc", (obj) => {
+      io.emit("receive-create-patawag-doc", obj);
+    });
+
     // EDITING PATAWAG DOCUMENT
     socket.on("send-patawag", (obj) => {
       io.emit("receive-patawag", obj);
@@ -109,9 +119,24 @@ const SocketIO = (app) => {
       io.emit("receive-reply-patawag", obj);
     });
 
-    // CREATE RESIDENT
-    socket.on("send-create-resident", (obj) => {
-      io.emit("receive-create-resident", obj);
+    // UPDATE STATUS RESIDENT
+    socket.on("send-update-status-resident", (obj) => {
+      io.emit("receive-update-status-resident", obj);
+    });
+
+    // CREATE STAFF
+    socket.on("send-create-staff", (obj) => {
+      io.emit("receive-create-staff", obj);
+    });
+
+    // UPDATE STAFF
+    socket.on("send-update-staff", (obj) => {
+      io.emit("receive-update-staff", obj);
+    });
+
+    // UPDATE PROFILE
+    socket.on("send-update-profile", (obj) => {
+      io.emit("receive-update-profile", obj);
     });
   });
 
