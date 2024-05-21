@@ -111,6 +111,18 @@ io.on('connection', (socket) => {
     console.log(edit_events_forms)
     io.emit('receive-edit_events_forms', edit_events_forms)
   })
+
+  socket.on('send-get_request', (get_request) => {
+    // socket.join(inquiry.id)
+    console.log(get_request)
+    io.emit('receive-new_request', get_request)
+  })
+
+  socket.on('send-blotter', (get_blotter) => {
+    // socket.join(inquiry.id)
+    console.log(get_blotter)
+    io.emit('receive-new_blotter', get_blotter)
+  })
 })
 
 // Routes
