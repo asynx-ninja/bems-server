@@ -24,7 +24,7 @@ const SocketIO = (app) => {
             delete users[socket.id];
         })
 
-        socket.on('get_login', () => {
+        socket.on('get-login', () => {
             io.emit('receive-login', users)
         })
 
