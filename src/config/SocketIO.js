@@ -6,14 +6,15 @@ const SocketIO = (app) => {
     const io = new Server(server, {
         pingTimeout: 60000,
         cors: {
-            origin: [
-                "https://manage-montalban-admin.netlify.app",
-                "https://manage-montalban-brgy.netlify.app",
-                "https://ebrgy-montalban.netlify.app",
-                "http://localhost:5173",
-                "http://localhost:5174",
-                "http://192.168.0.111:8081",
-            ],
+            // origin: [
+            //     "https://manage-montalban-admin.netlify.app",
+            //     "https://manage-montalban-brgy.netlify.app",
+            //     "https://ebrgy-montalban.netlify.app",
+            //     "http://localhost:5173",
+            //     "http://localhost:5174",
+            //     "http://192.168.0.111:8081",
+            // ],
+            origin: '*'
         },
     });
 
