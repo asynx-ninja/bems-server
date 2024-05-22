@@ -119,24 +119,48 @@ const SocketIO = (app) => {
             io.emit('receive-muni-about', obj)
         })
 
+        socket.on('send-upt-muni-about', (obj) => {
+            io.emit('receive-upt-muni-about', obj)
+        })
+
         socket.on('send-offered-serv', (obj) => {
             io.emit('receive-offered-serv', obj)
+        })
+
+         socket.on('send-upt-offered-serv', (obj) => {
+            io.emit('receive-upt-offered-serv', obj)
         })
 
         socket.on('send-tourist-spot', (obj) => {
             io.emit('receive-tourist-spot', obj)
         })
 
+         socket.on('send-upt-tourist-spot', (obj) => {
+            io.emit('receive-upt-tourist-spot', obj)
+        })
+
         socket.on('send-muni-official', (obj) => {
             io.emit('receive-muni-official', obj)
+        })
+
+        socket.on('send-upt-muni-official', (obj) => {
+            io.emit('receive-upt-muni-official', obj)
         })
 
         socket.on('send-muni-admin', (obj) => {
             io.emit('receive-muni-admin', obj)
         })
 
+        socket.on('send-upt-muni-admin', (obj) => {
+            io.emit('receive-upt-muni-admin', obj)
+        })
+
         socket.on('send-brgy-admin', (obj) => {
             io.emit('receive-brgy-admin', obj)
+        })
+
+        socket.on('send-upt-brgy-admin', (obj) => {
+            io.emit('receive-upt-brgy-admin', obj)
         })
 
         // UPDATE STATUS RESIDENT
