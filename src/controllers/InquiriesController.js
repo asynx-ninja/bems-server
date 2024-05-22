@@ -253,7 +253,7 @@ const RespondToInquiry = async (req, res) => {
   try {
     const { brgy, inq_id } = req.query;
     const { body, files } = req;
-    console.log(body, files);
+  
     const response = JSON.parse(body.response);
     const { sender, type, message, date, folder_id, status } = response;
 
