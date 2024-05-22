@@ -836,7 +836,7 @@ const GetRequestByUser = async (req, res) => {
     const { user_id, service_name, archived } = req.query;
 
     let query = {
-      $and: [{ isArchived: archived }, { user_id: user_id }],
+      $and: [{ isArchived: archived }, { "form.user_id.value": user_id }],
     };
 
     if (service_name && service_name.toLowerCase() !== "all") {
