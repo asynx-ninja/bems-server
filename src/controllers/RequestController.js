@@ -836,11 +836,11 @@ const GetRequestByUser = async (req, res) => {
     const { user_id, service_name, archived } = req.query;
 
     let query = {
-      $and: [{ isArchived: archived }, { user_id: user_id }],
+      $and: [{ isArchived: archived }, { "form.user_id.value": user_id }],
     };
 
     if (service_name && service_name.toLowerCase() !== "all") {
-      query.$and.push({ service_name: service_name });
+      query.$and.push({ "form.user_id.value": user_id });
     }
 
     const result = await Request.find(query).sort({ createdAt: -1 });
