@@ -13,58 +13,23 @@ const {
 // RESIDENT ONLY
 const GetInquiries = async (req, res) => {
   try {
-    const { id, brgy, archived, to, inq_id, page } = req.query;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
+    const { id, brgy, archived, to } = req.query;
 
-    const query = { user_id: id, brgy, isArchived: archived };
+    let query = {
+      $and: [{ isArchived: archived }, { user_id: id }, { brgy: brgy }],
+    };
 
-    const totalInquiries = await Inquiries.countDocuments(query);
-
-    let totalEventsApplications = 0
-
-    let result = []
-
-    if (to === "all") {
-      totalEventsApplications = await Inquiries.countDocuments({
-        "user_id": id,
-      });
-
-      result = await Inquiries.find({
-        "user_id": id,
-      })
-        .skip(skip)
-        .limit(itemsPerPage)
-        .sort({ createdAt: -1 });
-
-    } else {
-      totalEventsApplications = await Inquiries.countDocuments({
-        "user_id": id,
-        "compose.to": to,
-      });
-
-      result = await Inquiries.find({
-        "user_id": id,
-        "compose.to": to,
-      })
-        .skip(skip)
-        .limit(itemsPerPage)
-        .sort({ createdAt: -1 });
+    if(to && to.toLowerCase() !== "all"){
+      query.$and.push({ "compose.to": to });
     }
 
-    const all = await Inquiries.find({
-      "user_id": id,
-    })
+    const result = await Inquiries.find(query).sort({ createdAt: -1 });
 
-    return !result
-      ? res
-        .status(400)
-        .json({ error: `No such inquiries for Barangay ${brgy}` })
-      : res.status(200).json({
-        result,
-        all,
-        pageCount: Math.ceil(totalInquiries / itemsPerPage),
-      });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
+    });
   } catch (err) {
     res.send(err.message);
   }
@@ -137,10 +102,10 @@ const GetAdminInquiries = async (req, res) => {
     return !result
       ? res.status(400).json({ error: `No such Announcement for ${to}` })
       : res.status(200).json({
-          result,
-          pageCount: Math.ceil(result.length / 10),
-          total: result.length,
-        });
+        result,
+        pageCount: Math.ceil(result.length / 10),
+        total: result.length,
+      });
   } catch (err) {
     res.send(err.message);
   }
@@ -253,7 +218,7 @@ const RespondToInquiry = async (req, res) => {
   try {
     const { brgy, inq_id } = req.query;
     const { body, files } = req;
-    console.log(body, files);
+
     const response = JSON.parse(body.response);
     const { sender, type, message, date, folder_id, status } = response;
 
