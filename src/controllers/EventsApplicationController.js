@@ -42,7 +42,7 @@ const GetEventsApplicationByUser = async (req, res) => {
     const { user_id, event_name, archived } = req.query;
 
     let query = {
-      $and: [{ isArchived: archived }, { user_id: user_id }],
+      $and: [{ isArchived: archived }, { "form.user_id.value": user_id }],
     };
 
     if (event_name && event_name.toLowerCase() !== "all") {

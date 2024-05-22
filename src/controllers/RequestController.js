@@ -840,7 +840,7 @@ const GetRequestByUser = async (req, res) => {
     };
 
     if (service_name && service_name.toLowerCase() !== "all") {
-      query.$and.push({ "form.user_id.value": user_id });
+      query.$and.push({ service_name: service_name });
     }
 
     const result = await Request.find(query).sort({ createdAt: -1 });
