@@ -25,9 +25,11 @@ const GetBrgyService = async (req, res) => {
     if (status && status.toLowerCase() !== "all") {
       query.isApproved = status;
     }
+
     if (type && type.toLowerCase() !== "all") {
       query.type = type;
     }
+    
     const result = await Service.find(query).sort({createdAt: -1 }); 
     return res.status(200).json({
       result,

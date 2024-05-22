@@ -86,7 +86,7 @@ const PatawagSchema = new Schema(
       index: true,
     },
     to: {
-      type: [receiverSchema],
+      type: {complainant: [receiverSchema], defendant: [receiverSchema]},
       default: [],
     },
     brgy: {

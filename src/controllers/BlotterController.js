@@ -161,29 +161,18 @@ const getAllPatawag = async (req, res) => {
 
 const getSpecUserPatawag = async (req, res) => {
   try {
-    const { user_id, page } = req.query;
+    const { user_id } = req.query;
 
-    let totalEventsApplications = 0;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
-
-    const result = await Patawag.find({ "to.user_id": user_id })
-      .skip(skip)
-      .limit(itemsPerPage)
-      .sort({ createdAt: -1 });;
+    const result = await Patawag.find({ "to.user_id": user_id }).sort({ createdAt: -1 });;
 
     if (!result) {
       return res.status(404).json({ error: "Patawag not found" });
     }
 
-    totalEventsApplications = await Patawag.countDocuments({ "to.user_id": user_id });
-    
-    const all = await Patawag.find({ "to.user_id": user_id })
-
-    res.status(200).json({
+    return res.status(200).json({
       result,
-      all,
-      pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

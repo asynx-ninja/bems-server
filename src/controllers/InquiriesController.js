@@ -13,58 +13,23 @@ const {
 // RESIDENT ONLY
 const GetInquiries = async (req, res) => {
   try {
-    const { id, brgy, archived, to, inq_id, page } = req.query;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
+    const { id, brgy, archived, to } = req.query;
 
-    const query = { user_id: id, brgy, isArchived: archived };
+    let query = {
+      $and: [{ isArchived: archived }, { user_id: id }, { brgy: brgy }],
+    };
 
-    const totalInquiries = await Inquiries.countDocuments(query);
-
-    let totalEventsApplications = 0
-
-    let result = []
-
-    if (to === "all") {
-      totalEventsApplications = await Inquiries.countDocuments({
-        "user_id": id,
-      });
-
-      result = await Inquiries.find({
-        "user_id": id,
-      })
-        .skip(skip)
-        .limit(itemsPerPage)
-        .sort({ createdAt: -1 });
-
-    } else {
-      totalEventsApplications = await Inquiries.countDocuments({
-        "user_id": id,
-        "compose.to": to,
-      });
-
-      result = await Inquiries.find({
-        "user_id": id,
-        "compose.to": to,
-      })
-        .skip(skip)
-        .limit(itemsPerPage)
-        .sort({ createdAt: -1 });
+    if(to && to.toLowerCase() !== "all"){
+      query.$and.push({ "compose.to": to });
     }
 
-    const all = await Inquiries.find({
-      "user_id": id,
-    })
+    const result = await Inquiries.find(query).sort({ createdAt: -1 });
 
-    return !result
-      ? res
-        .status(400)
-        .json({ error: `No such inquiries for Barangay ${brgy}` })
-      : res.status(200).json({
-        result,
-        all,
-        pageCount: Math.ceil(totalInquiries / itemsPerPage),
-      });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
+    });
   } catch (err) {
     res.send(err.message);
   }
@@ -118,23 +83,55 @@ const GetInquiriesStatus = async (req, res) => {
   }
 };
 
-
 const GetAdminInquiries = async (req, res) => {
   try {
     const { to, archived, status } = req.query;
 
-    const query = {
+    const matchQuery = {
       "compose.to": to,
-      isArchived: archived,
+      isArchived: archived === 'true', // Convert to boolean
     };
 
     if (status && status.toLowerCase() !== "all") {
-      query.isApproved = status;
+      matchQuery.isApproved = status;
     }
 
-    const result = await Inquiries.find(query).sort({ createdAt: -1 });
+    const result = await Inquiries.aggregate([
+      { $match: matchQuery },
+      { $unwind: { path: "$response", preserveNullAndEmptyArrays: true } },
+      {
+        $group: {
+          _id: "$_id",
+          inq_id: { $first: "$inq_id" },
+          name: { $first: "$name" },
+          email: { $first: "$email" },
+          compose: { $first: "$compose" },
+          response: { $push: "$response" },
+          brgy: { $first: "$brgy" },
+          isArchived: { $first: "$isArchived" },
+          folder_id: { $first: "$folder_id" },
+          isApproved: { $first: "$isApproved" },
+          user_id: { $first: "$user_id" },
+          createdAt: { $first: "$createdAt" },
+          updatedAt: { $first: "$updatedAt" },
+          latestResponseDate: { $max: "$response.date" }
+        },
+      },
+      {
+        $addFields: {
+          mostRecentDate: {
+            $cond: {
+              if: { $gt: ["$latestResponseDate", "$createdAt"] },
+              then: "$latestResponseDate",
+              else: "$createdAt",
+            },
+          },
+        },
+      },
+      { $sort: { mostRecentDate: -1 } },
+    ]);
 
-    return !result
+    return result.length === 0
       ? res.status(400).json({ error: `No such Announcement for ${to}` })
       : res.status(200).json({
         result,
@@ -145,6 +142,33 @@ const GetAdminInquiries = async (req, res) => {
     res.send(err.message);
   }
 };
+
+// const GetAdminInquiries = async (req, res) => {
+//   try {
+//     const { to, archived, status } = req.query;
+
+//     const query = {
+//       "compose.to": to,
+//       isArchived: archived,
+//     };
+
+//     if (status && status.toLowerCase() !== "all") {
+//       query.isApproved = status;
+//     }
+
+//     const result = await Inquiries.find(query).sort({ createdAt: -1 });
+
+//     return !result
+//       ? res.status(400).json({ error: `No such Announcement for ${to}` })
+//       : res.status(200).json({
+//         result,
+//         pageCount: Math.ceil(result.length / 10),
+//         total: result.length,
+//       });
+//   } catch (err) {
+//     res.send(err.message);
+//   }
+// };
 
 
 const GetStaffInquiries = async (req, res) => {
@@ -246,7 +270,7 @@ const RespondToInquiry = async (req, res) => {
   try {
     const { brgy, inq_id } = req.query;
     const { body, files } = req;
-    console.log(body, files);
+
     const response = JSON.parse(body.response);
     const { sender, type, message, date, folder_id, status } = response;
 
