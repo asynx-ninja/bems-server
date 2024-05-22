@@ -833,57 +833,23 @@ const getTotalCompletedRequests = async (req, res) => {
 
 const GetRequestByUser = async (req, res) => {
   try {
-    const { user_id, service_name, page } = req.query;
+    const { user_id, service_name, archived } = req.query;
 
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
+    let query = {
+      $and: [{ isArchived: archived }, { user_id: user_id }],
+    };
 
-    let totalEventsApplications = 0;
-
-    let result = [];
-
-    if (service_name === "all") {
-      totalEventsApplications = await Request.countDocuments({
-        "form.user_id.value": user_id,
-      });
-
-      result = await Request.find({
-        "form.user_id.value": user_id,
-      })
-        .skip(skip)
-        .limit(itemsPerPage)
-        .sort({ createdAt: -1 });
-    } else {
-      totalEventsApplications = await Request.countDocuments({
-        $and: [
-          { "form.user_id.value": user_id },
-          {
-            service_name: service_name,
-          },
-        ],
-      });
-
-      result = await Request.find({
-        $and: [
-          { "form.user_id.value": user_id },
-          {
-            service_name: service_name,
-          },
-        ],
-      })
+    if (service_name && service_name.toLowerCase() !== "all") {
+      query.$and.push({ service_name: service_name });
     }
 
-    const all = await Request.find({
-      "form.user_id.value": user_id,
-    });
+    const result = await Request.find(query).sort({ createdAt: -1 });
 
-    return !result
-      ? res.status(400).json({ error: `No such event application` })
-      : res.status(200).json({
-          result,
-          all,
-          pageCount: Math.ceil(totalEventsApplications / itemsPerPage),
-        });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
+    });
   } catch (error) {
     console.log(error);
   }
