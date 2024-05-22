@@ -13,13 +13,16 @@ const composePatawag = async (req, res) => {
   try {
     const { patawag_folder_id } = req.query;
     const { body, files } = req;
-    const { name, to, responses, brgy, req_id } = JSON.parse(body.patawag);
+    const { name, to, responses, brgy, req_id, status } = JSON.parse(body.patawag);
 
     // console.log("patawag_folder_id: ", patawag_folder_id);
     // console.log("responses: ", responses);
     // console.log("body: ", body);
     // console.log("to: ", to);
     // console.log("files: ", files);
+
+    // Determine the status value
+    const finalStatus = status && status.trim() !== "" ? status : "In Progress";
 
     let fileArray = [];
     const patawag_id = GenerateID("", brgy, "P");
@@ -55,7 +58,7 @@ const composePatawag = async (req, res) => {
         file: fileArray,
       })),
       brgy,
-      status: "In Progress",
+      status: finalStatus,
       folder_id,
       // file: fileArray,
     });

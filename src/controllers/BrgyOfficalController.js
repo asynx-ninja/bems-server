@@ -11,10 +11,8 @@ const {
 
 const GetBarangayOfficial = async (req, res) => {
   try {
-    const { brgy, archived, page, position } = req.query;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
-
+    const { brgy, archived, position } = req.query;
+    
     const query = { $and: [{ brgy: brgy }, { isArchived: archived }] };
 
     if (position && position.toLowerCase() !== "all") {
@@ -23,15 +21,13 @@ const GetBarangayOfficial = async (req, res) => {
 
     const totalOfficials = await BrgyOfficial.countDocuments(query);
 
-    const result = await BrgyOfficial.find(query)
-      .skip(skip)
-      .limit(itemsPerPage);
+    const result = await BrgyOfficial.find(query).sort({ createdAt: -1 });
 
-    const pageCount = Math.ceil(totalOfficials / itemsPerPage);
-
-    return result.length > 0
-      ? res.status(200).json({ result, pageCount, total: totalOfficials })
-      : res.status(400).json({ error: `No officials found for Barangay ${brgy}` });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
+    });
   } catch (err) {
     res.status(500).send(err.message);
   }

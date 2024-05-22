@@ -14,9 +14,7 @@ const {
 
 const GetUsers = async (req, res) => {
   try {
-    const { brgy, status, page, type } = req.query;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
+    const { brgy, status, type } = req.query;
 
     let query = {
       $and: [{ "address.brgy": brgy }, { isArchived: false }],
@@ -30,18 +28,14 @@ const GetUsers = async (req, res) => {
       query.$and.push({ type: type });
     }
 
-    const result = await User.find(query)
-      .skip(skip)
-      .limit(itemsPerPage)
-      .sort({ createdAt: -1 });
-
+    const result = await User.find(query).sort({ createdAt: -1 });
     const totalUsers = await User.countDocuments(query);
 
-    const pageCount = Math.ceil(totalUsers / itemsPerPage);
-
-    return !result
-      ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
-      : res.status(200).json({ result, pageCount, total: totalUsers });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
+    });
   } catch (err) {
     res.send(err.message);
   }
@@ -313,9 +307,8 @@ const GetSpecificUser = async (req, res) => {
 
 const GetArchivedUsers = async (req, res) => {
   try {
-    const { brgy, type, status, page } = req.query;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
+    const { brgy, type, status } = req.query;
+
 
     let query = {
       $and: [{ "address.brgy": brgy }, { type: type }, { isArchived: true }],
@@ -326,15 +319,14 @@ const GetArchivedUsers = async (req, res) => {
       query.$and.push({ isApproved: status });
     }
 
-    const result = await User.find(query).skip(skip).limit(itemsPerPage);
-
+    const result = await User.find(query).sort({ createdAt: -1 });
     const totalUsers = await User.countDocuments(query);
 
-    const pageCount = Math.ceil(totalUsers / itemsPerPage);
-
-    return !result
-      ? res.status(400).json({ error: `No such user for Barangay ${brgy}` })
-      : res.status(200).json({ result, pageCount, total: totalUsers });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
+    });
   } catch (err) {
     res.send(err.message);
   }

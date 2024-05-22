@@ -11,9 +11,7 @@ const {
 
 const GetAllRequest = async (req, res) => {
   try {
-    const { brgy, archived, id, status, type, page } = req.query;
-    const itemsPerPage = 10; // Number of items per page
-    const skip = (parseInt(page) || 0) * itemsPerPage;
+    const { brgy, archived, id, status, type } = req.query;
 
     let query = {
       $and: [{ brgy: brgy }, { isArchived: archived }],
@@ -32,22 +30,13 @@ const GetAllRequest = async (req, res) => {
     }
     // Exclude service_name "Barangay Blotter"
     // query.$and.push({ service_name: { $ne: "Barangay Blotter" } });
-    const totalRequests = await Request.countDocuments(query);
-
-    const result = await Request.find(query)
-      .skip(skip)
-      .limit(itemsPerPage)
-      .sort({ createdAt: -1 });
-
-    return !result
-      ? res.status(400).json({ error: `No such request for Barangay ${brgy}` })
-      : res
-          .status(200)
-          .json({
-            result,
-            pageCount: Math.ceil(totalRequests / itemsPerPage),
-            total: totalRequests,
-          });
+  
+    const result = await Request.find(query).sort({createdAt: -1 }); 
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
+    });
   } catch (err) {
     res.status(400).json(err.message);
   }
