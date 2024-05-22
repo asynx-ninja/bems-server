@@ -178,34 +178,38 @@ const SocketIO = (app) => {
             io.emit('receive-upt-brgy-admin', obj)
         })
 
-    // UPDATE STATUS RESIDENT
-    socket.on("send-update-status-resident", (obj) => {
-      io.emit("receive-update-status-resident", obj);
-    });
-    // CREATE STAFF
-    socket.on("send-create-staff", (obj) => {
-      io.emit("receive-create-staff", obj);
-    });
-    // CREATE official
-    socket.on("send-create-official", (obj) => {
-      io.emit("receive-create-official", obj);
-    });
-    // Update official
-    socket.on("send-update-official", (obj) => {
-      io.emit("receive-update-official", obj);
-    });
-    // UPDATE STAFF
-    socket.on("send-update-staff", (obj) => {
-      io.emit("receive-update-staff", obj);
-    });
-    // UPDATE PROFILE
-    socket.on("send-update-profile", (obj) => {
-      io.emit("receive-update-profile", obj);
-    });
-    // UPDATE info
-    socket.on("send-update-info", (obj) => {
-      io.emit("receive-update-info", obj);
-    });
+        // UPDATE STATUS RESIDENT
+        socket.on("send-update-status-resident", (obj) => {
+            io.emit("receive-update-status-resident", obj);
+        });
+        // CREATE STAFF
+        socket.on("send-create-staff", (obj) => {
+            io.emit("receive-create-staff", obj);
+        });
+        // CREATE official
+        socket.on("send-create-official", (obj) => {
+            io.emit("receive-create-official", obj);
+        });
+        // Update official
+        socket.on("send-update-official", (obj) => {
+            io.emit("receive-update-official", obj);
+        });
+        // UPDATE STAFF
+        socket.on("send-update-staff", (obj) => {
+            io.emit("receive-update-staff", obj);
+        });
+        // UPDATE PROFILE
+        socket.on("send-update-profile", (obj) => {
+            io.emit("receive-update-profile", obj);
+        });
+        // UPDATE info
+        socket.on("send-update-info", (obj) => {
+            io.emit("receive-update-info", obj);
+        });
+
+        socket.on("send-update-brgy-info", (obj) => {
+            io.emit("receive-update-brgy-info", obj);
+        });
   });
 
     return server;
