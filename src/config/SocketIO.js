@@ -74,6 +74,7 @@ const SocketIO = (app) => {
       io.emit("receive-get-event", obj);
     });
 
+
     // CREATE EVENT FORMS
     socket.on("send-create-event-form", (obj) => {
       io.emit("receive-create-event-form", obj);
@@ -84,10 +85,25 @@ const SocketIO = (app) => {
       io.emit("receive-edit-event-form", obj);
     });
 
+     // CREATE SERVICE FORMS
+     socket.on("send-service-form", (obj) => {
+     io.emit("receive-service-form", obj);
+     });
+    
     // CREATING SERVICE
     socket.on("send-get-service", (obj) => {
       io.emit("receive-get-service", obj);
     });
+
+     // EDITING SERVICE
+    socket.on("send-updated-service", (obj) => {
+      io.emit("receive-updated-service", obj);
+    });
+
+     // CREATE SERVICE DOCUMENT FORMS
+     socket.on("send-document-form", (obj) => {
+     io.emit("receive-document-form", obj);
+     });
 
     // EDITING SERVICE FORM
     socket.on("send-edit-service-form", (obj) => {
@@ -113,6 +129,12 @@ const SocketIO = (app) => {
     socket.on("send-create-resident", (obj) => {
       io.emit("receive-create-resident", obj);
     });
+    
+      // CREATE OFFICIAL
+      socket.on('send-create-official', (obj) => {
+        console.log('Received new official:', obj);
+        io.emit('receive-create-official', obj);
+      });
   });
 
   return server;
