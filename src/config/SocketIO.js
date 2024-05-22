@@ -74,6 +74,10 @@ const SocketIO = (app) => {
       io.emit("receive-get-event", obj);
     });
 
+    // UPDATING EVENT
+    socket.on("send-update-event", (obj) => {
+      io.emit("receive-update-event", obj);
+    });
 
     // CREATE EVENT FORMS
     socket.on("send-create-event-form", (obj) => {
@@ -85,25 +89,25 @@ const SocketIO = (app) => {
       io.emit("receive-edit-event-form", obj);
     });
 
-     // CREATE SERVICE FORMS
-     socket.on("send-service-form", (obj) => {
-     io.emit("receive-service-form", obj);
-     });
-    
+    // CREATE SERVICE FORMS
+    socket.on("send-service-form", (obj) => {
+      io.emit("receive-service-form", obj);
+    });
+
     // CREATING SERVICE
     socket.on("send-get-service", (obj) => {
       io.emit("receive-get-service", obj);
     });
 
-     // EDITING SERVICE
+    // EDITING SERVICE
     socket.on("send-updated-service", (obj) => {
       io.emit("receive-updated-service", obj);
     });
 
-     // CREATE SERVICE DOCUMENT FORMS
-     socket.on("send-document-form", (obj) => {
-     io.emit("receive-document-form", obj);
-     });
+    // CREATE SERVICE DOCUMENT FORMS
+    socket.on("send-document-form", (obj) => {
+      io.emit("receive-document-form", obj);
+    });
 
     // EDITING SERVICE FORM
     socket.on("send-edit-service-form", (obj) => {
@@ -113,6 +117,11 @@ const SocketIO = (app) => {
     // EDITING SERVICE DOCUMENT
     socket.on("send-edit-service-doc", (obj) => {
       io.emit("receive-edit-service-doc", obj);
+    });
+
+    // CREATE PATAWAG DOCUMENT
+    socket.on("send-create-patawag-doc", (obj) => {
+      io.emit("receive-create-patawag-doc", obj);
     });
 
     // EDITING PATAWAG DOCUMENT
@@ -125,16 +134,34 @@ const SocketIO = (app) => {
       io.emit("receive-reply-patawag", obj);
     });
 
-    // CREATE RESIDENT
-    socket.on("send-create-resident", (obj) => {
-      io.emit("receive-create-resident", obj);
+    // UPDATE STATUS RESIDENT
+    socket.on("send-update-status-resident", (obj) => {
+      io.emit("receive-update-status-resident", obj);
     });
-    
-      // CREATE OFFICIAL
-      socket.on('send-create-official', (obj) => {
-        console.log('Received new official:', obj);
-        io.emit('receive-create-official', obj);
-      });
+    // CREATE STAFF
+    socket.on("send-create-staff", (obj) => {
+      io.emit("receive-create-staff", obj);
+    });
+    // CREATE official
+    socket.on("send-create-official", (obj) => {
+      io.emit("receive-create-official", obj);
+    });
+    // Update official
+    socket.on("send-update-official", (obj) => {
+      io.emit("receive-update-official", obj);
+    });
+    // UPDATE STAFF
+    socket.on("send-update-staff", (obj) => {
+      io.emit("receive-update-staff", obj);
+    });
+    // UPDATE PROFILE
+    socket.on("send-update-profile", (obj) => {
+      io.emit("receive-update-profile", obj);
+    });
+    // UPDATE info
+    socket.on("send-update-info", (obj) => {
+      io.emit("receive-update-info", obj);
+    });
   });
 
   return server;
