@@ -121,9 +121,9 @@ const SocketIO = (app) => {
       io.emit("receive-edit-service-doc", obj);
     });
 
-    // EDITING PATAWAG
-    socket.on("send-patawag", (obj) => {
-      io.emit("receive-patawag", obj);
+    // REPLY PATAWAG
+    socket.on("send-reply-patawag", (obj) => {
+      io.emit("receive-reply-patawag", obj);
     });
 
     // CREATE PATAWAG DOCUMENT
