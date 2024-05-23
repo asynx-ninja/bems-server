@@ -15,23 +15,12 @@ const composePatawag = async (req, res) => {
     const { body, files } = req;
     const { name, to, responses, brgy, req_id, status } = JSON.parse(body.patawag);
 
-    // console.log("patawag_folder_id: ", patawag_folder_id);
-    // console.log("responses: ", responses);
-    // console.log("body: ", body);
-    // console.log("to: ", to);
-    // console.log("files: ", files);
-
-    // Determine the status value
+    // Check if the status is empty and set it to "In Progress" if it is
     const finalStatus = status && status.trim() !== "" ? status : "In Progress";
 
     let fileArray = [];
     const patawag_id = GenerateID("", brgy, "P");
-    const folder_id = await createRequiredFolders(
-      patawag_id,
-      patawag_folder_id
-    );
-
-    // console.log("folder_id: ", folder_id);
+    const folder_id = await createRequiredFolders(patawag_id, patawag_folder_id);
 
     if (files) {
       for (let f = 0; f < files.length; f += 1) {
@@ -60,7 +49,6 @@ const composePatawag = async (req, res) => {
       brgy,
       status: finalStatus,
       folder_id,
-      // file: fileArray,
     });
 
     console.log("Create Patawag Result: ", result);
@@ -70,7 +58,6 @@ const composePatawag = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
 const Respond = async (req, res) => {
   try {
     const { patawag_id } = req.query;
@@ -163,7 +150,10 @@ const getSpecUserPatawag = async (req, res) => {
   try {
     const { user_id } = req.query;
 
-    const result = await Patawag.find({ "to.user_id": user_id }).sort({ createdAt: -1 });;
+    const result = await Patawag.find({ $or: [
+      { "to.complainant.user_id": user_id }, 
+      { "to.defendant.user_id": user_id }
+    ]}).sort({ createdAt: -1 });;
 
     if (!result) {
       return res.status(404).json({ error: "Patawag not found" });

@@ -39,7 +39,7 @@ const GetBarangayChairman = async (req, res) => {
 
     const query = { $and: [{ brgy: brgy }, { isArchived: archived }, {position: "Barangay Chairman"}] };
 
-    const result = await BrgyOfficial.find(query)
+    const result = await BrgyOfficial.find(query).sort({createdAt: -1 }); 
 
     return result.length > 0
       ? res.status(200).json({ result })
