@@ -204,12 +204,30 @@ const GetAllBrgyResident = async (req, res) => {
               status: {
                 $switch: {
                   branches: [
-                    { case: { $eq: ["$isApproved", "Registered"] }, then: "Registered" },
-                    { case: { $eq: ["$isApproved", "Pending"] }, then: "Pending" },
-                    { case: { $eq: ["$isApproved", "Denied"] }, then: "Denied" },
-                    { case: { $eq: ["$isApproved", "Verified"] }, then: "Verified" },
-                    { case: { $eq: ["$isApproved", "Verification Approval"] }, then: "Verification Approval" },
-                    { case: { $eq: ["$isApproved", "For Review"] }, then: "For Review" },
+                    {
+                      case: { $eq: ["$isApproved", "Registered"] },
+                      then: "Registered",
+                    },
+                    {
+                      case: { $eq: ["$isApproved", "Pending"] },
+                      then: "Pending",
+                    },
+                    {
+                      case: { $eq: ["$isApproved", "Denied"] },
+                      then: "Denied",
+                    },
+                    {
+                      case: { $eq: ["$isApproved", "Verified"] },
+                      then: "Verified",
+                    },
+                    {
+                      case: { $eq: ["$isApproved", "Verification Approval"] },
+                      then: "Verification Approval",
+                    },
+                    {
+                      case: { $eq: ["$isApproved", "For Review"] },
+                      then: "For Review",
+                    },
                     // Add more cases as needed
                   ],
                   default: "Woahh",
@@ -289,17 +307,26 @@ const GetSpecificUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "No such user" });
-    }
 
     const result = await User.find({
       _id: id,
     });
 
-    return !result
-      ? res.status(400).json({ error: `No such user` })
-      : res.status(200).json(result);
+    return res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
+const GetSpecificAcc = async (req, res) => {
+  try {
+    const { user_id } = req.query;
+
+    const result = await User.find({
+      user_id: user_id,
+    });
+
+    return res.status(200).json(result);
   } catch (err) {
     res.send(err.message);
   }
@@ -308,7 +335,6 @@ const GetSpecificUser = async (req, res) => {
 const GetArchivedUsers = async (req, res) => {
   try {
     const { brgy, type, status } = req.query;
-
 
     let query = {
       $and: [{ "address.brgy": brgy }, { type: type }, { isArchived: true }],
@@ -472,10 +498,10 @@ const UpdateUser = async (req, res) => {
           isHead: user.isHead,
           profile: file
             ? {
-              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
-              id,
-              name,
-            }
+                link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+                id,
+                name,
+              }
             : user.profile,
           socials: {
             facebook: {
@@ -525,7 +551,6 @@ const UpdateVerification = async (req, res) => {
     const newVerification = JSON.parse(body.newVerification);
 
     // console.log("gago", primarySaved, secondarySaved, oldVerification, newVerification);
-
 
     primary.push(...primarySaved);
     secondary.push(...secondarySaved);
@@ -579,7 +604,7 @@ const UpdateVerification = async (req, res) => {
               name,
             });
           else if (files[i].originalname.includes("SELFIE")) {
-            console.log("omsem")
+            console.log("omsem");
             Object.assign(selfie, {
               link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
               id,
@@ -602,7 +627,9 @@ const UpdateVerification = async (req, res) => {
           primary_file: primary,
           secondary_id: newVerification.secondary_id,
           secondary_file: secondary,
-          selfie: !selfie.hasOwnProperty("link") ? oldVerification.selfie : selfie,
+          selfie: !selfie.hasOwnProperty("link")
+            ? oldVerification.selfie
+            : selfie,
           user_folder_id:
             oldVerification.user_folder_id === ""
               ? folder_id
@@ -621,7 +648,6 @@ const UpdateVerification = async (req, res) => {
     res.send(err.message);
   }
 };
-
 
 const StatusUser = async (req, res) => {
   try {
@@ -727,4 +753,5 @@ module.exports = {
   ArchiveUser,
   getAllResidentIsArchived,
   UpdateVerification,
+  GetSpecificAcc,
 };
