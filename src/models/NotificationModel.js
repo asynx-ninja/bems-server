@@ -135,10 +135,12 @@ const TargetSchema = new Schema(
     user_id: {
       type: [String],
       default: null,
+      index: true,
     },
     area: {
       type: String,
       default: null,
+      index: true,
     },
   },
   { _id: false }
@@ -159,6 +161,7 @@ const NotificationSchema = new Schema(
       type: String,
       enum: ["Municipality", "Barangay", "Resident"],
       default: "",
+      index: true,
     },
     target: { type: TargetSchema, required: true },
     read_by: { type: [ReadBySchema], required: true },
