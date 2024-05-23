@@ -29,8 +29,8 @@ const GetBrgyService = async (req, res) => {
     if (type && type.toLowerCase() !== "all") {
       query.type = type;
     }
-    
-    const result = await Service.find(query).sort({createdAt: -1 }); 
+
+    const result = await Service.find(query).sort({ createdAt: -1 });
     return res.status(200).json({
       result,
       pageCount: Math.ceil(result.length / 10),
@@ -58,8 +58,8 @@ const SearchBrgyServices = async (req, res) => {
     return !result
       ? res.status(400).json({ error: `No such service for Barangay ${brgy}` })
       : res
-          .status(200)
-          .json({ result });
+        .status(200)
+        .json({ result });
   } catch (err) {
     res.send(err.message);
   }
@@ -421,6 +421,23 @@ const ArchiveService = async (req, res) => {
   }
 };
 
+const getAllServices = async (req, res) => {
+  const { brgy } = req.query;
+
+  const result = await Service.aggregate([
+    // Unwind the "collections" array to access individual documents within it
+    { $unwind: "$collections" },
+    // Group by service name
+    { $match: { brgy: brgy, isArchived: false } },  // Replace "ROSARIO" with your desired Barangay
+    // Group by service name and use $addToSet to get distinct values
+    { $group: { _id: "$name" } },
+    // Project only the "_id" field (which holds distinct service names)
+    { $project: { _id: 1 } }
+  ])
+
+  res.status(200).json(result)
+}
+
 
 module.exports = {
   GetBrgyService,
@@ -434,4 +451,5 @@ module.exports = {
   StatusService,
   ArchiveService,
   GetServiceAndForm,
+  getAllServices,
 };
