@@ -173,36 +173,24 @@ const GetAdminInquiries = async (req, res) => {
 
 const GetStaffInquiries = async (req, res) => {
   try {
-    const { brgy, archived, status, page, label } = req.query;
-    const itemsPerPage = 10;
-    const skip = (parseInt(page) || 0) * itemsPerPage;
-    console.log(skip)
-    const query = {
-      brgy,
-      isArchived: archived,
-      "compose.to": label
+    const { brgy, archived, status, label } = req.query;
+
+    let query = {
+      $and: [{ brgy: brgy }, { isArchived: archived }, {"compose.to": label}],
     };
 
     if (status && status.toLowerCase() !== "all") {
       query.isApproved = status;
     }
 
-    const totalInquiries = await Inquiries.countDocuments(query);
+    const result = await Inquiries.find(query).sort({ createdAt: -1 });
 
-    const result = await Inquiries.find(query)
-      .skip(skip)
-      .limit(itemsPerPage)
-      .sort({ createdAt: -1 });
 
-    return !result
-      ? res
-        .status(400)
-        .json({ error: `No such inquiries for Barangay ${brgy}` })
-      : res.status(200).json({
-        result,
-        pageCount: Math.ceil(totalInquiries / itemsPerPage),
-        total: totalInquiries
-      });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
+    });
   } catch (err) {
     res.send(err.message);
   }

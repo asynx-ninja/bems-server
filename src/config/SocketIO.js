@@ -203,10 +203,6 @@ const SocketIO = (app) => {
             io.emit("receive-update-profile", obj);
         });
         // UPDATE info
-        socket.on("send-update-info", (obj) => {
-            io.emit("receive-update-info", obj);
-        });
-
         socket.on("send-update-brgy-info", (obj) => {
             io.emit("receive-update-brgy-info", obj);
         });
