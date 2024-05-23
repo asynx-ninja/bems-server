@@ -85,30 +85,30 @@ const SocketIO = (app) => {
             io.emit("receive-create-event-form", obj);
         });
 
-    // EDITING EVENT FORMS
-    socket.on("send-edit-event-form", (obj) => {
-      io.emit("receive-edit-event-form", obj);
-    });
+        // EDITING EVENT FORMS
+        socket.on("send-edit-event-form", (obj) => {
+            io.emit("receive-edit-event-form", obj);
+        });
 
-    // CREATE SERVICE FORMS
-    socket.on("send-service-form", (obj) => {
-      io.emit("receive-service-form", obj);
-    });
+        // CREATE SERVICE FORMS
+        socket.on("send-service-form", (obj) => {
+            io.emit("receive-service-form", obj);
+        });
 
-    // CREATING SERVICE
-    socket.on("send-get-service", (obj) => {
-      io.emit("receive-get-service", obj);
-    });
+        // CREATING SERVICE
+        socket.on("send-get-service", (obj) => {
+            io.emit("receive-get-service", obj);
+        });
 
-    // EDITING SERVICE
-    socket.on("send-updated-service", (obj) => {
-      io.emit("receive-updated-service", obj);
-    });
+        // EDITING SERVICE
+        socket.on("send-updated-service", (obj) => {
+            io.emit("receive-updated-service", obj);
+        });
 
-    // CREATE SERVICE DOCUMENT FORMS
-    socket.on("send-document-form", (obj) => {
-      io.emit("receive-document-form", obj);
-    });
+        // CREATE SERVICE DOCUMENT FORMS
+        socket.on("send-document-form", (obj) => {
+            io.emit("receive-document-form", obj);
+        });
 
         // EDITING SERVICE FORM
         socket.on("send-edit-service-form", (obj) => {
@@ -120,9 +120,9 @@ const SocketIO = (app) => {
             io.emit('receive-edit-service-doc', obj)
         })
 
-        // EDITING PATAWAG
-        socket.on('send-patawag', (obj) => {
-            io.emit('receive-patawag', obj)
+        // REPLY PATAWAG
+        socket.on('send-reply-patawag', (obj) => {
+            io.emit('receive-reply-patawag', obj)
         })
 
         // CREATE PATAWAG DOCUMENT
@@ -142,7 +142,7 @@ const SocketIO = (app) => {
             io.emit('receive-offered-serv', obj)
         })
 
-         socket.on('send-upt-offered-serv', (obj) => {
+        socket.on('send-upt-offered-serv', (obj) => {
             io.emit('receive-upt-offered-serv', obj)
         })
 
@@ -150,7 +150,7 @@ const SocketIO = (app) => {
             io.emit('receive-tourist-spot', obj)
         })
 
-         socket.on('send-upt-tourist-spot', (obj) => {
+        socket.on('send-upt-tourist-spot', (obj) => {
             io.emit('receive-upt-tourist-spot', obj)
         })
 
@@ -210,7 +210,7 @@ const SocketIO = (app) => {
         socket.on("send-update-brgy-info", (obj) => {
             io.emit("receive-update-brgy-info", obj);
         });
-        
+
         socket.on("send-resident-notif", (obj) => {
             io.emit("receive-resident-notif", obj);
         });
@@ -222,7 +222,7 @@ const SocketIO = (app) => {
         socket.on("send-muni-notif", (obj) => {
             io.emit("receive-muni-notif", obj);
         });
-  });
+    });
 
     return server;
 };

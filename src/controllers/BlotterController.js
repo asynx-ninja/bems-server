@@ -150,7 +150,10 @@ const getSpecUserPatawag = async (req, res) => {
   try {
     const { user_id } = req.query;
 
-    const result = await Patawag.find({ "to.user_id": user_id }).sort({ createdAt: -1 });;
+    const result = await Patawag.find({ $or: [
+      { "to.complainant.user_id": user_id }, 
+      { "to.defendant.user_id": user_id }
+    ]}).sort({ createdAt: -1 });;
 
     if (!result) {
       return res.status(404).json({ error: "Patawag not found" });

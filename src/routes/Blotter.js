@@ -5,7 +5,6 @@ const upload = require("../config/Multer");
 
 const { composePatawag, Respond, specPatawag, getAllPatawag, getSpecUserPatawag, GetStaffBlotter } = require("../controllers/BlotterController");
 
-
 router.get("/", specPatawag);
 router.get("/all_patawag", getAllPatawag);
 router.get("/staffblotter", GetStaffBlotter);
