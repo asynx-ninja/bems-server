@@ -83,71 +83,44 @@ const GetInquiriesStatus = async (req, res) => {
   }
 };
 
-const GetAdminInquiries = async (req, res) => {
-  try {
-    const { to, archived, status } = req.query;
-
-    const matchQuery = {
-      "compose.to": to,
-      isArchived: archived === 'true', // Convert to boolean
-    };
-
-    if (status && status.toLowerCase() !== "all") {
-      matchQuery.isApproved = status;
-    }
-
-    const result = await Inquiries.aggregate([
-      { $match: matchQuery },
-      { $unwind: { path: "$response", preserveNullAndEmptyArrays: true } },
-      {
-        $group: {
-          _id: "$_id",
-          inq_id: { $first: "$inq_id" },
-          name: { $first: "$name" },
-          email: { $first: "$email" },
-          compose: { $first: "$compose" },
-          response: { $push: "$response" },
-          brgy: { $first: "$brgy" },
-          isArchived: { $first: "$isArchived" },
-          folder_id: { $first: "$folder_id" },
-          isApproved: { $first: "$isApproved" },
-          user_id: { $first: "$user_id" },
-          createdAt: { $first: "$createdAt" },
-          updatedAt: { $first: "$updatedAt" },
-          mostRecentDate: { $max: { $ifNull: ["$response.date", "$createdAt"] } }
-        },
-      },
-      { $sort: { mostRecentDate: -1 } }, // Sort by the most recent date
-    ]);
-
-    return result.length === 0
-      ? res.status(400).json({ error: `No such Announcement for ${to}` })
-      : res.status(200).json({
-        result,
-        pageCount: Math.ceil(result.length / 10),
-        total: result.length,
-      });
-  } catch (err) {
-    res.send(err.message);
-  }
-};
-
 // const GetAdminInquiries = async (req, res) => {
 //   try {
 //     const { to, archived, status } = req.query;
 
-//     const query = {
+//     const matchQuery = {
 //       "compose.to": to,
-//       isArchived: archived,
+//       isArchived: archived === 'true', // Convert to boolean
 //     };
 
 //     if (status && status.toLowerCase() !== "all") {
-//       query.isApproved = status;
+//       matchQuery.isApproved = status;
 //     }
 
-//     const result = await Inquiries.find(query).sort({ createdAt: -1 });
+//     const result = await Inquiries.aggregate([
+//       { $match: matchQuery },
+//       { $unwind: { path: "$response", preserveNullAndEmptyArrays: true } },
+//       {
+//         $group: {
+//           _id: "$_id",
+//           inq_id: { $first: "$inq_id" },
+//           name: { $first: "$name" },
+//           email: { $first: "$email" },
+//           compose: { $first: "$compose" },
+//           response: { $push: "$response" },
+//           brgy: { $first: "$brgy" },
+//           isArchived: { $first: "$isArchived" },
+//           folder_id: { $first: "$folder_id" },
+//           isApproved: { $first: "$isApproved" },
+//           user_id: { $first: "$user_id" },
+//           createdAt: { $first: "$createdAt" },
+//           updatedAt: { $first: "$updatedAt" },
+//           mostRecentDate: { $max: { $ifNull: ["$response.date", "$createdAt"] } }
+//         },
+//       },
+//       { $sort: { mostRecentDate: -1 } }, // Sort by the most recent date
+//     ]);
 
-//     return !result
+//     return result.length === 0
 //       ? res.status(400).json({ error: `No such Announcement for ${to}` })
 //       : res.status(200).json({
 //         result,
@@ -158,6 +131,33 @@ const GetAdminInquiries = async (req, res) => {
 //     res.send(err.message);
 //   }
 // };
+
+const GetAdminInquiries = async (req, res) => {
+  try {
+    const { to, archived, status } = req.query;
+
+    const query = {
+      "compose.to": to,
+      isArchived: archived,
+    };
+
+    if (status && status.toLowerCase() !== "all") {
+      query.isApproved = status;
+    }
+
+    const result = await Inquiries.find(query).sort({ createdAt: -1 });
+
+    return !result
+      ? res.status(400).json({ error: `No such Announcement for ${to}` })
+      : res.status(200).json({
+        result,
+        pageCount: Math.ceil(result.length / 10),
+        total: result.length,
+      });
+  } catch (err) {
+    res.send(err.message);
+  }
+};
 
 
 const GetStaffInquiries = async (req, res) => {
