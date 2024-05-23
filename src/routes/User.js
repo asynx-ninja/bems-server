@@ -18,6 +18,7 @@ const {
   UpdateVerification,
   UpdateMobileVerification,
   CreateUserMobile,
+  GetSpecificAcc
 } = require("../controllers/UserController");
 
 const upload = require("../config/Multer");
@@ -30,6 +31,7 @@ router.get("/brgy_resident_isArchived", getAllResidentIsArchived);
 router.get("/admin", GetAdminUsers);
 router.get("/showArchivedAdmin", GetArchivedAdminUsers);
 router.get("/specific/:id", GetSpecificUser);
+router.get("/specific_user/acc/", GetSpecificAcc);
 router.get("/showArchived/", GetArchivedUsers);
 router.post("/", upload.array("files", 10), CreateUser);
 router.post("/create_mobile", upload.array("files", 20), CreateUserMobile);
