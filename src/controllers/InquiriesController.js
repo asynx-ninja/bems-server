@@ -34,6 +34,7 @@ const GetInquiries = async (req, res) => {
     res.send(err.message);
   }
 };
+
 // Backend API endpoint to get the number of inquiries in each status for every barangay
 const GetInquiriesStatus = async (req, res) => {
   try {
