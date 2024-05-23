@@ -210,6 +210,18 @@ const SocketIO = (app) => {
         socket.on("send-update-brgy-info", (obj) => {
             io.emit("receive-update-brgy-info", obj);
         });
+        
+        socket.on("send-resident-notif", (obj) => {
+            io.emit("receive-resident-notif", obj);
+        });
+
+        socket.on("send-staff-notif", (obj) => {
+            io.emit("receive-staff-notif", obj);
+        });
+
+        socket.on("send-muni-notif", (obj) => {
+            io.emit("receive-muni-notif", obj);
+        });
   });
 
     return server;
