@@ -78,6 +78,7 @@ const SocketIO = (app) => {
 
     // UPDATING EVENT
     socket.on("send-update-event", (obj) => {
+      console.log(obj);
       io.emit("receive-update-event", obj);
     });
 
@@ -222,6 +223,14 @@ const SocketIO = (app) => {
 
     socket.on("send-muni-notif", (obj) => {
       io.emit("receive-muni-notif", obj);
+    });
+
+    socket.on("send-archive-muni", (obj) => {
+      io.emit("receive-archive-muni", obj);
+    });
+    
+    socket.on("send-restore-muni", (obj) => {
+      io.emit("receive-restore-muni", obj);
     });
   });
 
