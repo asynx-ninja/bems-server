@@ -114,21 +114,10 @@ const GetAdminInquiries = async (req, res) => {
           user_id: { $first: "$user_id" },
           createdAt: { $first: "$createdAt" },
           updatedAt: { $first: "$updatedAt" },
-          latestResponseDate: { $max: "$response.date" }
+          mostRecentDate: { $max: { $ifNull: ["$response.date", "$createdAt"] } }
         },
       },
-      {
-        $addFields: {
-          mostRecentDate: {
-            $cond: {
-              if: { $gt: ["$latestResponseDate", "$createdAt"] },
-              then: "$latestResponseDate",
-              else: "$createdAt",
-            },
-          },
-        },
-      },
-      { $sort: { mostRecentDate: -1 } },
+      { $sort: { mostRecentDate: -1 } }, // Sort by the most recent date
     ]);
 
     return result.length === 0
