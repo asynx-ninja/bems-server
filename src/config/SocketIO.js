@@ -218,6 +218,16 @@ const SocketIO = (app) => {
         socket.on("send-muni-notif", (obj) => {
             io.emit("receive-muni-notif", obj);
         });
+
+        //ARCHIVE BRGY
+        socket.on("send-archive-staff", (obj) => {
+            io.emit("receive-archive-staff", obj);
+        });
+
+        //RESTORE BRGY
+        socket.on("send-restore-staff", (obj) => {
+            io.emit("receive-restore-staff", obj);
+        });
     });
 
     return server;
