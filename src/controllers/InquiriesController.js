@@ -175,18 +175,13 @@ const GetStaffInquiries = async (req, res) => {
   try {
     const { brgy, archived, status, label } = req.query;
 
-
-    const query = {
-      brgy,
-      isArchived: archived,
-      "compose.to": label
+    let query = {
+      $and: [{ brgy: brgy }, { isArchived: archived }, {"compose.to": label}],
     };
 
     if (status && status.toLowerCase() !== "all") {
       query.isApproved = status;
     }
-
-    const totalInquiries = await Inquiries.countDocuments(query);
 
     const result = await Inquiries.find(query).sort({ createdAt: -1 });
 
