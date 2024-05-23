@@ -426,6 +426,101 @@ const CreateUser = async (req, res) => {
   }
 };
 
+const CreateUserMobile = async (req, res) => {
+  try {
+    const { folder_id } = req.query;
+    const { body, files } = req;
+    const user = JSON.parse(body.user);
+    const fileType = JSON.parse(body.fileTypes);
+
+    let primary = [],
+      secondary = [],
+      selfie = {};
+
+    const user_id = GenerateID("", user.address.brgy, "U");
+
+    const user_folder_id = await createRequiredFolders(user_id, folder_id);
+
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        try {
+          const { id, name } = await uploadFolderFiles(
+            files[i],
+            user_folder_id
+          );
+
+          if (fileType[i].includes("PRIMARY"))
+            primary.push({
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            });
+          else if (fileType[i].includes("SECONDARY"))
+            secondary.push({
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            });
+          else if (fileType[i].includes("SELFIE"))
+            Object.assign(selfie, {
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            });
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    }
+
+    // Hash the password before saving
+    const hashedPassword = await hash(user.password);
+
+    const result = await User.create({
+      user_id,
+      firstName: user.firstName,
+      middleName: user.middleName,
+      lastName: user.lastName,
+      suffix: user.suffix,
+      religion: user.religion,
+      email: user.email,
+      birthday: user.birthday,
+      age: user.age,
+      contact: user.contact,
+      sex: user.sex,
+      address: user.address,
+      occupation: user.occupation,
+      civil_status: user.civil_status,
+      type: user.type,
+      isVoter: user.isVoter,
+      isHead: user.isHead,
+      isArchived: user.isArchived,
+      profile: {},
+      socials: {},
+      username: user.username,
+      password: hashedPassword, // Save the hashed password
+      isApproved: user.isApproved,
+      verification: {
+        user_folder_id: user_folder_id,
+        primary_id: user.primary_id,
+        primary_file: primary,
+        secondary_id: user.secondary_id,
+        secondary_file: secondary,
+        selfie: selfie,
+      },
+    });
+
+    res.status(200).json(result);
+  } catch (err) {
+    if (err.code === 11000) {
+      return res
+        .status(400)
+        .json({ error: "Username or email already existed" });
+    }
+    res.send(err.message);
+  }
+};
+
 const UpdateUser = async (req, res) => {
   try {
     const { folder_id, doc_id } = req.query;
@@ -511,19 +606,22 @@ const UpdateVerification = async (req, res) => {
     let primary = [],
       secondary = [],
       selfie = {},
-      folder_id;
+      folder_id, fileType;
 
     if (!mongoose.Types.ObjectId.isValid(doc_id)) {
       return res.status(400).json({ error: "No such user" });
     }
 
-    // console.log("gago1", body, files);
+    console.log("gago1", files, req.file);
 
     const primarySaved = JSON.parse(body.primarySaved);
     const secondarySaved = JSON.parse(body.secondarySaved);
     const oldVerification = JSON.parse(body.oldVerification);
     const newVerification = JSON.parse(body.newVerification);
 
+    if(body.fileType !== undefined){
+      fileType = JSON.parse(body.fileType);
+    }
     // console.log("gago", primarySaved, secondarySaved, oldVerification, newVerification);
 
 
@@ -608,6 +706,126 @@ const UpdateVerification = async (req, res) => {
               ? folder_id
               : oldVerification.user_folder_id,
         },
+        isApproved: "For Review"
+      },
+      { new: true }
+    );
+
+    const subject = "Resident Status Update";
+    const text = "The status of your resident has been updated.";
+    await sendEmail(result.email, subject, text, "For Review");
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.send(err.message);
+  }
+};
+
+const UpdateMobileVerification = async (req, res) => {
+  try {
+    const { doc_id, user_id, root_folder } = req.query;
+    const { body, files } = req;
+    let primary = [],
+      secondary = [],
+      selfie = {},
+      folder_id;
+
+    if (!mongoose.Types.ObjectId.isValid(doc_id)) {
+      return res.status(400).json({ error: "No such user" });
+    }
+
+    console.log("gago1", files);
+
+    const primarySaved = JSON.parse(body.primarySaved);
+    const secondarySaved = JSON.parse(body.secondarySaved);
+    const oldVerification = JSON.parse(body.oldVerification);
+    const newVerification = JSON.parse(body.newVerification);
+    const fileType = JSON.parse(body.fileTypes);
+
+    // console.log("gago", primarySaved, secondarySaved, oldVerification, newVerification);
+
+    primary.push(...primarySaved);
+    secondary.push(...secondarySaved);
+
+    if (oldVerification.user_folder_id === "") {
+      folder_id = await createRequiredFolders(user_id, root_folder);
+    } else {
+      folder_id = oldVerification.user_folder_id;
+    }
+
+    const primaryFullItem = oldVerification.primary_file;
+    const secondaryFullItem = oldVerification.secondary_file;
+
+    //console.log("gago", primaryFullItem, secondaryFullItem);
+
+    const primaryDeletedItems = compareArrays(primaryFullItem, primarySaved);
+    const secondaryDeletedItems = compareArrays(
+      secondaryFullItem,
+      secondarySaved
+    );
+
+    //console.log(primaryDeletedItems, secondaryDeletedItems);
+
+    if (primaryDeletedItems.length > 0) {
+      primaryDeletedItems.forEach(async (item) => {
+        await deleteFolderFiles(item.id, folder_id);
+      });
+    }
+
+    if (secondaryDeletedItems.length > 0) {
+      secondaryDeletedItems.forEach(async (item) => {
+        await deleteFolderFiles(item.id, folder_id);
+      });
+    }
+
+    if (files) {
+      for (let i = 0; i < files.length; i += 1) {
+        try {
+          const { id, name } = await uploadFolderFiles(files[i], folder_id);
+
+          if (fileType[i].includes("PRIMARY"))
+            primary.push({
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            });
+          else if (fileType[i].includes("SECONDARY"))
+            secondary.push({
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            });
+          else if (fileType[i].includes("SELFIE")) {
+            console.log("omsem")
+            Object.assign(selfie, {
+              link: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`,
+              id,
+              name,
+            });
+
+            await deleteFolderFiles(oldVerification.selfie.id, folder_id);
+          }
+        } catch (err) {
+          console.log("gege", err.message);
+        }
+      }
+    }
+
+    const result = await User.findOneAndUpdate(
+      { _id: doc_id },
+      {
+        verification: {
+          primary_id: newVerification.primary_id,
+          primary_file: primary,
+          secondary_id: newVerification.secondary_id,
+          secondary_file: secondary,
+          selfie: !selfie.hasOwnProperty("link") ? oldVerification.selfie : selfie,
+          user_folder_id:
+            oldVerification.user_folder_id === ""
+              ? folder_id
+              : oldVerification.user_folder_id,
+        },
+        isApproved: "For Review"
       },
       { new: true }
     );
@@ -727,4 +945,6 @@ module.exports = {
   ArchiveUser,
   getAllResidentIsArchived,
   UpdateVerification,
+  UpdateMobileVerification,
+  CreateUserMobile,
 };
