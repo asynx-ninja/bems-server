@@ -12,7 +12,8 @@ const {
   UpdateServices,
   StatusService,
   ArchiveService,
-  GetServiceAndForm
+  GetServiceAndForm,
+  getAllServices
 } = require("../controllers/ServicesController");
 
 const upload = require("../config/Multer");
@@ -23,6 +24,7 @@ router.get("/allservices", GetAllBrgyService);
 router.get("/approved_services", GetAllApprovedBrgyService);
 router.get("/pendingservices", GetAllPenBrgyService);
 router.get("/specific_service", GetServiceAndForm);
+router.get("/get_distinct_services/", getAllServices);
 router.get("/banner/:brgy", GetBrgyServiceBanner);
 router.post("/", upload.array("files", 10), CreateServices);
 router.patch("/:id", upload.array("files", 10), UpdateServices);

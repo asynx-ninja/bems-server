@@ -11,7 +11,7 @@ const GetCredentials = async (req, res) => {
 
     const result = await User.find(
       { username: username },
-      { password: 1, type: 1, email: 1, "address.brgy": 1, isApproved: 1 }
+      { password: 1, type: 1, email: 1, "address.brgy": 1, isApproved: 1, isArchived: 1 }
     );
 
     if (result.length === 0 || !result) {

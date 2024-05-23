@@ -109,7 +109,6 @@ const PatawagSchema = new Schema(
       enum: [
         "In Progress",
         "Completed",
-        "Rejected",
       ],
       default: "In Progress",
       index: true,

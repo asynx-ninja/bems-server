@@ -22,11 +22,11 @@ const GetBarangayAnnouncement = async (req, res) => {
     const result = await Announcement.find(query)
       .sort({ createdAt: -1 });
 
-      return res.status(200).json({
-        result,
-        pageCount: Math.ceil(result.length / 10),
-        total: result.length, // Total count without pagination
-      });
+    return res.status(200).json({
+      result,
+      pageCount: Math.ceil(result.length / 10),
+      total: result.length, // Total count without pagination
+    });
   } catch (err) {
     res.send(err.message);
   }
@@ -296,9 +296,26 @@ const GetSpecificBarangayAnnouncement = async (req, res) => {
   }
 };
 
+const getAllEvents = async (req, res) => {
+  const { brgy } = req.query;
+
+  const result = await Announcement.aggregate([
+    // Unwind the "collections" array to access individual documents within it
+    { $unwind: "$collections" },
+    // Group by service name
+    { $match: { isArchived: false, $or: [{ brgy: brgy }, { isOpen: true }] } },  // Replace "ROSARIO" with your desired Barangay
+    // Group by service name and use $addToSet to get distinct values
+    { $group: { _id: "$title" } },
+    // Project only the "_id" field (which holds distinct service names)
+    { $project: { _id: 1 } }
+  ])
+
+  res.status(200).json(result)
+}
+
 module.exports = {
   GetBarangayAnnouncement,
-  SearchBarangayAnnouncement,  
+  SearchBarangayAnnouncement,
   GetAllOpenBrgyAnnouncement,
   CreateAnnouncement,
   UpdateAnnouncement,
@@ -306,4 +323,5 @@ module.exports = {
   GetBrgyAnnouncementBanner,
   UpdateAttendees,
   GetSpecificBarangayAnnouncement,
+  getAllEvents,
 };
