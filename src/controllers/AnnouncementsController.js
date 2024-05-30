@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
-
+const cron = require('node-cron');
 const Announcement = require("../models/AnnouncementsModel");
 const GenerateID = require("../functions/GenerateID");
 const compareArrays = require("../functions/CompareArrays");
-
+const SocketIO  = require("../config/SocketIO")
+const app = require('../../server');
+const { io } = SocketIO(app);
 const {
   createBarangayFolder,
   createRequiredFolders,
@@ -312,6 +314,31 @@ const getAllEvents = async (req, res) => {
 
   res.status(200).json(result)
 }
+const archiveOldEvents = async () => { 
+  try {
+    const oneWeekAgo = new Date();
+    // oneWeekAgo.setHours(0, 0, 0, 0);
+
+    const result = await Announcement.updateMany(
+      { date: { $lte: oneWeekAgo }, isArchived: false },
+      { $set: { isArchived: true } }
+    );
+
+    console.log(`${result.modifiedCount} events archived automatically.`);
+
+    // // Emit the socket event after successful archiving
+    // io.emit('send-archive-muni', result); 
+
+  } catch (err) {
+    console.error('Error archiving events:', err);
+  }
+};
+
+// Schedule the task to run daily at midnight (0 0 * * *)
+cron.schedule('* * * * *', () => { 
+  console.log('Running automatic event archiving task...');
+  archiveOldEvents(); 
+});
 
 module.exports = {
   GetBarangayAnnouncement,
@@ -324,4 +351,5 @@ module.exports = {
   UpdateAttendees,
   GetSpecificBarangayAnnouncement,
   getAllEvents,
+  // archiveOldEvents
 };

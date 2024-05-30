@@ -14,6 +14,7 @@ const {
   UpdateAttendees,
   GetSpecificBarangayAnnouncement,
   getAllEvents,
+  // archiveOldEvents
 } = require("../controllers/AnnouncementsController");
 
 router.get("/", GetBarangayAnnouncement);

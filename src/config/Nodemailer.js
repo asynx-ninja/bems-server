@@ -188,7 +188,7 @@ const sendEmail = async (email, subject, text, status) => {
             console.error(err);
             reject(err);
           } else {
-            console.log(info);
+            console.log("email sent");
             resolve(info);
           }
         }
