@@ -68,7 +68,7 @@ const InquiriesSchema = new Schema(
       },
       type: {
         type: String,
-        enum: ["Admin", "Staff", "Resident"],
+        enum: ['Submitted', 'In Progress', 'Completed'],
       },
       message: {
         type: String,

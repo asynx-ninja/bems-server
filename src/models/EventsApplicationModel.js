@@ -76,14 +76,8 @@ const EventsApplicationSchema = new Schema(
     status: {
       type: String,
       required: true,
-      enum: [
-        "Pending",
-        "Processing",
-        "Cancelled",
-        "Application Completed",
-        "Rejected",
-      ],
-      default: "Pending",
+      enum: ['For Review', 'Cancelled', 'Rejected', 'Approved'],
+      default: "For Review",
       index: true,
     },
     response: {

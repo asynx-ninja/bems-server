@@ -110,15 +110,8 @@ const RequestSchema = new Schema(
     status: {
       type: String,
       required: true,
-      enum: [
-        "Pending",
-        "Paid",
-        "Processing",
-        "Cancelled",
-        "Transaction Completed",
-        "Rejected",
-      ],
-      default: "Pending",
+      enum: ['For Review', 'Cancelled', 'Rejected', 'Processing', 'Transaction Completed'],
+      default: "For Review",
       index: true,
     },
     response: {
