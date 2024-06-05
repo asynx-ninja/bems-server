@@ -107,8 +107,9 @@ const PatawagSchema = new Schema(
       type: String,
       required: true,
       enum: [
+        "New",
         "In Progress",
-        "Completed",
+        "Resolved",
       ],
       default: "In Progress",
       index: true,

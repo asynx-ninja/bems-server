@@ -80,8 +80,8 @@ const ServicesSchema = new Schema(
     },
     isApproved: {
       type: String,
-      enum: ["Approved", "Disapproved", "Pending"],
-      default: "Pending",
+      enum: ["Approved", "Disapproved", "For Review"],
+      default: "For Review",
       required: true,
       index: true,
     },
