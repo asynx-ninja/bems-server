@@ -9,7 +9,7 @@ const GetActivityLog = async (req, res) => {
 
     return res.status(200).json({
       result,
-      pageCount: Math.ceil(result.length / 10),
+      pageCount: Math.ceil(result.length / 15),
       total: result.length, // Total count without pagination
     });
   } catch (err) {
@@ -23,15 +23,17 @@ const AddActLog = async (req, res) => {
       const { action, details, ip } = req.body; // No need to parse since it's already JSON
   
       const userRecord = await User.findOne({ _id: id });
-      const { firstName, lastName, type, address } = userRecord;
+      const { firstName, lastName, type, address, profile } = userRecord;
   
       // Extract the firstName and barangay from the user record
       const { brgy } = address;
+      const {link} = profile
   
       const result = await ActivityLogs.create({
         user: id,
         firstname: firstName,
         lastname: lastName,
+        profile: link,
         type: type,
         action,
         details,
