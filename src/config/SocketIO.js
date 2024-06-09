@@ -132,6 +132,11 @@ const SocketIO = (app) => {
       io.emit("receive-create-patawag-doc", obj);
     });
 
+    // edit PATAWAG DOCUMENT
+    socket.on("send-edit-patawag-doc", (obj) => {
+      io.emit("receive-edit-patawag-doc", obj);
+    });
+
     socket.on("send-muni-about", (obj) => {
       io.emit("receive-muni-about", obj);
     });
