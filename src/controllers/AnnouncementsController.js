@@ -34,27 +34,6 @@ const GetBarangayAnnouncement = async (req, res) => {
   }
 };
 
-const SearchBarangayAnnouncement = async (req, res) => {
-  try {
-    const { brgy, archived } = req.query;
-
-    let query = {
-      brgy: brgy,
-      ...(archived !== undefined && { isArchived: archived }),
-    };
-
-    const result = await Announcement.find(query)
-
-    return !result
-      ? res
-        .status(400)
-        .json({ error: `No such Announcement for Barangay ${brgy}` })
-      : res.status(200).json({ result });
-  } catch (err) {
-    res.send(err.message);
-  }
-};
-
 const GetAllOpenBrgyAnnouncement = async (req, res) => {
   try {
     const { brgy } = req.query;
@@ -343,7 +322,6 @@ cron.schedule('* * * * *', () => {
 
 module.exports = {
   GetBarangayAnnouncement,
-  SearchBarangayAnnouncement,
   GetAllOpenBrgyAnnouncement,
   CreateAnnouncement,
   UpdateAnnouncement,

@@ -68,7 +68,7 @@ const InquiriesSchema = new Schema(
       },
       type: {
         type: String,
-        enum: ['Submitted', 'In Progress', 'Completed'],
+        enum: ['Resident', 'Staff', 'Admin'],
       },
       message: {
         type: String,
@@ -104,8 +104,8 @@ const InquiriesSchema = new Schema(
     },
     isApproved: {
       type: String,
-      enum: ["Completed", "In Progress", "Pending"],
-      default: "Pending",
+      enum: ["Completed", "In Progress", "Submitted"],
+      default: "Submitted",
       required: true,
       index: true,
     },

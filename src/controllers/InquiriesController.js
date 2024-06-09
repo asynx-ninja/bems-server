@@ -220,7 +220,7 @@ const CreateInquiries = async (req, res) => {
       },
       brgy,
       folder_id,
-      isApproved: "Pending",
+      isApproved: "Submitted",
       isArchived: false,
       user_id,
     });
