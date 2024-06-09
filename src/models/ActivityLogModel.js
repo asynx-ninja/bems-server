@@ -26,7 +26,7 @@ const ActivityLogs = new Schema(
     },
     action: {
       type: String,
-      enum: ["Create", "Delete", "Update", "Archive"],
+      enum: ["Created", "Deleted", "Updated", "Archived", "Restored"],
     },
     details: {
       type: String,
