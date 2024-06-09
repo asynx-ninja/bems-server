@@ -19,6 +19,9 @@ const ActivityLogs = new Schema(
       required: true,
       index: true,
     },
+    profile: {
+      type: String,
+    },
     type: {
       type: String,
       required: true,
@@ -26,7 +29,7 @@ const ActivityLogs = new Schema(
     },
     action: {
       type: String,
-      enum: ["Create", "Delete", "Update", "Archive"],
+      enum: ["Created", "Deleted", "Updated", "Archived", "Restored"],
     },
     details: {
       type: String,
