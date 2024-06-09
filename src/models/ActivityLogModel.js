@@ -19,6 +19,9 @@ const ActivityLogs = new Schema(
       required: true,
       index: true,
     },
+    profile: {
+      type: String,
+    },
     type: {
       type: String,
       required: true,
