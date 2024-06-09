@@ -277,7 +277,7 @@ const CreateServices = async (req, res) => {
         logo: logoObject,
         file: remainingFiles,
       },
-      isApproved: "Pending",
+      isApproved: "For Review",
     });
 
     res.status(200).json(result);

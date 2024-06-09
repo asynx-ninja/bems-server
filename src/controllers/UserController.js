@@ -14,7 +14,7 @@ const {
 
 const GetUsers = async (req, res) => {
   try {
-    const { brgy, status, type } = req.query;
+    const { brgy, status, type, civil_status, isVoter, isHead, minAge, maxAge } = req.query;
 
     let query = {
       $and: [{ "address.brgy": brgy }, { isArchived: false }],
@@ -24,8 +24,24 @@ const GetUsers = async (req, res) => {
     if (status && status.toLowerCase() !== "all") {
       query.$and.push({ isApproved: status });
     }
+     // If civil_status is provided and not "all", add it to the query
+     if (civil_status && civil_status.toLowerCase() !== "all") {
+      const civilStatusArray = civil_status.split(",");
+      query.$and.push({ civil_status: { $in: civilStatusArray } });
+    }
+    if (isVoter && isVoter.toLowerCase() !== "all") {
+      query.$and.push({ isVoter: isVoter });
+    }
+    if (isHead && isHead.toLowerCase() !== "all") {
+      query.$and.push({ isHead: isHead });
+    }
     if (type && type.toLowerCase() !== "all") {
       query.$and.push({ type: type });
+    }
+
+    // Add age range condition if both minAge and maxAge are provided
+    if (minAge && maxAge) {
+      query.$and.push({ age: { $gte: parseInt(minAge), $lte: parseInt(maxAge) } });
     }
 
     const result = await User.find(query).sort({ createdAt: -1 });

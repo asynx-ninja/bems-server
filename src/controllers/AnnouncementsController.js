@@ -82,7 +82,7 @@ const CreateAnnouncement = async (req, res) => {
   try {
     const { event_folder_id } = req.query;
     const { body, files } = req;
-    const { title, details, date, brgy, isOpen } = JSON.parse(
+    const { title, details, date, brgy, isOpen, application_limit } = JSON.parse(
       body.announcement
     );
     let fileArray = [];
@@ -120,6 +120,7 @@ const CreateAnnouncement = async (req, res) => {
       },
       isOpen,
       attendees: [],
+      application_limit,
     });
 
     res.status(200).json(result);

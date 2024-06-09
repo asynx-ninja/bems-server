@@ -98,6 +98,10 @@ const AnnouncementsSchema = new Schema(
       default: false,
       required: true,
     },
+    application_limit: {
+      type: Number,
+      required: true,
+    },
   },
   { timestamps: true }
 );

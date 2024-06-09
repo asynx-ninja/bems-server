@@ -11,6 +11,7 @@ const {
   GetAllPenApp,
   GetCountPenApp,
   CancelEventApplication,
+  StatusApplication,
 } = require("../controllers/EventsApplicationController");
 
 const upload = require("../config/Multer");
@@ -24,5 +25,6 @@ router.post("/", upload.array("files", 10), CreateEventsApplication);
 router.patch("/", upload.array("files", 10), RespondToEventsApplication);
 router.patch("/cancel/", CancelEventApplication);
 router.patch("/archived/:id/:archived", ArchiveEventsApplication);
+router.patch("/status/", StatusApplication);
 
 module.exports = router;
