@@ -36,7 +36,6 @@ const GetAllEventsApplication = async (req, res) => {
   }
 };
 
-
 const GetEventsApplicationByUser = async (req, res) => {
   try {
     const { user_id, event_name, archived } = req.query;
@@ -294,6 +293,31 @@ const CancelEventApplication = async (req, res) => {
   }
 };
 
+const StatusApplication = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const { status } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "No such event" });
+    }
+
+    const result = await EventsApplication.findByIdAndUpdate(
+      { _id: id },
+      { $set: { status: status } },
+      { new: true }
+    );
+
+    if (!result) {
+      return res.status(404).json({ error: "No such event" });
+    }
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
 module.exports = {
   GetAllEventsApplication,
   GetEventsApplicationByUser,
@@ -304,4 +328,5 @@ module.exports = {
   GetAllPenApp,
   GetCountPenApp,
   CancelEventApplication,
+  StatusApplication,
 };
